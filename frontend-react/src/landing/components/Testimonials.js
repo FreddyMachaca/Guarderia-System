@@ -75,29 +75,35 @@ const Testimonials = () => {
   const nextSlide = () => {
     if (isAnimating) return;
     setIsAnimating(true);
-    setCurrentSlide((prev) => (prev + 1) % testimonials.length);
-    setTimeout(() => setIsAnimating(false), 500);
+    setTimeout(() => {
+      setCurrentSlide((prev) => (prev + 1) % testimonials.length);
+      setTimeout(() => setIsAnimating(false), 300);
+    }, 300);
   };
 
   const prevSlide = () => {
     if (isAnimating) return;
     setIsAnimating(true);
-    setCurrentSlide((prev) => (prev - 1 + testimonials.length) % testimonials.length);
-    setTimeout(() => setIsAnimating(false), 500);
+    setTimeout(() => {
+      setCurrentSlide((prev) => (prev - 1 + testimonials.length) % testimonials.length);
+      setTimeout(() => setIsAnimating(false), 300);
+    }, 300);
   };
 
   const goToSlide = (index) => {
     if (isAnimating || index === currentSlide) return;
     setIsAnimating(true);
-    setCurrentSlide(index);
-    setTimeout(() => setIsAnimating(false), 500);
+    setTimeout(() => {
+      setCurrentSlide(index);
+      setTimeout(() => setIsAnimating(false), 300);
+    }, 300);
   };
 
   return (
     <section className="testimonials" id="testimonios">
       <div className="testimonials-container">
         <div className="testimonials-header">
-          <div className="testimonials-badge">💬 Voces Reales</div>
+          <div className="testimonials-badge">💬 Testimonios</div>
           <h2>
             Historias que <span className="highlight">Inspiran</span>
           </h2>
@@ -109,16 +115,7 @@ const Testimonials = () => {
 
         <div className="testimonials-main">
           <div className="testimonial-featured">
-            <div className={`testimonial-content ${isAnimating ? 'animating' : ''}`}>
-              <div className="testimonial-decoration">
-                <div className="quote-icon">❝</div>
-                <div className="floating-hearts">
-                  <span>💖</span>
-                  <span>✨</span>
-                  <span>🌟</span>
-                </div>
-              </div>
-
+            <div className={`testimonial-content ${isAnimating ? 'fade-out' : 'fade-in'}`}>
               <div className="rating-section">
                 <div className="stars">
                   {[...Array(testimonials[currentSlide].rating)].map((_, index) => (
@@ -151,10 +148,6 @@ const Testimonials = () => {
                   </div>
                 </div>
                 <div className="trust-indicators">
-                  <div className="verified-family">
-                    <div className="verified-icon">✓</div>
-                    <span>Familia Verificada</span>
-                  </div>
                   <div className="enrollment-time">
                     <div className="time-icon">⏰</div>
                     <span>{testimonials[currentSlide].timeEnrolled} con nosotros</span>
@@ -187,28 +180,7 @@ const Testimonials = () => {
           ))}
         </div>
 
-        <div className="testimonials-grid">
-          {testimonials.filter((_, index) => index !== currentSlide).slice(0, 3).map((testimonial) => (
-            <div key={testimonial.id} className="testimonial-mini-card">
-              <div className="mini-card-header">
-                <div className="mini-rating">
-                  {[...Array(testimonial.rating)].map((_, index) => (
-                    <span key={index} className="mini-star">⭐</span>
-                  ))}
-                </div>
-                <div className="mini-verified">✓</div>
-              </div>
-              <p className="mini-text">{testimonial.text.slice(0, 120)}...</p>
-              <div className="mini-author">
-                <div className="mini-avatar">{testimonial.avatar}</div>
-                <div className="mini-info">
-                  <h5>{testimonial.author}</h5>
-                  <span>{testimonial.role} • {testimonial.age}</span>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
+
 
         <div className="testimonials-cta">
           <div className="cta-content">
