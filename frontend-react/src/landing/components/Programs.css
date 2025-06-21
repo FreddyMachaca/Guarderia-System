@@ -1,35 +1,92 @@
 .programs {
-  padding: 50px 0;
-  background: #f8fafc;
+  padding: 40px 0;
+  background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 50%, #f1f3f4 100%);
   position: relative;
+  overflow: hidden;
+}
+
+.programs::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: 
+    radial-gradient(circle at 20% 80%, rgba(255, 107, 53, 0.05) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(78, 205, 196, 0.08) 0%, transparent 50%),
+    url('data:image/svg+xml,<svg width="60" height="60" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="grid" width="60" height="60" patternUnits="userSpaceOnUse"><path d="M 60 0 L 0 0 0 60" fill="none" stroke="rgba(255,107,53,0.05)" stroke-width="1"/></pattern></defs><rect width="100%" height="100%" fill="url(%23grid)"/></svg>');
+  z-index: 0;
 }
 
 .programs-container {
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
   padding: 0 20px;
+  position: relative;
+  z-index: 1;
 }
 
 .programs-header {
   text-align: center;
-  margin-bottom: 20px;
+  margin-bottom: 80px;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.programs-badge {
+  background: linear-gradient(135deg, #FF6B35, #e55a2b);
+  color: white;
+  padding: 15px 30px;
+  border-radius: 50px;
+  font-size: 16px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 30px;
+  box-shadow: 0 10px 30px rgba(255, 107, 53, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.programs-badge::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.programs-badge:hover::before {
+  left: 100%;
 }
 
 .programs-header h2 {
   font-family: 'Poppins', sans-serif;
   font-size: 48px;
-  font-weight: 700;
-  color: #1e293b;
-  margin-bottom: 20px;
-  letter-spacing: -0.5px;
+  font-weight: 800;
+  color: #2c3e50;
+  line-height: 1.2;
+  margin-bottom: 25px;
+}
+
+.programs-header .highlight {
+  background: linear-gradient(135deg, #FF6B35, #e55a2b);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .programs-header p {
-  font-size: 20px;
-  color: #64748b;
-  max-width: 600px;
-  margin: 0 auto;
-  line-height: 1.6;
+  font-size: 18px;
+  color: #7f8c8d;
+  line-height: 1.7;
+  margin-bottom: 40px;
   font-weight: 400;
 }
 
@@ -41,20 +98,37 @@
 }
 
 .program-card {
-  padding: 30px 32px;
-  border-radius: 20px;
   background: white;
-  border: 1px solid #e2e8f0;
+  padding: 45px 35px;
+  border-radius: 24px;
   text-align: center;
-  transition: all 0.3s ease;
+  border: 1px solid #e9ecef;
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   position: relative;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
 }
 
 .program-card:hover {
   transform: translateY(-8px);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
-  border-color: #CBD5E1;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+  border-color: #FF6B35;
+}
+
+.program-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: linear-gradient(90deg, #FF6B35, #4ECDC4);
+  transform: translateX(-100%);
+  transition: transform 0.3s ease;
+}
+
+.program-card:hover::before {
+  transform: translateX(0);
 }
 
 .program-icon {
@@ -66,18 +140,22 @@
   align-items: center;
   justify-content: center;
   transition: all 0.3s ease;
+  position: relative;
 }
 
 .program-card.sports .program-icon {
-  background: #FEF3E2;
+  background: rgba(255, 107, 53, 0.1);
+  border: 3px solid rgba(255, 107, 53, 0.2);
 }
 
 .program-card.music .program-icon {
-  background: #E0F2F1;
+  background: rgba(78, 205, 196, 0.1);
+  border: 3px solid rgba(78, 205, 196, 0.2);
 }
 
 .program-card.drawing .program-icon {
-  background: #FFEBEE;
+  background: rgba(255, 107, 53, 0.1);
+  border: 3px solid rgba(255, 107, 53, 0.2);
 }
 
 .program-icon img {
@@ -86,55 +164,50 @@
   transition: transform 0.3s ease;
 }
 
-.program-card:hover .program-icon img {
+.program-card:hover .program-icon {
   transform: scale(1.1);
+}
+
+.program-card:hover .program-icon img {
+  transform: scale(1.1) rotate(5deg);
 }
 
 .program-card h3 {
   font-family: 'Poppins', sans-serif;
   font-size: 24px;
-  font-weight: 600;
+  font-weight: 700;
   margin-bottom: 16px;
-}
-
-.program-card.sports h3 {
-  color: #EA580C;
-}
-
-.program-card.music h3 {
-  color: #059669;
-}
-
-.program-card.drawing h3 {
-  color: #DC2626;
+  color: #2c3e50;
 }
 
 .program-card p {
   font-size: 16px;
-  color: #64748B;
-  line-height: 1.6;
-  margin-bottom: 24px;
+  color: #7f8c8d;
+  line-height: 1.7;
+  margin-bottom: 30px;
 }
 
 .program-features {
   list-style: none;
   padding: 0;
-  margin-bottom: 32px;
+  margin-bottom: 35px;
   text-align: left;
 }
 
 .program-features li {
-  color: #475569;
-  font-size: 14px;
-  margin-bottom: 8px;
+  color: #5a6c7d;
+  font-size: 15px;
+  margin-bottom: 12px;
   display: flex;
   align-items: center;
   gap: 12px;
+  font-weight: 500;
 }
 
 .program-features li::before {
   content: '✓';
   color: white;
+  background: #28a745;
   border-radius: 50%;
   width: 20px;
   height: 20px;
@@ -146,44 +219,40 @@
   flex-shrink: 0;
 }
 
-.program-card.sports .program-features li::before {
-  background: #EA580C;
-}
-
-.program-card.music .program-features li::before {
-  background: #059669;
-}
-
-.program-card.drawing .program-features li::before {
-  background: #DC2626;
-}
-
 .program-btn {
+  background: linear-gradient(135deg, #FF6B35, #e55a2b);
+  color: white;
   border: none;
-  padding: 12px 24px;
-  border-radius: 12px;
-  font-size: 14px;
-  font-weight: 500;
+  padding: 18px 35px;
+  border-radius: 50px;
+  font-size: 16px;
+  font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
-  color: white;
+  box-shadow: 0 8px 25px rgba(255, 107, 53, 0.3);
+  position: relative;
+  overflow: hidden;
+  width: 100%;
 }
 
-.program-card.sports .program-btn {
-  background: #EA580C;
+.program-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
 }
 
-.program-card.music .program-btn {
-  background: #059669;
-}
-
-.program-card.drawing .program-btn {
-  background: #DC2626;
+.program-btn:hover::before {
+  left: 100%;
 }
 
 .program-btn:hover {
-  transform: translateY(-2px);
-  filter: brightness(110%);
+  transform: translateY(-3px);
+  box-shadow: 0 12px 35px rgba(255, 107, 53, 0.4);
 }
 
 @media (max-width: 1024px) {

@@ -188,14 +188,15 @@ const Testimonials = () => {
             <h3>¿Tu Historia Será la Próxima?</h3>
             <p>Únete a nuestra familia y crea recuerdos inolvidables para tu pequeño</p>
             <div className="cta-actions">
-              <button className="cta-btn primary">
-                <span>Conoce Más</span>
-                <div className="btn-arrow">→</div>
-              </button>
-              <button className="cta-btn secondary">
+              <a 
+                className="cta-btn secondary" 
+                href="https://wa.me/11111111" 
+                target="_blank" 
+                rel="noopener noreferrer"
+              >
                 <span>Programa una Visita</span>
                 <div className="btn-calendar">📅</div>
-              </button>
+              </a>
             </div>
           </div>
         </div>

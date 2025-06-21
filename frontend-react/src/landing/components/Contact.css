@@ -76,7 +76,7 @@
 }
 
 .contact-header .highlight {
-  background: linear-gradient(135deg, #FF6B35, #4ECDC4);
+  background: linear-gradient(135deg, #FF6B35, #e55a2b);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;

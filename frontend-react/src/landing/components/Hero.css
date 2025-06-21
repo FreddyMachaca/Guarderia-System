@@ -164,7 +164,7 @@
 .rotating-text {
   position: relative;
   display: inline-block;
-  background: linear-gradient(135deg, #FF6B35, #4ECDC4);
+  background: linear-gradient(135deg, #4ECDC4, #26A69A);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;

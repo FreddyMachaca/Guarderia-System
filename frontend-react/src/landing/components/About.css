@@ -85,7 +85,7 @@
 }
 
 .about-title .highlight {
-  background: linear-gradient(135deg, #4ECDC4 0%, #26A69A 100%);
+  background: linear-gradient(135deg, #4ECDC4, #26A69A);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;

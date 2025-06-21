@@ -43,7 +43,10 @@ const Programs = () => {
     <section className="programs" id="programas">
       <div className="programs-container">
         <div className="programs-header">
-          <h2>Nuestros Programas Especializados</h2>
+          <div className="programs-badge">🎯 Programas</div>
+          <h2>
+            Nuestros Programas <span className="highlight">Especializados</span>
+          </h2>
           <p>
             Desarrollamos el potencial único de cada niño a través de programas educativos 
             innovadores diseñados por expertos en desarrollo infantil. Cada actividad está 
