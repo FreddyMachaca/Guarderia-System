@@ -1,8 +1,39 @@
 .landing {
   min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
 }
 
-.landing h1 {
+.landing::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: 
+    radial-gradient(circle at 10% 10%, rgba(255, 107, 53, 0.03) 0%, transparent 50%),
+    radial-gradient(circle at 90% 90%, rgba(78, 205, 196, 0.03) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: -1;
+}
+
+.landing * {
+  box-sizing: border-box;
+}
+
+.landing h1,
+.landing h2,
+.landing h3 {
   margin: 0;
-  text-align: center;
+}
+
+.landing section {
+  position: relative;
+}
+
+@media (max-width: 768px) {
+  .landing {
+    font-size: 14px;
+  }
 }
