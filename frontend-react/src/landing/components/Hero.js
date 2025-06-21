@@ -13,11 +13,6 @@ const Hero = () => {
     "Más Seguro"
   ];
 
-  const benefits = [
-    { icon: "🎯", text: "Metodología Personalizada" },
-    { icon: "👥", text: "Grupos Reducidos" },
-  ];
-
   useEffect(() => {
     setIsVisible(true);
     const interval = setInterval(() => {
@@ -42,7 +37,7 @@ const Hero = () => {
         <div className={`hero-content ${isVisible ? 'animate-in' : ''}`}>
           
           <h1 className="hero-title">
-            El <span className="rotating-text">
+            Nuestro Programa <span className="rotating-text">
               <span className={`text-item ${currentTextIndex === 0 ? 'active' : ''}`}>
                 {rotatingTexts[0]}
               </span>
@@ -64,15 +59,6 @@ const Hero = () => {
             ambiente seguro y educadores especializados. Tu hijo merece el mejor comienzo 
             para su futuro brillante.
           </p>
-
-          <div className="benefits-preview">
-            {benefits.map((benefit, index) => (
-              <div key={index} className="benefit-item">
-                <span className="benefit-icon">{benefit.icon}</span>
-                <span className="benefit-text">{benefit.text}</span>
-              </div>
-            ))}
-          </div>
           
           <div className="hero-buttons">
             <button className="hero-btn primary">
