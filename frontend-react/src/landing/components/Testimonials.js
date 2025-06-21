@@ -8,7 +8,7 @@ const Testimonials = () => {
   const testimonials = [
     {
       id: 1,
-      text: "Mi hija Sofía ha florecido de manera increíble desde que está aquí. La metodología personalizada y el cariño del equipo han transformado su manera de aprender y relacionarse.",
+      text: "Mi hija Sofía aprendio bastante gracias a la metodologia personalizada y el cariño del equipo han transformado su manera de aprender y relacionarse.",
       author: "María González",
       role: "Madre de Sofía",
       age: "4 años",
@@ -19,24 +19,24 @@ const Testimonials = () => {
     },
     {
       id: 2,
-      text: "Como padre, ver el desarrollo emocional y cognitivo de Diego ha sido extraordinario. Los maestros no solo educan, realmente se preocupan por cada niño como si fuera propio.",
+      text: "Como padre, ver el desarrollo emocional y cognitivo de Diego ha sido extraordinario.",
       author: "Carlos Rodríguez",
       role: "Padre de Diego",
       age: "3 años",
       avatar: "CR",
       rating: 5,
-      location: "Cochabamba",
+      location: "La Paz",
       timeEnrolled: "1.5 años"
     },
     {
       id: 3,
-      text: "Lucas llegó tímido y reservado, ahora es un niño seguro de sí mismo, creativo y con ganas de explorar el mundo. El ambiente cálido y las metodologías innovadoras han sido clave.",
+      text: "Lucas llegó tímido y reservado, ahora es un niño seguro de sí mismo, creativo y con ganas de aprender.",
       author: "Ana Martínez",
       role: "Madre de Lucas",
       age: "5 años",
       avatar: "AM",
       rating: 5,
-      location: "Santa Cruz",
+      location: "La Paz",
       timeEnrolled: "3 años"
     },
     {
@@ -47,18 +47,18 @@ const Testimonials = () => {
       age: "4 años",
       avatar: "RS",
       rating: 5,
-      location: "Tarija",
+      location: "La Paz",
       timeEnrolled: "2.5 años"
     },
     {
       id: 5,
-      text: "Como educadora, reconozco la calidad excepcional del programa. Mateo ha superado todas nuestras expectativas y cada día nos sorprende con su crecimiento integral.",
+      text: "Como educadora, reconozco la calidad excepcional del programa.",
       author: "Lucía Herrera",
       role: "Madre de Mateo",
       age: "3 años",
       avatar: "LH",
       rating: 5,
-      location: "Oruro",
+      location: "La Paz",
       timeEnrolled: "1 año"
     }
   ];
