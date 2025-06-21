@@ -61,11 +61,11 @@ const Hero = () => {
           </p>
           
           <div className="hero-buttons">
-            <button className="hero-btn primary">
+            <a href="#contacto" className="hero-btn primary">
               <span className="btn-text">Inscríbete Ahora</span>
               <span className="btn-icon">→</span>
               <div className="btn-glow"></div>
-            </button>
+            </a>
           </div>
         </div>
         

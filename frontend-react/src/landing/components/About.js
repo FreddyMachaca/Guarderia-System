@@ -17,7 +17,7 @@ const About = () => {
               creando un ambiente donde cada niño puede brillar y desarrollar su máximo potencial.
             </p>
             <div className="about-actions">
-              <button className="about-btn">Conoce Más Sobre Nosotros</button>
+              <a href="#contacto" className="about-btn">Conoce Más Sobre Nosotros</a>
             </div>
           </div>
           <div className="about-visual">

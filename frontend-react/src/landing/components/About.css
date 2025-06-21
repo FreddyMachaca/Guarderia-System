@@ -120,6 +120,7 @@
   box-shadow: 0 8px 25px rgba(255, 107, 53, 0.3);
   position: relative;
   overflow: hidden;
+  text-decoration: none;
 }
 
 .about-btn::before {

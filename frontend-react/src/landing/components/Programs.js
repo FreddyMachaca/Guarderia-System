@@ -66,7 +66,7 @@ const Programs = () => {
                   <li key={index}>{feature}</li>
                 ))}
               </ul>
-              <button className="program-btn">Explorar Programa</button>
+              <a href="#contacto" className="program-btn">Explorar Programa</a>
             </div>
           ))}
         </div>

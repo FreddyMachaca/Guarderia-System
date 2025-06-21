@@ -27,10 +27,10 @@ const Footer = () => {
               Cada día es una nueva oportunidad para descubrir el potencial único de tu hijo.
             </p>
             <div className="social-links">
-              <a href="#" className="social-link" aria-label="Facebook">
+              <a href="https://facebook.com/guarderia" target="_blank" rel="noopener noreferrer" className="social-link" aria-label="Facebook">
                 <img src={facebookIcon} alt="Facebook" />
               </a>
-              <a href="#" className="social-link" aria-label="WhatsApp">
+              <a href="https://wa.me/59111111111" target="_blank" rel="noopener noreferrer" className="social-link" aria-label="WhatsApp">
                 <img src={whatsappIcon} alt="WhatsApp" />
               </a>
             </div>
@@ -42,8 +42,8 @@ const Footer = () => {
               <li><a href="#inicio">Inicio</a></li>
               <li><a href="#sobre-nosotros">Acerca de Nosotros</a></li>
               <li><a href="#programas">Nuestros Programas</a></li>
+              <li><a href="#testimonios">Testimonios</a></li>
               <li><a href="#contacto">Contacto</a></li>
-              <li><a href="#admisiones">Admisiones</a></li>
             </ul>
           </div>
 

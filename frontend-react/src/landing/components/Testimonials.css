@@ -479,6 +479,7 @@ background: linear-gradient(135deg, rgba(137, 158, 232, 0.1), rgba(75, 100, 162,
   gap: 10px;
   position: relative;
   overflow: hidden;
+  text-decoration: none;
 }
 
 .cta-btn.primary {
