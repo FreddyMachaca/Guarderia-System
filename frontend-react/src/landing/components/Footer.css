@@ -48,7 +48,6 @@
 .footer-logo img {
   width: 50px;
   height: 50px;
-  filter: brightness(0) invert(1);
 }
 
 .footer-logo span {
@@ -73,7 +72,7 @@
 .social-link {
   width: 45px;
   height: 45px;
-  background: linear-gradient(135deg, #FF6B35, #4ECDC4);
+  background: linear-gradient(135deg, #4a6741, #34495e);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -84,9 +83,15 @@
   transition: all 0.3s ease;
 }
 
+.social-link img {
+  width: 24px;
+  height: 24px;
+}
+
 .social-link:hover {
   transform: translateY(-3px) scale(1.1);
-  box-shadow: 0 10px 25px rgba(255, 107, 53, 0.3);
+  box-shadow: 0 10px 25px rgba(74, 103, 65, 0.4);
+  background: linear-gradient(135deg, #5a7851, #3e556f);
 }
 
 .footer-section {
@@ -155,66 +160,37 @@
 .contact-info li {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 15px;
+  gap: 8px;
+  margin-bottom: 2px;
   color: rgba(255, 255, 255, 0.8);
   font-size: 15px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.contact-info li:hover {
+  color: rgba(255, 255, 255, 1);
+  transform: translateX(5px);
 }
 
 .contact-icon {
   width: 35px;
   height: 35px;
-  background: linear-gradient(135deg, #FF6B35, #e55a2b);
+  background: linear-gradient(135deg, #4a6741, #34495e);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 16px;
   flex-shrink: 0;
-}
-
-.newsletter {
-  background: rgba(255, 255, 255, 0.1);
-  padding: 25px;
-  border-radius: 15px;
-  margin-top: 20px;
-}
-
-.newsletter h4 {
-  color: white;
-  font-size: 18px;
-  font-weight: 600;
-  margin-bottom: 15px;
-}
-
-.newsletter-form {
-  display: flex;
-  gap: 10px;
-}
-
-.newsletter-input {
-  flex: 1;
-  padding: 12px 15px;
-  border: none;
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.9);
-  font-size: 14px;
-}
-
-.newsletter-btn {
-  background: linear-gradient(135deg, #FF6B35, #e55a2b);
-  color: white;
-  border: none;
-  padding: 12px 20px;
-  border-radius: 8px;
-  font-weight: 600;
-  cursor: pointer;
   transition: all 0.3s ease;
+  cursor: pointer;
 }
 
-.newsletter-btn:hover {
-  transform: scale(1.05);
-  box-shadow: 0 5px 15px rgba(255, 107, 53, 0.3);
+.contact-icon:hover {
+  transform: scale(1.1);
+  background: linear-gradient(135deg, #5a7851, #3e556f);
+  box-shadow: 0 5px 15px rgba(74, 103, 65, 0.3);
 }
 
 .footer-bottom {
