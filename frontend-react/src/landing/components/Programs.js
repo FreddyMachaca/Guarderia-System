@@ -67,17 +67,6 @@ const Programs = () => {
             </div>
           ))}
         </div>
-        
-        <div className="stats-section">
-          <div className="stats-grid">
-            {stats.map((stat, index) => (
-              <div key={index} className="stat-item">
-                <span className="stat-number">{stat.number}</span>
-                <span className="stat-label">{stat.label}</span>
-              </div>
-            ))}
-          </div>
-        </div>
       </div>
     </section>
   );
