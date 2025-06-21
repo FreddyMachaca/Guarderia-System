@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import './Contact.css';
+import whatsappIcon from '../../assets/icons/whatsapp-icon.svg';
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -21,8 +22,6 @@ const Contact = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log('Formulario enviado:', formData);
-    // Aquí se enviaría el formulario a un backend
     alert('¡Gracias por contactarnos! Te responderemos a la brevedad.');
     setFormData({
       name: '',
@@ -39,7 +38,7 @@ const Contact = () => {
       <div className="contact-container">
         <div className="contact-header">
           <div className="contact-badge">📋 Solicitud de Información</div>
-          <h2>¿Listo para comenzar una gran aventura educativa?</h2>
+          <h2>¿Listo para comenzar una gran <span className="highlight">aventura educativa</span>?</h2>
           <p>
             Completa el formulario y uno de nuestros asesores educativos te 
             contactará para brindarte toda la información que necesitas.
@@ -49,6 +48,7 @@ const Contact = () => {
         <div className="contact-content">
           <div className="contact-form-container">
             <form className="contact-form" onSubmit={handleSubmit}>
+              <h3>Solicitar Información</h3>
               <div className="form-group">
                 <label htmlFor="name">Nombre del Padre/Madre/Tutor</label>
                 <input
@@ -154,14 +154,6 @@ const Contact = () => {
             </div>
 
             <div className="info-block">
-              <div className="info-icon">✉️</div>
-              <div className="info-content">
-                <h4>Escríbenos</h4>
-                <p>info@gmail.com</p>
-              </div>
-            </div>
-
-            <div className="info-block">
               <div className="info-icon">🕒</div>
               <div className="info-content">
                 <h4>Horario de Atención</h4>
@@ -170,9 +162,17 @@ const Contact = () => {
             </div>
 
             <div className="cta-block">
-              <h4>¿Prefieres una visita guiada?</h4>
-              <p>Agenda una cita y conoce nuestras instalaciones</p>
-              <button className="schedule-visit-btn">Agendar Visita</button>
+              <h4>CONTÁCTANOS EN WHATSAPP</h4>
+              <p>Obtén respuesta inmediata a todas tus consultas</p>
+              <a 
+                href="https://wa.me/11111111" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="whatsapp-btn"
+              >
+                <img src={whatsappIcon} alt="WhatsApp" className="whatsapp-icon" />
+                Escribir en WhatsApp
+              </a>
             </div>
           </div>
         </div>
