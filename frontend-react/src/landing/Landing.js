@@ -1,10 +1,15 @@
 import React from 'react';
 import './Landing.css';
+import Header from './components/Header';
+import Hero from './components/Hero';
+import Programs from './components/Programs';
 
 const Landing = () => {
   return (
     <div className="landing">
-      <h1>Guardería System - Landing Page</h1>
+      <Header />
+      <Hero />
+      <Programs />
     </div>
   );
 };
