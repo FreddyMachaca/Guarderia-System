@@ -11,7 +11,7 @@ const Programs = () => {
       icon: sportIcon,
       title: "Actividades Deportivas",
       description: "Desarrollo físico y coordinación a través de deportes adaptados para cada edad",
-      features: ["Natación infantil", "Gimnasia rítmica", "Fútbol recreativo", "Yoga para niños"],
+      features: ["Actividades fisicas", "Gimnasia rítmica", "Fútbol recreativo"],
       className: "sports"
     },
     {
@@ -19,7 +19,7 @@ const Programs = () => {
       icon: musicIcon,
       title: "Educación Musical",
       description: "Estimulación auditiva y creatividad musical para el desarrollo cognitivo integral",
-      features: ["Piano y teclado", "Coro infantil", "Instrumentos", "Musicoterapia"],
+      features: ["Piano y teclado", "Coro infantil", "Instrumentos"],
       className: "music"
     },
     {
@@ -27,7 +27,7 @@ const Programs = () => {
       icon: drawingIcon,
       title: "Arte y Creatividad",
       description: "Expresión artística y desarrollo de habilidades motoras finas a través del arte",
-      features: ["Pintura y dibujo", "Escultura", "Manualidades", "Arte digital"],
+      features: ["Pintura y dibujo", "Escultura", "Manualidades"],
       className: "drawing"
     }
   ];
