@@ -157,7 +157,7 @@ const Contact = () => {
               <div className="info-icon">✉️</div>
               <div className="info-content">
                 <h4>Escríbenos</h4>
-                <p>info@edukid.com</p>
+                <p>info@gmail.com</p>
               </div>
             </div>
 

@@ -71,7 +71,7 @@ const Hero = () => {
         
         <div className={`hero-image ${isVisible ? 'animate-in' : ''}`}>
           <div className="image-frame">
-            <img src={heroImage} alt="Niños felices en EduKid" />
+            <img src={heroImage} alt="Niños felices" />
             <div className="image-overlay">
               <div className="overlay-badge">
                 <span className="badge-icon">🎨</span>

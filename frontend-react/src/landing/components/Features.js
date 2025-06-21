@@ -39,7 +39,7 @@ const Features = () => {
     <section className="features">
       <div className="features-container">
         <div className="features-header">
-          <h2>¿Por Qué Elegir EduKid?</h2>
+          <h2>¿Por Qué Elegir "Nombre"?</h2>
         </div>
         <div className="features-grid">
           {features.map((feature, index) => (

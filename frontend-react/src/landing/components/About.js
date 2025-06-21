@@ -12,7 +12,7 @@ const About = () => {
               Creamos Experiencias de Aprendizaje <span className="highlight">Extraordinarias</span>
             </h2>
             <p className="about-description">
-              En EduKid, cada día es una aventura de descubrimiento. Nuestro enfoque 
+              En "Nombre", cada día es una aventura de descubrimiento. Nuestro enfoque 
               pedagógico innovador combina la tradición educativa con metodologías modernas, 
               creando un ambiente donde cada niño puede brillar y desarrollar su máximo potencial.
             </p>
@@ -22,7 +22,7 @@ const About = () => {
           </div>
           <div className="about-visual">
             <div className="image-container">
-              <img src={playGroup} alt="Niños aprendiendo en EduKid" className="about-image" />
+              <img src={playGroup} alt="Niños aprendiendo" className="about-image" />
               <div className="floating-badge top-left">
                 <span className="badge-icon">🎓</span>
                 <span className="badge-text">Educación de Calidad</span>

@@ -7,7 +7,7 @@ const Testimonials = () => {
   const testimonials = [
     {
       id: 1,
-      text: "EduKid transformó completamente la experiencia educativa de mi hija. Ver su crecimiento diario y su emoción por aprender cada mañana no tiene precio. ¡Es el mejor regalo que pudimos darle!",
+      text: "Nombre transformó completamente la experiencia educativa de mi hija. Ver su crecimiento diario y su emoción por aprender cada mañana no tiene precio. ¡Es el mejor regalo que pudimos darle!",
       author: "María González",
       role: "Madre de Sofía (4 años)",
       avatar: "MG",
@@ -25,7 +25,7 @@ const Testimonials = () => {
     },
     {
       id: 3,
-      text: "Estamos completamente enamorados de EduKid. Las instalaciones son de otro nivel, el programa es integral y lo más importante: nuestro hijo despierta emocionado por ir cada día.",
+      text: "Excelente atención y un ambiente cálido y acogedor. Mi hijo Lucas ha florecido aquí, aprendiendo a través del juego y la exploración. ¡No podríamos estar más felices con nuestra elección!",
       author: "Ana Martínez",
       role: "Madre de Lucas (5 años)",
       avatar: "AM",
@@ -34,7 +34,7 @@ const Testimonials = () => {
     },
     {
       id: 4,
-      text: "La atención personalizada y el seguimiento individual han sido increíbles. Mi hija no solo aprende, sino que desarrolla confianza y autonomía. ¡Recomiendo EduKid sin dudarlo!",
+      text: "La atención personalizada y el seguimiento individual han sido increíbles. Mi hija no solo aprende, sino que desarrolla confianza y autonomía.",
       author: "Roberto Silva",
       role: "Padre de Isabella (4 años)",
       avatar: "RS",
@@ -43,7 +43,7 @@ const Testimonials = () => {
     },
     {
       id: 5,
-      text: "Como educadora, puedo decir que EduKid supera mis expectativas. La metodología innovadora y el ambiente acogedor crean la combinación perfecta para el desarrollo integral.",
+      text: "Como educadora, puedo decir que supera mis expectativas. La metodología innovadora y el ambiente acogedor crean la combinación perfecta para el desarrollo integral.",
       author: "Lucía Herrera",
       role: "Madre de Mateo (3 años)",
       avatar: "LH",
@@ -84,7 +84,7 @@ const Testimonials = () => {
           </h2>
           <p>
             La confianza de los padres es nuestro mayor logro. Conoce las experiencias 
-            auténticas de familias que han elegido EduKid para transformar el futuro de sus pequeños.
+            auténticas de familias que han elegido NOMBRE para transformar el futuro de sus pequeños.
           </p>
         </div>
 

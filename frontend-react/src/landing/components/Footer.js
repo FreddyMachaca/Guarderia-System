@@ -17,8 +17,8 @@ const Footer = () => {
         <div className="footer-content">
           <div className="footer-brand">
             <div className="footer-logo">
-              <img src={logo} alt="EduKid" />
-              <span>EduKid</span>
+              <img src={logo} alt="Logo" />
+              <span>Nombre</span>
             </div>
             <p className="footer-description">
               Formamos pequeños genios con amor, dedicación y metodologías innovadoras. 
@@ -67,7 +67,7 @@ const Footer = () => {
               </li>
               <li>
                 <div className="contact-icon">✉️</div>
-                info@edukid.com
+                info@gmail.com
               </li>
               <li>
                 <div className="contact-icon">🕒</div>
@@ -93,7 +93,7 @@ const Footer = () => {
         </div>
 
         <div className="footer-bottom">
-          <p>&copy; 2024 EduKid. Todos los derechos reservados. Formando el futuro de nuestros pequeños.</p>
+          <p>&copy; 2025 Cegepa SRL. Todos los derechos reservados.</p>
           <div className="footer-bottom-links">
             <a href="#">Política de Privacidad</a>
             <a href="#">Términos de Servicio</a>
