@@ -3,184 +3,227 @@ import './Testimonials.css';
 
 const Testimonials = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [isAnimating, setIsAnimating] = useState(false);
 
   const testimonials = [
     {
       id: 1,
-      text: "Nombre transformó completamente la experiencia educativa de mi hija. Ver su crecimiento diario y su emoción por aprender cada mañana no tiene precio. ¡Es el mejor regalo que pudimos darle!",
+      text: "Mi hija Sofía ha florecido de manera increíble desde que está aquí. La metodología personalizada y el cariño del equipo han transformado su manera de aprender y relacionarse.",
       author: "María González",
-      role: "Madre de Sofía (4 años)",
+      role: "Madre de Sofía",
+      age: "4 años",
       avatar: "MG",
       rating: 5,
-      image: "/api/placeholder/80/80"
+      location: "La Paz",
+      timeEnrolled: "2 años"
     },
     {
       id: 2,
-      text: "La metodología que utilizan es excepcional. Mi hijo desarrolló habilidades sociales y cognitivas de manera sorprendente. Los maestros no solo enseñan, son verdaderos guías en su desarrollo.",
+      text: "Como padre, ver el desarrollo emocional y cognitivo de Diego ha sido extraordinario. Los maestros no solo educan, realmente se preocupan por cada niño como si fuera propio.",
       author: "Carlos Rodríguez",
-      role: "Padre de Diego (3 años)",
+      role: "Padre de Diego",
+      age: "3 años",
       avatar: "CR",
       rating: 5,
-      image: "/api/placeholder/80/80"
+      location: "Cochabamba",
+      timeEnrolled: "1.5 años"
     },
     {
       id: 3,
-      text: "Excelente atención y un ambiente cálido y acogedor. Mi hijo Lucas ha florecido aquí, aprendiendo a través del juego y la exploración. ¡No podríamos estar más felices con nuestra elección!",
+      text: "Lucas llegó tímido y reservado, ahora es un niño seguro de sí mismo, creativo y con ganas de explorar el mundo. El ambiente cálido y las metodologías innovadoras han sido clave.",
       author: "Ana Martínez",
-      role: "Madre de Lucas (5 años)",
+      role: "Madre de Lucas",
+      age: "5 años",
       avatar: "AM",
       rating: 5,
-      image: "/api/placeholder/80/80"
+      location: "Santa Cruz",
+      timeEnrolled: "3 años"
     },
     {
       id: 4,
-      text: "La atención personalizada y el seguimiento individual han sido increíbles. Mi hija no solo aprende, sino que desarrolla confianza y autonomía.",
+      text: "La atención personalizada es incomparable. Isabella no solo ha desarrollado habilidades académicas, sino también valores fundamentales que la acompañarán toda la vida.",
       author: "Roberto Silva",
-      role: "Padre de Isabella (4 años)",
+      role: "Padre de Isabella",
+      age: "4 años",
       avatar: "RS",
       rating: 5,
-      image: "/api/placeholder/80/80"
+      location: "Tarija",
+      timeEnrolled: "2.5 años"
     },
     {
       id: 5,
-      text: "Como educadora, puedo decir que supera mis expectativas. La metodología innovadora y el ambiente acogedor crean la combinación perfecta para el desarrollo integral.",
+      text: "Como educadora, reconozco la calidad excepcional del programa. Mateo ha superado todas nuestras expectativas y cada día nos sorprende con su crecimiento integral.",
       author: "Lucía Herrera",
-      role: "Madre de Mateo (3 años)",
+      role: "Madre de Mateo",
+      age: "3 años",
       avatar: "LH",
       rating: 5,
-      image: "/api/placeholder/80/80"
+      location: "Oruro",
+      timeEnrolled: "1 año"
     }
-  ];
-
-  const stats = [
-    { number: "500+", label: "Familias Satisfechas", icon: "👨‍👩‍👧‍👦" },
-    { number: "98%", label: "Satisfacción General", icon: "⭐" },
-    { number: "15+", label: "Años de Experiencia", icon: "🎓" },
-    { number: "25+", label: "Programas Especializados", icon: "📚" }
   ];
 
   useEffect(() => {
     const timer = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % testimonials.length);
-    }, 5000);
+      if (!isAnimating) {
+        nextSlide();
+      }
+    }, 6000);
     return () => clearInterval(timer);
-  }, [testimonials.length]);
+  }, [isAnimating]);
 
   const nextSlide = () => {
+    if (isAnimating) return;
+    setIsAnimating(true);
     setCurrentSlide((prev) => (prev + 1) % testimonials.length);
+    setTimeout(() => setIsAnimating(false), 500);
   };
 
   const prevSlide = () => {
+    if (isAnimating) return;
+    setIsAnimating(true);
     setCurrentSlide((prev) => (prev - 1 + testimonials.length) % testimonials.length);
+    setTimeout(() => setIsAnimating(false), 500);
+  };
+
+  const goToSlide = (index) => {
+    if (isAnimating || index === currentSlide) return;
+    setIsAnimating(true);
+    setCurrentSlide(index);
+    setTimeout(() => setIsAnimating(false), 500);
   };
 
   return (
-    <section className="testimonials">
+    <section className="testimonials" id="testimonios">
       <div className="testimonials-container">
         <div className="testimonials-header">
-          <div className="header-badge">✨ Testimonios Reales</div>
+          <div className="testimonials-badge">💬 Voces Reales</div>
           <h2>
-            Lo Que Dicen Nuestras <span className="highlight">Familias</span>
+            Historias que <span className="highlight">Inspiran</span>
           </h2>
           <p>
-            La confianza de los padres es nuestro mayor logro. Conoce las experiencias 
-            auténticas de familias que han elegido NOMBRE para transformar el futuro de sus pequeños.
+            Cada testimonio es una historia de transformación, crecimiento y confianza. 
+            Descubre por qué las familias eligen nuestro centro como el hogar educativo de sus pequeños.
           </p>
         </div>
 
-        <div className="testimonials-carousel">
-          <button className="carousel-btn prev" onClick={prevSlide}>
-            <span>‹</span>
-          </button>
-          
-          <div className="testimonial-main">
-            <div className="testimonial-featured">
-              <div className="quote-decoration">"</div>
-              <div className="rating">
-                {[...Array(testimonials[currentSlide].rating)].map((_, index) => (
-                  <span key={index} className="star">★</span>
-                ))}
+        <div className="testimonials-main">
+          <div className="testimonial-featured">
+            <div className={`testimonial-content ${isAnimating ? 'animating' : ''}`}>
+              <div className="testimonial-decoration">
+                <div className="quote-icon">❝</div>
+                <div className="floating-hearts">
+                  <span>💖</span>
+                  <span>✨</span>
+                  <span>🌟</span>
+                </div>
               </div>
+
+              <div className="rating-section">
+                <div className="stars">
+                  {[...Array(testimonials[currentSlide].rating)].map((_, index) => (
+                    <span key={index} className="star">⭐</span>
+                  ))}
+                </div>
+                <span className="rating-text">Experiencia Excepcional</span>
+              </div>
+
               <blockquote className="testimonial-text">
                 {testimonials[currentSlide].text}
               </blockquote>
+
               <div className="testimonial-author">
-                <div className="author-avatar">
-                  <img src={testimonials[currentSlide].image} alt={testimonials[currentSlide].author} />
-                  <div className="avatar-fallback">{testimonials[currentSlide].avatar}</div>
+                <div className="author-profile">
+                  <div className="author-avatar">
+                    <div className="avatar-circle">
+                      <span>{testimonials[currentSlide].avatar}</span>
+                    </div>
+                    <div className="avatar-ring"></div>
+                  </div>
+                  <div className="author-details">
+                    <h4>{testimonials[currentSlide].author}</h4>
+                    <p className="author-role">{testimonials[currentSlide].role}</p>
+                    <div className="author-meta">
+                      <span className="child-age">{testimonials[currentSlide].age}</span>
+                      <span className="separator">•</span>
+                      <span className="location">{testimonials[currentSlide].location}</span>
+                    </div>
+                  </div>
                 </div>
-                <div className="author-info">
-                  <h4>{testimonials[currentSlide].author}</h4>
-                  <p>{testimonials[currentSlide].role}</p>
-                </div>
-                <div className="verified-badge">
-                  <span>✓</span>
-                  <small>Verificado</small>
+                <div className="trust-indicators">
+                  <div className="verified-family">
+                    <div className="verified-icon">✓</div>
+                    <span>Familia Verificada</span>
+                  </div>
+                  <div className="enrollment-time">
+                    <div className="time-icon">⏰</div>
+                    <span>{testimonials[currentSlide].timeEnrolled} con nosotros</span>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
 
-          <button className="carousel-btn next" onClick={nextSlide}>
-            <span>›</span>
-          </button>
+          <div className="testimonial-navigation">
+            <button className="nav-btn prev" onClick={prevSlide} disabled={isAnimating}>
+              <span>‹</span>
+            </button>
+            <button className="nav-btn next" onClick={nextSlide} disabled={isAnimating}>
+              <span>›</span>
+            </button>
+          </div>
         </div>
 
-        <div className="carousel-indicators">
+        <div className="testimonials-indicators">
           {testimonials.map((_, index) => (
             <button
               key={index}
               className={`indicator ${currentSlide === index ? 'active' : ''}`}
-              onClick={() => setCurrentSlide(index)}
-            />
+              onClick={() => goToSlide(index)}
+              disabled={isAnimating}
+            >
+              <span className="indicator-dot"></span>
+            </button>
           ))}
         </div>
 
         <div className="testimonials-grid">
           {testimonials.filter((_, index) => index !== currentSlide).slice(0, 3).map((testimonial) => (
-            <div key={testimonial.id} className="testimonial-card">
-              <div className="rating">
-                {[...Array(testimonial.rating)].map((_, index) => (
-                  <span key={index} className="star">★</span>
-                ))}
-              </div>
-              <p className="testimonial-text">{testimonial.text}</p>
-              <div className="testimonial-author">
-                <div className="author-avatar">
-                  <img src={testimonial.image} alt={testimonial.author} />
-                  <div className="avatar-fallback">{testimonial.avatar}</div>
+            <div key={testimonial.id} className="testimonial-mini-card">
+              <div className="mini-card-header">
+                <div className="mini-rating">
+                  {[...Array(testimonial.rating)].map((_, index) => (
+                    <span key={index} className="mini-star">⭐</span>
+                  ))}
                 </div>
-                <div className="author-info">
-                  <h4>{testimonial.author}</h4>
-                  <p>{testimonial.role}</p>
+                <div className="mini-verified">✓</div>
+              </div>
+              <p className="mini-text">{testimonial.text.slice(0, 120)}...</p>
+              <div className="mini-author">
+                <div className="mini-avatar">{testimonial.avatar}</div>
+                <div className="mini-info">
+                  <h5>{testimonial.author}</h5>
+                  <span>{testimonial.role} • {testimonial.age}</span>
                 </div>
               </div>
             </div>
           ))}
         </div>
 
-        <div className="stats-showcase">
-          <div className="stats-header">
-            <h3>Números que Nos Enorgullecen</h3>
-          </div>
-          <div className="stats-grid">
-            {stats.map((stat, index) => (
-              <div key={index} className="stat-card">
-                <div className="stat-icon">{stat.icon}</div>
-                <div className="stat-number">{stat.number}</div>
-                <div className="stat-label">{stat.label}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="cta-section">
+        <div className="testimonials-cta">
           <div className="cta-content">
-            <h3>¿Listo para Ser Parte de Nuestra Familia?</h3>
-            <p>Únete a cientos de familias que ya confían en nosotros</p>
-            <div className="cta-buttons">
-              <button className="cta-btn primary">Agendar Visita</button>
-              <button className="cta-btn secondary">Ver Programas</button>
+            <div className="cta-icon">🌈</div>
+            <h3>¿Tu Historia Será la Próxima?</h3>
+            <p>Únete a nuestra familia y crea recuerdos inolvidables para tu pequeño</p>
+            <div className="cta-actions">
+              <button className="cta-btn primary">
+                <span>Conoce Más</span>
+                <div className="btn-arrow">→</div>
+              </button>
+              <button className="cta-btn secondary">
+                <span>Programa una Visita</span>
+                <div className="btn-calendar">📅</div>
+              </button>
             </div>
           </div>
         </div>
