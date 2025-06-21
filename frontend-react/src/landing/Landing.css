@@ -2,6 +2,7 @@
   min-height: 100vh;
   position: relative;
   overflow-x: hidden;
+  font-family: 'Poppins', 'Arial', sans-serif;
 }
 
 .landing::before {
@@ -35,5 +36,35 @@
 @media (max-width: 768px) {
   .landing {
     font-size: 14px;
+  }
+  
+  .landing h1 {
+    font-size: 1.8rem;
+  }
+  
+  .landing h2 {
+    font-size: 1.6rem;
+  }
+  
+  .landing h3 {
+    font-size: 1.3rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .landing {
+    font-size: 13px;
+  }
+  
+  .landing h1 {
+    font-size: 1.6rem;
+  }
+  
+  .landing h2 {
+    font-size: 1.4rem;
+  }
+  
+  .landing h3 {
+    font-size: 1.2rem;
   }
 }

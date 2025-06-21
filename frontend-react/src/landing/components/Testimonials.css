@@ -575,12 +575,24 @@ background: linear-gradient(135deg, rgba(137, 158, 232, 0.1), rgba(75, 100, 162,
     font-size: 32px;
   }
   
+  .testimonials-header p {
+    font-size: 16px;
+  }
+  
   .testimonial-featured {
     padding: 40px 30px;
   }
   
   .testimonial-text {
     font-size: 20px;
+  }
+  
+  .testimonial-decoration {
+    gap: 20px;
+  }
+  
+  .quote-icon {
+    font-size: 60px;
   }
   
   .cta-actions {
@@ -602,5 +614,89 @@ background: linear-gradient(135deg, rgba(137, 158, 232, 0.1), rgba(75, 100, 162,
   .trust-indicators {
     flex-direction: column;
     align-items: center;
+  }
+  
+  .cta-content h3 {
+    font-size: 28px;
+  }
+  
+  .cta-content p {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .testimonials {
+    padding: 60px 0;
+  }
+  
+  .testimonials-container {
+    padding: 0 10px;
+  }
+  
+  .testimonials-header h2 {
+    font-size: 28px;
+  }
+  
+  .testimonials-header p {
+    font-size: 15px;
+  }
+  
+  .testimonial-featured {
+    padding: 30px 20px;
+  }
+  
+  .testimonial-text {
+    font-size: 18px;
+  }
+  
+  .quote-icon {
+    font-size: 50px;
+  }
+  
+  .floating-hearts span {
+    font-size: 20px;
+  }
+  
+  .stars .star {
+    font-size: 24px;
+  }
+  
+  .author-avatar {
+    width: 70px;
+    height: 70px;
+  }
+  
+  .avatar-circle {
+    font-size: 28px;
+  }
+  
+  .author-details h4 {
+    font-size: 20px;
+  }
+  
+  .author-role {
+    font-size: 14px;
+  }
+  
+  .author-meta {
+    font-size: 13px;
+  }
+  
+  .cta-content {
+    padding: 25px 20px;
+  }
+  
+  .cta-content h3 {
+    font-size: 24px;
+  }
+  
+  .cta-content p {
+    font-size: 15px;
+  }
+  
+  .cta-btn {
+    padding: 14px 25px;
+    font-size: 14px;
   }
 }
