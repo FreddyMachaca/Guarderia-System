@@ -39,13 +39,21 @@ const Header = () => {
           <a href="#testimonios" onClick={(e) => handleNavClick(e, 'testimonios')}>Testimonios</a>
           <a href="#contacto" onClick={(e) => handleNavClick(e, 'contacto')}>Contacto</a>
         </nav>
-        <a 
-          href="#contacto" 
-          className="apply-btn"
-          onClick={(e) => handleNavClick(e, 'contacto')}
-        >
-          Inscríbete
-        </a>
+        <div className="header-buttons">
+          <a 
+            href="/portal" 
+            className="portal-btn"
+          >
+            Ingresar al Portal
+          </a>
+          <a 
+            href="#contacto" 
+            className="apply-btn"
+            onClick={(e) => handleNavClick(e, 'contacto')}
+          >
+            Inscríbete
+          </a>
+        </div>
       </div>
     </header>
   );
