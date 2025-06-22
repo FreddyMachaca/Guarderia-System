@@ -32,13 +32,6 @@ const Programs = () => {
     }
   ];
 
-  const stats = [
-    { number: "500+", label: "Estudiantes Activos" },
-    { number: "25+", label: "Programas Especializados" },
-    { number: "15+", label: "Años de Experiencia" },
-    { number: "98%", label: "Satisfacción Familiar" }
-  ];
-
   return (
     <section className="programs" id="programas">
       <div className="programs-container">
