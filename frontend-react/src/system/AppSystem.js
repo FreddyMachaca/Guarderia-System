@@ -1,8 +1,8 @@
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useApi } from './hooks/useApi';
-import Dashboard from './pages/Dashboard';
-import ParentDashboard from './pages/ParentDashboard';
+import Dashboard from './pages/dashboard/Dashboard';
+import ParentDashboard from './pages/dashboard/ParentDashboard';
 import './System.css';
 
 const AppSystem = () => {

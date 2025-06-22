@@ -1,7 +1,7 @@
 import React from 'react';
 import './Dashboard.css';
-import { useApi } from '../hooks/useApi';
-import { useMenus } from '../hooks/useMenus';
+import { useApi } from '../../hooks/useApi';
+import { useMenus } from '../../hooks/useMenus';
 import 'primeicons/primeicons.css';
 
 const Dashboard = () => {
