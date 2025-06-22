@@ -33,8 +33,19 @@ const FormularioNino = ({ nino, onVolver }) => {
     cargarGrupos();
     if (nino) {
       setFormData({
-        ...nino,
-        nin_fecha_nacimiento: nino.nin_fecha_nacimiento ? nino.nin_fecha_nacimiento.split('T')[0] : ''
+        nin_nombre: nino.nin_nombre || '',
+        nin_apellido: nino.nin_apellido || '',
+        nin_fecha_nacimiento: nino.nin_fecha_nacimiento ? nino.nin_fecha_nacimiento.split('T')[0] : '',
+        nin_edad: nino.nin_edad || '',
+        nin_genero: nino.nin_genero || '',
+        nin_ci: nino.nin_ci || '',
+        nin_ci_ext: nino.nin_ci_ext || 'LP',
+        nin_tutor_legal: nino.nin_tutor_legal || '',
+        nin_alergias: nino.nin_alergias || '',
+        nin_medicamentos: nino.nin_medicamentos || '',
+        nin_observaciones: nino.nin_observaciones || '',
+        nin_estado: nino.nin_estado || 'activo',
+        asn_grp_id: nino.grupo_actual ? nino.grupo_actual.grp_id : ''
       });
       if (nino.nin_foto) {
         setPreviewFoto(`${process.env.REACT_APP_API_URL}storage/${nino.nin_foto}`);
@@ -128,7 +139,9 @@ const FormularioNino = ({ nino, onVolver }) => {
       const formDataToSend = new FormData();
       
       Object.keys(formData).forEach(key => {
-        formDataToSend.append(key, formData[key]);
+        if (key !== 'asn_grp_id') {
+          formDataToSend.append(key, formData[key] || '');
+        }
       });
 
       if (foto) {
@@ -136,29 +149,42 @@ const FormularioNino = ({ nino, onVolver }) => {
       }
 
       const storedToken = localStorage.getItem(`${process.env.REACT_APP_STORAGE_KEY}_token`);
-      const url = nino ? `${process.env.REACT_APP_API_PATH}ninos/${nino.nin_id}` : `${process.env.REACT_APP_API_PATH}ninos`;
-      const method = nino ? 'POST' : 'POST';
       
+      let response;
       if (nino) {
         formDataToSend.append('_method', 'PUT');
+        response = await fetch(`${process.env.REACT_APP_API_PATH}ninos/${nino.nin_id}`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${storedToken}`
+          },
+          body: formDataToSend
+        });
+      } else {
+        response = await fetch(`${process.env.REACT_APP_API_PATH}ninos`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${storedToken}`
+          },
+          body: formDataToSend
+        });
       }
 
-      const response = await fetch(url, {
-        method: method,
-        headers: {
-          'Authorization': `Bearer ${storedToken}`
-        },
-        body: formDataToSend
-      });
-
       if (response.ok) {
+        const result = await response.json();
+        console.log('Guardado exitosamente:', result);
         onVolver();
       } else {
         const errorData = await response.json();
         console.error('Error al guardar:', errorData);
+        if (errorData.errors) {
+          setErrors(errorData.errors);
+        }
+        alert('Error al guardar los datos');
       }
     } catch (error) {
       console.error('Error:', error);
+      alert('Error de conexión');
     }
     
     setLoading(false);
@@ -317,7 +343,7 @@ const FormularioNino = ({ nino, onVolver }) => {
             <label>Alergias</label>
             <textarea
               name="nin_alergias"
-              value={formData.nin_alergias}
+              value={formData.nin_alergias || ''}
               onChange={handleInputChange}
               placeholder="Especificar alergias conocidas"
               rows="3"
@@ -327,7 +353,7 @@ const FormularioNino = ({ nino, onVolver }) => {
             <label>Medicamentos</label>
             <textarea
               name="nin_medicamentos"
-              value={formData.nin_medicamentos}
+              value={formData.nin_medicamentos || ''}
               onChange={handleInputChange}
               placeholder="Medicamentos que toma regularmente"
               rows="3"
@@ -376,7 +402,7 @@ const FormularioNino = ({ nino, onVolver }) => {
             <label>Observaciones</label>
             <textarea
               name="nin_observaciones"
-              value={formData.nin_observaciones}
+              value={formData.nin_observaciones || ''}
               onChange={handleInputChange}
               placeholder="Observaciones adicionales"
               rows="4"

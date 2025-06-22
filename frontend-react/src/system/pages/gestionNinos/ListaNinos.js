@@ -41,12 +41,12 @@ const ListaNinos = ({ onAgregarNino, onEditarNino }) => {
   };
 
   const eliminarNino = async (id) => {
-    if (window.confirm('¿Está seguro de eliminar este niño?')) {
+    if (window.confirm('¿Está seguro de desactivar este niño?')) {
       try {
         await del(`/ninos/${id}`);
         cargarNinos();
       } catch (error) {
-        console.error('Error al eliminar niño:', error);
+        console.error('Error al cambiar estado del niño:', error);
       }
     }
   };
@@ -149,9 +149,9 @@ const ListaNinos = ({ onAgregarNino, onEditarNino }) => {
               <button 
                 className="btn-delete"
                 onClick={() => eliminarNino(nino.nin_id)}
-                title="Eliminar"
+                title="Desactivar"
               >
-                <i className="pi pi-trash"></i>
+                <i className="pi pi-ban"></i>
               </button>
             </div>
           </div>
