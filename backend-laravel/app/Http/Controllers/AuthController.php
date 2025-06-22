@@ -33,6 +33,7 @@ class AuthController extends Controller
             ->first();
 
         $token = $this->generateToken($user->usr_id);
+        $this->storeToken($token, $user->usr_id);
 
         return response()->json([
             'user' => [
@@ -72,6 +73,7 @@ class AuthController extends Controller
             ->first();
 
         $token = $this->generateToken($user->usr_id);
+        $this->storeToken($token, $user->usr_id);
 
         return response()->json([
             'user' => [
@@ -90,7 +92,13 @@ class AuthController extends Controller
 
     public function logout(Request $request)
     {
-        $request->user()->tokens()->delete();
+        $token = $request->header('Authorization');
+        if ($token) {
+            $token = str_replace('Bearer ', '', $token);
+            DB::table('tbl_tkn_tokens')
+                ->where('tkn_token', $token)
+                ->update(['tkn_estado' => 'inactivo']);
+        }
 
         return response()->json([
             'message' => 'Sesión cerrada exitosamente'
@@ -99,11 +107,41 @@ class AuthController extends Controller
 
     public function user(Request $request)
     {
-        return response()->json($request->user());
+        $token = $request->header('Authorization');
+        if (!$token) {
+            return response()->json(['message' => 'Token no proporcionado'], 401);
+        }
+
+        $token = str_replace('Bearer ', '', $token);
+        $tokenData = DB::table('tbl_tkn_tokens')
+            ->where('tkn_token', $token)
+            ->where('tkn_estado', 'activo')
+            ->first();
+
+        if (!$tokenData) {
+            return response()->json(['message' => 'Token inválido'], 401);
+        }
+
+        $user = DB::table('tbl_usr_usuarios')
+            ->where('usr_id', $tokenData->tkn_usr_id)
+            ->first();
+
+        return response()->json($user);
     }
 
     private function generateToken($userId)
     {
         return base64_encode($userId . '|' . time() . '|' . rand(1000, 9999));
+    }
+
+    private function storeToken($token, $userId)
+    {
+        DB::table('tbl_tkn_tokens')->insert([
+            'tkn_token' => $token,
+            'tkn_usr_id' => $userId,
+            'tkn_estado' => 'activo',
+            'tkn_fecha_creacion' => now(),
+            'tkn_fecha_expiracion' => now()->addDays(30)
+        ]);
     }
 }

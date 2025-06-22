@@ -1,16 +1,35 @@
-import React from 'react';
-import './Dashboard.css';
+import React, { useState, useEffect } from 'react';
 import { useApi } from '../../hooks/useApi';
 import { useMenus } from '../../hooks/useMenus';
+import FormularioNino from './FormularioNino';
+import ListaNinos from './ListaNinos';
+import './GestionNinos.css';
 import 'primeicons/primeicons.css';
 
-const Dashboard = () => {
+const GestionNinos = () => {
   const { getCurrentUser, logout } = useApi();
   const { adminMenus, activeMenu, setMenu, isMenuOpen, toggleMenu } = useMenus();
+  const [vista, setVista] = useState('lista');
+  const [ninoSeleccionado, setNinoSeleccionado] = useState(null);
   const user = getCurrentUser();
 
+  const handleAgregarNino = () => {
+    setNinoSeleccionado(null);
+    setVista('formulario');
+  };
+
+  const handleEditarNino = (nino) => {
+    setNinoSeleccionado(nino);
+    setVista('formulario');
+  };
+
+  const handleVolverLista = () => {
+    setVista('lista');
+    setNinoSeleccionado(null);
+  };
+
   return (
-    <div className="dashboard">
+    <div className="gestion-ninos">
       <div className={`dashboard-sidebar ${!isMenuOpen ? 'collapsed' : ''}`}>
         <div className="sidebar-header">
           <div className="sidebar-logo">
@@ -39,7 +58,7 @@ const Dashboard = () => {
             <button className="menu-toggle" onClick={toggleMenu}>
               <i className="pi pi-bars" />
             </button>
-            <h1>Panel de Administración</h1>
+            <h1>Gestión de Niños</h1>
           </div>
           <div className="header-right">
             <div className="user-info">
@@ -55,36 +74,22 @@ const Dashboard = () => {
           </div>
         </header>
         
-        <div className="dashboard-content">
-          <div className="dashboard-cards">
-            <div className="dashboard-card">
-              <h3>Niños Registrados</h3>
-              <div className="card-value">0</div>
-              <div className="card-description">Total de niños activos</div>
-            </div>
-            
-            <div className="dashboard-card">
-              <h3>Personal Activo</h3>
-              <div className="card-value">0</div>
-              <div className="card-description">Maestros y administradores</div>
-            </div>
-            
-            <div className="dashboard-card">
-              <h3>Padres Registrados</h3>
-              <div className="card-value">0</div>
-              <div className="card-description">Familias en el sistema</div>
-            </div>
-            
-            <div className="dashboard-card">
-              <h3>Actividades Hoy</h3>
-              <div className="card-value">0</div>
-              <div className="card-description">Programadas para hoy</div>
-            </div>
-          </div>
+        <div className="gestion-content">
+          {vista === 'lista' ? (
+            <ListaNinos 
+              onAgregarNino={handleAgregarNino}
+              onEditarNino={handleEditarNino}
+            />
+          ) : (
+            <FormularioNino 
+              nino={ninoSeleccionado}
+              onVolver={handleVolverLista}
+            />
+          )}
         </div>
       </div>
     </div>
   );
 };
 
-export default Dashboard;
+export default GestionNinos;

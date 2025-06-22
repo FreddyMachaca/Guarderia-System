@@ -3,6 +3,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { useApi } from './hooks/useApi';
 import Dashboard from './pages/dashboard/Dashboard';
 import ParentDashboard from './pages/dashboard/ParentDashboard';
+import GestionNinos from './pages/gestionNinos/GestionNinos';
 import './System.css';
 
 const AppSystem = () => {
@@ -20,6 +21,7 @@ const AppSystem = () => {
       <Routes>
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/parent" element={<ParentDashboard />} />
+        <Route path="/gestion-ninos" element={<GestionNinos />} />
         
         <Route path="/" element={
           userType === 'parent' ? 

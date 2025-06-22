@@ -1,106 +1,63 @@
 import { useState, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 export const useMenus = () => {
   const [activeMenu, setActiveMenu] = useState('dashboard');
   const [isMenuOpen, setIsMenuOpen] = useState(true);
+  const navigate = useNavigate();
 
-  const parentMenus = [
+  const adminMenus = [
     {
       id: 'dashboard',
-      title: 'Panel Principal',
-      icon: 'pi pi-home',
-      path: '/system/parent'
-    },
-    {
-      id: 'children',
-      title: 'Mis Hijos',
-      icon: 'pi pi-users',
-      path: '/system/parent/children'
-    },
-    {
-      id: 'messages',
-      title: 'Mensajes',
-      icon: 'pi pi-comments',
-      path: '/system/parent/messages'
-    },
-    {
-      id: 'payments',
-      title: 'Pagos',
-      icon: 'pi pi-credit-card',
-      path: '/system/parent/payments'
-    },
-    {
-      id: 'events',
-      title: 'Eventos',
-      icon: 'pi pi-calendar',
-      path: '/system/parent/events'
-    }
-  ];
-
-  const staffMenus = [
-    {
-      id: 'dashboard',
-      title: 'Panel Principal',
+      title: 'Dashboard',
       icon: 'pi pi-home',
       path: '/system/dashboard'
     },
     {
-      id: 'children',
-      title: 'Niños',
+      id: 'gestion-ninos',
+      title: 'Gestión de Niños',
       icon: 'pi pi-users',
-      path: '/system/children'
+      path: '/system/gestion-ninos'
     },
     {
-      id: 'parents',
-      title: 'Padres',
-      icon: 'pi pi-users',
-      path: '/system/parents'
-    },
-    {
-      id: 'staff',
+      id: 'personal',
       title: 'Personal',
-      icon: 'pi pi-id-card',
-      path: '/system/staff'
+      icon: 'pi pi-user-plus',
+      path: '/system/personal'
     },
     {
-      id: 'activities',
+      id: 'padres',
+      title: 'Padres',
+      icon: 'pi pi-heart',
+      path: '/system/padres'
+    },
+    {
+      id: 'grupos',
+      title: 'Grupos/Aulas',
+      icon: 'pi pi-building',
+      path: '/system/grupos'
+    },
+    {
+      id: 'actividades',
       title: 'Actividades',
-      icon: 'pi pi-palette',
-      path: '/system/activities'
+      icon: 'pi pi-calendar',
+      path: '/system/actividades'
     },
     {
-      id: 'reports',
+      id: 'reportes',
       title: 'Reportes',
       icon: 'pi pi-chart-bar',
-      path: '/system/reports'
-    }
-  ];
-
-  const adminMenus = [
-    ...staffMenus,
-    {
-      id: 'admin',
-      title: 'Administración',
-      icon: 'pi pi-cog',
-      path: '/system/admin'
-    },
-    {
-      id: 'users',
-      title: 'Usuarios',
-      icon: 'pi pi-user',
-      path: '/system/admin/users'
-    },
-    {
-      id: 'roles',
-      title: 'Roles',
-      icon: 'pi pi-shield',
-      path: '/system/admin/roles'
+      path: '/system/reportes'
     }
   ];
 
   const setMenu = useCallback((menuId) => {
     setActiveMenu(menuId);
-  }, []);
+    const menu = adminMenus.find(m => m.id === menuId);
+    if (menu) {
+      navigate(menu.path);
+    }
+  }, [adminMenus, navigate]);
 
   const toggleMenu = useCallback(() => {
     setIsMenuOpen(prev => !prev);
@@ -113,8 +70,6 @@ export const useMenus = () => {
   return {
     activeMenu,
     isMenuOpen,
-    parentMenus,
-    staffMenus,
     adminMenus,
     setMenu,
     toggleMenu,

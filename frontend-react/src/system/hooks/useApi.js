@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 
 const API_PATH = process.env.REACT_APP_API_PATH;
@@ -39,8 +39,17 @@ axiosInstance.interceptors.response.use(
 );
 
 export const useApi = () => {
+  const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const token = localStorage.getItem(`${STORAGE_KEY}_token`);
+    const userData = localStorage.getItem(`${STORAGE_KEY}_user`);
+    if (token && userData) {
+      setUser(JSON.parse(userData));
+    }
+  }, []);
 
   const request = useCallback(async (method, endpoint, data = null) => {
     setLoading(true);
@@ -74,6 +83,7 @@ export const useApi = () => {
       if (response.token) {
         localStorage.setItem(`${STORAGE_KEY}_token`, response.token);
         localStorage.setItem(`${STORAGE_KEY}_user`, JSON.stringify(response.user));
+        setUser(response.user);
       }
       return response;
     } catch (error) {
@@ -89,13 +99,14 @@ export const useApi = () => {
     } finally {
       localStorage.removeItem(`${STORAGE_KEY}_token`);
       localStorage.removeItem(`${STORAGE_KEY}_user`);
+      setUser(null);
       window.location.href = '/portal';
     }
   }, [post]);
 
   const getCurrentUser = useCallback(() => {
-    const user = localStorage.getItem(`${STORAGE_KEY}_user`);
-    return user ? JSON.parse(user) : null;
+    const userData = localStorage.getItem(`${STORAGE_KEY}_user`);
+    return userData ? JSON.parse(userData) : null;
   }, []);
 
   const isAuthenticated = useCallback(() => {
@@ -103,6 +114,7 @@ export const useApi = () => {
   }, []);
 
   return {
+    user,
     loading,
     error,
     get,
