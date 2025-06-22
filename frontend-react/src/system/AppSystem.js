@@ -3,6 +3,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { useApi } from './hooks/useApi';
 import Dashboard from './pages/Dashboard';
 import ParentDashboard from './pages/ParentDashboard';
+import './System.css';
 
 const AppSystem = () => {
   const { isAuthenticated, getCurrentUser } = useApi();
@@ -15,7 +16,7 @@ const AppSystem = () => {
   const userType = user?.type;
 
   return (
-    <div className="app-system">
+    <div className="app-system system">
       <Routes>
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/parent" element={<ParentDashboard />} />
