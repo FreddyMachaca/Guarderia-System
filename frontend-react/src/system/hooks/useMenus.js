@@ -8,31 +8,31 @@ export const useMenus = () => {
     {
       id: 'dashboard',
       title: 'Panel Principal',
-      icon: '🏠',
+      icon: 'pi pi-home',
       path: '/system/parent'
     },
     {
       id: 'children',
       title: 'Mis Hijos',
-      icon: '👶',
+      icon: 'pi pi-users',
       path: '/system/parent/children'
     },
     {
       id: 'messages',
       title: 'Mensajes',
-      icon: '💬',
+      icon: 'pi pi-comments',
       path: '/system/parent/messages'
     },
     {
       id: 'payments',
       title: 'Pagos',
-      icon: '💳',
+      icon: 'pi pi-credit-card',
       path: '/system/parent/payments'
     },
     {
       id: 'events',
       title: 'Eventos',
-      icon: '📅',
+      icon: 'pi pi-calendar',
       path: '/system/parent/events'
     }
   ];
@@ -41,37 +41,37 @@ export const useMenus = () => {
     {
       id: 'dashboard',
       title: 'Panel Principal',
-      icon: '🏠',
+      icon: 'pi pi-home',
       path: '/system/dashboard'
     },
     {
       id: 'children',
       title: 'Niños',
-      icon: '👶',
+      icon: 'pi pi-users',
       path: '/system/children'
     },
     {
       id: 'parents',
       title: 'Padres',
-      icon: '👥',
+      icon: 'pi pi-users',
       path: '/system/parents'
     },
     {
       id: 'staff',
       title: 'Personal',
-      icon: '👨‍🏫',
+      icon: 'pi pi-id-card',
       path: '/system/staff'
     },
     {
       id: 'activities',
       title: 'Actividades',
-      icon: '🎨',
+      icon: 'pi pi-palette',
       path: '/system/activities'
     },
     {
       id: 'reports',
       title: 'Reportes',
-      icon: '📊',
+      icon: 'pi pi-chart-bar',
       path: '/system/reports'
     }
   ];
@@ -81,19 +81,19 @@ export const useMenus = () => {
     {
       id: 'admin',
       title: 'Administración',
-      icon: '⚙️',
+      icon: 'pi pi-cog',
       path: '/system/admin'
     },
     {
       id: 'users',
       title: 'Usuarios',
-      icon: '👤',
+      icon: 'pi pi-user',
       path: '/system/admin/users'
     },
     {
       id: 'roles',
       title: 'Roles',
-      icon: '🔐',
+      icon: 'pi pi-shield',
       path: '/system/admin/roles'
     }
   ];

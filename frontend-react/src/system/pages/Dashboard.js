@@ -2,6 +2,7 @@ import React from 'react';
 import './Dashboard.css';
 import { useApi } from '../hooks/useApi';
 import { useMenus } from '../hooks/useMenus';
+import 'primeicons/primeicons.css';
 
 const Dashboard = () => {
   const { getCurrentUser, logout } = useApi();
@@ -25,7 +26,7 @@ const Dashboard = () => {
               className={`menu-item ${activeMenu === menu.id ? 'active' : ''}`}
               onClick={() => setMenu(menu.id)}
             >
-              <span className="menu-icon">{menu.icon}</span>
+              <i className={`menu-icon ${menu.icon}`} />
               {menu.title}
             </button>
           ))}
