@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Portal.css';
-import LoginParent from './components/LoginParent';
-import LoginStaff from './components/LoginStaff';
+import LoginParent from './pages/login/LoginParent';
+import LoginStaff from './pages/login/LoginStaff';
 
 const Portal = () => {
   const [selectedType, setSelectedType] = useState(null);
