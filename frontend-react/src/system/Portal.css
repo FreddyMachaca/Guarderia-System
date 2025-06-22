@@ -1,6 +1,6 @@
 .portal {
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #FF6B35 0%, #4ECDC4 100%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -11,7 +11,7 @@
   background: white;
   border-radius: 20px;
   padding: 40px;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+  box-shadow: 0 20px 60px rgba(255, 107, 53, 0.2);
   max-width: 800px;
   width: 100%;
   text-align: center;
@@ -22,19 +22,39 @@
 }
 
 .back-btn {
-  background: none;
+  background: linear-gradient(135deg, #FF6B35, #e55a2b);
   border: none;
-  color: #667eea;
+  color: white;
   font-size: 16px;
+  font-weight: 600;
   cursor: pointer;
-  margin-bottom: 20px;
-  padding: 10px;
-  border-radius: 8px;
-  transition: background 0.3s;
+  margin-bottom: 30px;
+  padding: 12px 24px;
+  border-radius: 30px;
+  transition: all 0.3s ease;
+  box-shadow: 0 6px 20px rgba(255, 107, 53, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.back-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.back-btn:hover::before {
+  left: 100%;
 }
 
 .back-btn:hover {
-  background: #f8f9ff;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(255, 107, 53, 0.4);
 }
 
 .portal-header h1 {
@@ -56,8 +76,8 @@
 }
 
 .portal-card {
-  background: #f8f9ff;
-  border: 2px solid #e1e8ff;
+  background: #fff8f5;
+  border: 2px solid #ffeee6;
   border-radius: 16px;
   padding: 40px 30px;
   cursor: pointer;
@@ -68,20 +88,28 @@
 
 .portal-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 15px 40px rgba(102, 126, 234, 0.2);
-  border-color: #667eea;
+  box-shadow: 0 15px 40px rgba(255, 107, 53, 0.2);
+  border-color: #FF6B35;
+}
+
+.portal-card:nth-child(1) .card-icon {
+  background: linear-gradient(135deg, #FF6B35, #e55a2b);
+}
+
+.portal-card:nth-child(2) .card-icon {
+  background: linear-gradient(135deg, #4ECDC4, #26A69A);
 }
 
 .card-icon {
   width: 60px;
   height: 60px;
-  background: #667eea;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   margin: 0 auto 20px;
   color: white;
+  box-shadow: 0 6px 20px rgba(255, 107, 53, 0.3);
 }
 
 .card-icon svg {
@@ -106,7 +134,7 @@
   bottom: 20px;
   right: 20px;
   font-size: 1.5rem;
-  color: #667eea;
+  color: #FF6B35;
   opacity: 0;
   transform: translateX(-10px);
   transition: all 0.3s ease;
