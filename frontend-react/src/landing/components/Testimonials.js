@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import './Testimonials.css';
 
 const Testimonials = () => {
@@ -63,6 +63,15 @@ const Testimonials = () => {
     }
   ];
 
+  const nextSlide = useCallback(() => {
+    if (isAnimating) return;
+    setIsAnimating(true);
+    setTimeout(() => {
+      setCurrentSlide((prev) => (prev + 1) % testimonials.length);
+      setTimeout(() => setIsAnimating(false), 300);
+    }, 300);
+  }, [isAnimating, testimonials.length]);
+
   useEffect(() => {
     const timer = setInterval(() => {
       if (!isAnimating) {
@@ -70,16 +79,7 @@ const Testimonials = () => {
       }
     }, 6000);
     return () => clearInterval(timer);
-  }, [isAnimating]);
-
-  const nextSlide = () => {
-    if (isAnimating) return;
-    setIsAnimating(true);
-    setTimeout(() => {
-      setCurrentSlide((prev) => (prev + 1) % testimonials.length);
-      setTimeout(() => setIsAnimating(false), 300);
-    }, 300);
-  };
+  }, [isAnimating, nextSlide]);
 
   const prevSlide = () => {
     if (isAnimating) return;
@@ -179,8 +179,6 @@ const Testimonials = () => {
             </button>
           ))}
         </div>
-
-
 
         <div className="testimonials-cta">
           <div className="cta-content">

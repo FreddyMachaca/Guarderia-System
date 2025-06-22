@@ -1,17 +1,10 @@
-import React, { useState } from 'react';
+import React from 'react';
 import './Footer.css';
 import logo from '../../assets/icons/logo.svg';
 import facebookIcon from '../../assets/icons/facebook-icon.svg';
 import whatsappIcon from '../../assets/icons/whatsapp-icon.svg';
 
 const Footer = () => {
-  const [email, setEmail] = useState('');
-
-  const handleNewsletterSubmit = (e) => {
-    e.preventDefault();
-    console.log('Suscripción newsletter:', email);
-    setEmail('');
-  };
 
   return (
     <footer className="footer">
@@ -50,11 +43,11 @@ const Footer = () => {
           <div className="footer-section">
             <h3>Programas</h3>
             <ul className="footer-links">
-              <li><a href="#">Actividades Deportivas</a></li>
-              <li><a href="#">Educación Musical</a></li>
-              <li><a href="#">Arte y Creatividad</a></li>
-              <li><a href="#">Inglés Inmersivo</a></li>
-              <li><a href="#">Estimulación Temprana</a></li>
+              <li><a href="#deportes">Actividades Deportivas</a></li>
+              <li><a href="#musica">Educación Musical</a></li>
+              <li><a href="#arte">Arte y Creatividad</a></li>
+              <li><a href="#ingles">Inglés Inmersivo</a></li>
+              <li><a href="#estimulacion">Estimulación Temprana</a></li>
             </ul>
           </div>
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import './Stats.css';
 
 const Stats = () => {
@@ -6,7 +6,7 @@ const Stats = () => {
   const [animatedNumbers, setAnimatedNumbers] = useState({});
   const statsRef = useRef(null);
 
-  const stats = [
+  const stats = useMemo(() => [
     { 
       number: 50,
       suffix: "+",
@@ -35,38 +35,9 @@ const Stats = () => {
       icon: "📚",
       description: "Educación integral"
     }
-  ];
+  ], []);
 
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting && !isVisible) {
-          setIsVisible(true);
-        }
-      },
-      { threshold: 0.3 }
-    );
-
-    if (statsRef.current) {
-      observer.observe(statsRef.current);
-    }
-
-    return () => {
-      if (statsRef.current) {
-        observer.unobserve(statsRef.current);
-      }
-    };
-  }, [isVisible]);
-
-  useEffect(() => {
-    if (isVisible) {
-      stats.forEach((stat, index) => {
-        animateNumber(index, stat.number);
-      });
-    }
-  }, [isVisible]);
-
-  const animateNumber = (index, targetNumber) => {
+  const animateNumber = useCallback((index, targetNumber) => {
     const duration = 3000;
     const steps = 60;
     const increment = targetNumber / steps;
@@ -87,7 +58,37 @@ const Stats = () => {
         [index]: Math.floor(currentNumber)
       }));
     }, duration / steps);
-  };
+  }, []);
+
+  useEffect(() => {
+    const currentRef = statsRef.current;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !isVisible) {
+          setIsVisible(true);
+        }
+      },
+      { threshold: 0.3 }
+    );
+
+    if (currentRef) {
+      observer.observe(currentRef);
+    }
+
+    return () => {
+      if (currentRef) {
+        observer.unobserve(currentRef);
+      }
+    };
+  }, [isVisible]);
+
+  useEffect(() => {
+    if (isVisible) {
+      stats.forEach((stat, index) => {
+        animateNumber(index, stat.number);
+      });
+    }
+  }, [isVisible, stats, animateNumber]);
 
   return (
     <section className="stats" id="estadisticas" ref={statsRef}>
