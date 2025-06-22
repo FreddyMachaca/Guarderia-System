@@ -14,6 +14,12 @@
   height: 100vh;
   z-index: 1000;
   overflow-y: auto;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: translateX(0);
+}
+
+.dashboard-sidebar.collapsed {
+  transform: translateX(-100%);
 }
 
 .sidebar-header {
@@ -95,6 +101,11 @@
 .dashboard-main {
   flex: 1;
   margin-left: 280px;
+  transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dashboard-main.expanded {
+  margin-left: 0;
 }
 
 .dashboard-header {
@@ -108,13 +119,63 @@
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
 }
 
+.menu-toggle {
+  background: linear-gradient(135deg, #FF6B35, #e55a2b);
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 50%;
+  font-size: 18px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 6px 20px rgba(255, 107, 53, 0.3);
+  position: relative;
+  overflow: hidden;
+  width: 45px;
+  height: 45px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 20px;
+}
+
+.menu-toggle::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.menu-toggle:hover::before {
+  left: 100%;
+}
+
+.menu-toggle:hover {
+  transform: scale(1.1);
+  box-shadow: 0 10px 30px rgba(255, 107, 53, 0.4);
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+}
+
 .dashboard-header h1 {
   color: #2c3e50;
   font-size: 28px;
   font-weight: 700;
   font-family: 'Poppins', sans-serif;
   margin: 0;
-  background: linear-gradient(135deg, #2c3e50, #FF6B35);
+  background: linear-gradient(135deg, #FF6B35, #ff8c42);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -264,17 +325,25 @@
 @media (max-width: 768px) {
   .dashboard-sidebar {
     width: 100%;
-    position: relative;
-    height: auto;
+    transform: translateX(-100%);
+    z-index: 2000;
+  }
+  
+  .dashboard-sidebar:not(.collapsed) {
+    transform: translateX(0);
   }
   
   .dashboard-main {
     margin-left: 0;
   }
   
+  .dashboard-main.expanded {
+    margin-left: 0;
+  }
+  
   .dashboard-header {
     padding: 15px 20px;
-    flex-direction: column;
+    flex-direction: row;
     gap: 15px;
   }
   
@@ -292,7 +361,7 @@
   }
   
   .user-info {
-    flex-direction: column;
+    flex-direction: row;
     gap: 10px;
   }
   

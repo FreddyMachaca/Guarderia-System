@@ -6,12 +6,12 @@ import 'primeicons/primeicons.css';
 
 const ParentDashboard = () => {
   const { getCurrentUser, logout } = useApi();
-  const { parentMenus, activeMenu, setMenu } = useMenus();
+  const { parentMenus, activeMenu, setMenu, isMenuOpen, toggleMenu } = useMenus();
   const user = getCurrentUser();
 
   return (
     <div className="dashboard">
-      <div className="dashboard-sidebar">
+      <div className={`dashboard-sidebar ${!isMenuOpen ? 'collapsed' : ''}`}>
         <div className="sidebar-header">
           <div className="sidebar-logo">
             <span>Nombre</span>
@@ -33,18 +33,25 @@ const ParentDashboard = () => {
         </nav>
       </div>
 
-      <div className="dashboard-main">
+      <div className={`dashboard-main ${!isMenuOpen ? 'expanded' : ''}`}>
         <header className="dashboard-header">
-          <h1>Portal de Padres</h1>
-          <div className="user-info">
-            <div className="user-avatar">
-              {user?.name?.charAt(0)?.toUpperCase()}
+          <div className="header-left">
+            <button className="menu-toggle" onClick={toggleMenu}>
+              <i className="pi pi-bars" />
+            </button>
+            <h1>Portal de Padres</h1>
+          </div>
+          <div className="header-right">
+            <div className="user-info">
+              <div className="user-avatar">
+                {user?.name?.charAt(0)?.toUpperCase()}
+              </div>
+              <div className="user-details">
+                <div className="user-name">Bienvenido, {user?.name}</div>
+                <div className="user-role">Padre/Madre</div>
+              </div>
+              <button onClick={logout} className="logout-btn">Cerrar Sesión</button>
             </div>
-            <div className="user-details">
-              <div className="user-name">Bienvenido, {user?.name}</div>
-              <div className="user-role">Padre/Madre</div>
-            </div>
-            <button onClick={logout} className="logout-btn">Cerrar Sesión</button>
           </div>
         </header>
         

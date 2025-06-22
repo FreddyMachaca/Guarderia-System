@@ -2,7 +2,7 @@ import { useState, useCallback } from 'react';
 
 export const useMenus = () => {
   const [activeMenu, setActiveMenu] = useState('dashboard');
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(true);
 
   const parentMenus = [
     {
