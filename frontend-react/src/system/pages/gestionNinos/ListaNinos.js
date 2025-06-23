@@ -154,13 +154,15 @@ const ListaNinos = ({ onAgregarNino, onEditarNino, onVerNino }) => {
           >
             <i className="pi pi-pencil"></i>
           </button>
-          <button 
-            className="btn-delete"
-            onClick={() => eliminarNino(nino)}
-            title="Desactivar"
-          >
-            <i className="pi pi-ban"></i>
-          </button>
+          {(nino.nin_estado !== 'inactivo') && (
+            <button 
+              className="btn-delete"
+              onClick={() => eliminarNino(nino)}
+              title="Desactivar"
+            >
+              <i className="pi pi-ban"></i>
+            </button>
+          )}
         </div>
       </div>
     );

@@ -71,7 +71,7 @@ const DataView = ({
                       <i className="pi pi-pencil"></i>
                     </button>
                   )}
-                  {onDelete && (
+                  {onDelete && item.nin_estado !== 'inactivo' && (
                     <button 
                       className="btn-table-delete"
                       onClick={() => onDelete(item)}
