@@ -8,26 +8,32 @@ use Illuminate\Support\Facades\Validator;
 use App\Models\Nino;
 use App\Models\Grupo;
 use App\Models\AsignacionNino;
+use App\Services\PaginationService;
 
 class NinoController extends Controller
 {
     public function index(Request $request)
     {
         $incluirInactivos = $request->query('incluir_inactivos', false);
+        $page = $request->query('page', 1);
+        $limit = $request->query('limit', 10);
         
-        if ($incluirInactivos) {
-            $ninos = Nino::all();
-        } else {
-            $ninos = Nino::where('nin_estado', 'activo')->get();
+        $query = Nino::query();
+        
+        if (!$incluirInactivos) {
+            $query->where('nin_estado', 'activo');
         }
         
-        foreach ($ninos as $nino) {
+        $result = PaginationService::paginate($query, $page, $limit);
+        
+        foreach ($result['data'] as $nino) {
             $nino->grupo_actual = $this->getGrupoActual($nino->nin_id);
         }
 
         return response()->json([
             'success' => true,
-            'data' => $ninos
+            'data' => $result['data'],
+            'pagination' => $result['pagination']
         ]);
     }
 

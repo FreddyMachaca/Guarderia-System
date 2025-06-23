@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useApi } from '../../hooks/useApi';
 import './GestionNinos.css';
+import Pagination from '../../components/Pagination';
+import usePagination from '../../hooks/usePagination';
 
 const ListaNinos = ({ onAgregarNino, onEditarNino }) => {
   const [ninos, setNinos] = useState([]);
@@ -10,23 +12,52 @@ const ListaNinos = ({ onAgregarNino, onEditarNino }) => {
   const [grupos, setGrupos] = useState([]);
   const [incluirInactivos, setIncluirInactivos] = useState(false);
   const { get, del } = useApi();
+  
+  const {
+    currentPage,
+    limit,
+    pagination,
+    handlePageChange,
+    handleLimitChange,
+    updatePagination
+  } = usePagination();
 
   useEffect(() => {
     cargarNinos();
     cargarGrupos();
-  }, [incluirInactivos]);
+  }, [incluirInactivos, currentPage, limit]);
 
   const cargarNinos = async () => {
     try {
-      const params = incluirInactivos ? '?incluir_inactivos=true' : '';
-      const response = await get(`/ninos${params}`);
-      const data = response.data || response || [];
-      setNinos(Array.isArray(data) ? data : []);
+      setLoading(true);
+      const params = new URLSearchParams();
+      
+      if (incluirInactivos) {
+        params.append('incluir_inactivos', 'true');
+      }
+      
+      params.append('page', currentPage);
+      params.append('limit', limit);
+      
+      const response = await get(`/ninos?${params}`);
+      if (response.data && response.data.data) {
+        setNinos(response.data.data);
+        updatePagination(response.data.pagination || {
+          current_page: 1,
+          total_pages: 1,
+          total_records: response.data.data.length,
+          per_page: limit
+        });
+      } else {
+        const data = response.data || response || [];
+        setNinos(Array.isArray(data) ? data : []);
+      }
     } catch (error) {
       console.error('Error al cargar niños:', error);
       setNinos([]);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const cargarGrupos = async () => {
@@ -49,6 +80,10 @@ const ListaNinos = ({ onAgregarNino, onEditarNino }) => {
         console.error('Error al cambiar estado del niño:', error);
       }
     }
+  };
+
+  const handleRefresh = () => {
+    cargarNinos();
   };
 
   const ninosFiltrados = Array.isArray(ninos) ? ninos.filter(nino => {
@@ -158,10 +193,22 @@ const ListaNinos = ({ onAgregarNino, onEditarNino }) => {
         ))}
       </div>
 
-      {ninosFiltrados.length === 0 && (
+      {ninosFiltrados.length === 0 && !loading ? (
         <div className="no-results">
           <i className="pi pi-search"></i>
           <p>No se encontraron niños que coincidan con los filtros</p>
+        </div>
+      ) : (
+        <div style={{marginTop: '1rem'}}>
+          <Pagination
+            currentPage={pagination.current_page}
+            totalPages={pagination.total_pages}
+            totalRecords={pagination.total_records}
+            perPage={pagination.per_page}
+            onPageChange={handlePageChange}
+            onLimitChange={handleLimitChange}
+            onRefresh={handleRefresh}
+          />
         </div>
       )}
     </div>

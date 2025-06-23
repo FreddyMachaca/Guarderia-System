@@ -27,7 +27,19 @@ axiosInstance.interceptors.request.use(
 );
 
 axiosInstance.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    if (response.data && response.data.pagination) {
+      return {
+        ...response,
+        data: {
+          data: response.data.data,
+          pagination: response.data.pagination,
+          success: response.data.success
+        }
+      };
+    }
+    return response;
+  },
   (error) => {
     if (error.response?.status === 401) {
       localStorage.removeItem(`${STORAGE_KEY}_token`);
