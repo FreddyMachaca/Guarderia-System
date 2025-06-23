@@ -232,15 +232,28 @@
 
 .filtro-busqueda i {
   position: absolute;
-  left: 15px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: #999;
+  right: 0;
+  top: 0;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  background: #ff6b35;
+  color: white;
+  border-radius: 0 8px 8px 0;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.filtro-busqueda i:hover {
+  background: #e55a2b;
 }
 
 .input-busqueda {
   width: 100%;
-  padding: 12px 12px 12px 45px;
+  padding: 12px;
+  padding-right: 40px;
   border: 2px solid #e0e0e0;
   border-radius: 8px;
   font-size: 1rem;

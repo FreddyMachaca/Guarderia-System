@@ -8,6 +8,7 @@ const ListaNinos = ({ onAgregarNino, onEditarNino }) => {
   const [ninos, setNinos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
+  const [searchInput, setSearchInput] = useState('');
   const [grupoFilter, setGrupoFilter] = useState('');
   const [grupos, setGrupos] = useState([]);
   const [incluirInactivos, setIncluirInactivos] = useState(false);
@@ -124,12 +125,13 @@ const ListaNinos = ({ onAgregarNino, onEditarNino }) => {
 
       <div className="filtros">
         <div className="filtro-busqueda">
-          <i className="pi pi-search"></i>
+          <i className="pi pi-search" onClick={() => setSearchTerm(searchInput)}></i>
           <input
             type="text"
             placeholder="Buscar por nombre, apellido o CI..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
+            onKeyPress={(e) => e.key === 'Enter' && setSearchTerm(searchInput)}
             className="input-busqueda"
           />
         </div>
