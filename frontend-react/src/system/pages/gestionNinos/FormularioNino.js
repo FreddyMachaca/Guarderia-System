@@ -32,10 +32,29 @@ const FormularioNino = ({ nino, onVolver }) => {
   useEffect(() => {
     cargarGrupos();
     if (nino) {
+      const formatearFecha = (fecha) => {
+        if (!fecha) return '';
+        if (typeof fecha === 'string' && fecha.match(/^\d{4}-\d{2}-\d{2}$/)) {
+          return fecha;
+        }
+        if (typeof fecha === 'string' && fecha.includes('T')) {
+          return fecha.split('T')[0];
+        }
+        if (fecha instanceof Date) {
+          return fecha.toISOString().split('T')[0];
+        }
+        try {
+          return new Date(fecha).toISOString().split('T')[0];
+        } catch (error) {
+          console.error('Error formateando fecha:', error);
+          return '';
+        }
+      };
+
       setFormData({
         nin_nombre: nino.nin_nombre || '',
         nin_apellido: nino.nin_apellido || '',
-        nin_fecha_nacimiento: nino.nin_fecha_nacimiento ? nino.nin_fecha_nacimiento.split('T')[0] : '',
+        nin_fecha_nacimiento: formatearFecha(nino.nin_fecha_nacimiento),
         nin_edad: nino.nin_edad || '',
         nin_genero: nino.nin_genero || '',
         nin_ci: nino.nin_ci || '',
@@ -47,6 +66,7 @@ const FormularioNino = ({ nino, onVolver }) => {
         nin_estado: nino.nin_estado || 'activo',
         asn_grp_id: nino.grupo_actual ? nino.grupo_actual.grp_id : ''
       });
+      
       if (nino.nin_foto) {
         setPreviewFoto(`${process.env.REACT_APP_API_URL}storage/${nino.nin_foto}`);
       }
