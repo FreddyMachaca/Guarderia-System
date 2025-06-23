@@ -88,3 +88,13 @@ CREATE TABLE public.tbl_rel_padres_ninos (
     rel_parentesco VARCHAR(20) NOT NULL, -- 'padre', 'madre', etc.
     rel_fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+--Usado en el login y autenticación
+CREATE TABLE public.tbl_tkn_tokens (
+    tkn_id SERIAL PRIMARY KEY NOT NULL,
+    tkn_token VARCHAR(255) UNIQUE NOT NULL,
+    tkn_usr_id INT NOT NULL,
+    tkn_estado VARCHAR(20) NOT NULL, -- 'activo', 'inactivo'
+    tkn_fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    tkn_fecha_expiracion TIMESTAMP NOT NULL
+);
