@@ -8,6 +8,7 @@ const DataView = ({
   columns, 
   onEdit, 
   onDelete, 
+  onView,
   emptyMessage 
 }) => {
   if (!data || data.length === 0) {
@@ -52,6 +53,15 @@ const DataView = ({
               ))}
               <td className="actions-column">
                 <div className="row-actions">
+                  {onView && (
+                    <button 
+                      className="btn-table-view"
+                      onClick={() => onView(item)}
+                      title="Ver detalles"
+                    >
+                      <i className="pi pi-eye"></i>
+                    </button>
+                  )}
                   {onEdit && (
                     <button 
                       className="btn-table-edit"

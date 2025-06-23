@@ -5,7 +5,7 @@ import Pagination from '../../components/Pagination';
 import usePagination from '../../hooks/usePagination';
 import DataView from '../../components/DataView';
 
-const ListaNinos = ({ onAgregarNino, onEditarNino }) => {
+const ListaNinos = ({ onAgregarNino, onEditarNino, onVerNino }) => {
   const [ninos, setNinos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -141,6 +141,13 @@ const ListaNinos = ({ onAgregarNino, onEditarNino }) => {
         </div>
         <div className="nino-actions">
           <button 
+            className="btn-view"
+            onClick={() => onVerNino(nino)}
+            title="Ver detalles"
+          >
+            <i className="pi pi-eye"></i>
+          </button>
+          <button 
             className="btn-edit"
             onClick={() => onEditarNino(nino)}
             title="Editar"
@@ -267,6 +274,7 @@ const ListaNinos = ({ onAgregarNino, onEditarNino }) => {
         columns={columns}
         onEdit={onEditarNino}
         onDelete={eliminarNino}
+        onView={onVerNino}
         emptyMessage="No se encontraron niños que coincidan con los filtros"
       />
 

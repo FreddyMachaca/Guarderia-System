@@ -3,6 +3,7 @@ import { useApi } from '../../hooks/useApi';
 import { useMenus } from '../../hooks/useMenus';
 import FormularioNino from './FormularioNino';
 import ListaNinos from './ListaNinos';
+import ViewNinos from './ViewNinos';
 import './GestionNinos.css';
 import 'primeicons/primeicons.css';
 
@@ -21,6 +22,11 @@ const GestionNinos = () => {
   const handleEditarNino = (nino) => {
     setNinoSeleccionado(nino);
     setVista('formulario');
+  };
+  
+  const handleVerNino = (nino) => {
+    setNinoSeleccionado(nino);
+    setVista('detalle');
   };
 
   const handleVolverLista = () => {
@@ -79,9 +85,15 @@ const GestionNinos = () => {
             <ListaNinos 
               onAgregarNino={handleAgregarNino}
               onEditarNino={handleEditarNino}
+              onVerNino={handleVerNino}
+            />
+          ) : vista === 'formulario' ? (
+            <FormularioNino 
+              nino={ninoSeleccionado}
+              onVolver={handleVolverLista}
             />
           ) : (
-            <FormularioNino 
+            <ViewNinos 
               nino={ninoSeleccionado}
               onVolver={handleVolverLista}
             />
