@@ -13,10 +13,38 @@ class Grupo extends Model
     protected $fillable = [
         'grp_nombre',
         'grp_descripcion',
-        'grp_capacidad_maxima',
+        'grp_capacidad',
         'grp_edad_minima',
         'grp_edad_maxima',
-        'grp_prs_responsable_id',
+        'grp_responsable_id',
         'grp_estado'
     ];
+
+    protected $dates = [
+        'grp_fecha_creacion',
+        'grp_fecha_actualizacion'
+    ];
+
+    public function responsable()
+    {
+        return $this->belongsTo(Personal::class, 'grp_responsable_id', 'prs_id');
+    }
+
+    public function asignaciones()
+    {
+        return $this->hasMany(AsignacionNino::class, 'asn_grp_id', 'grp_id');
+    }
+
+    public function ninosActivos()
+    {
+        return $this->hasMany(AsignacionNino::class, 'asn_grp_id', 'grp_id')
+                    ->whereNull('asn_fecha_baja')
+                    ->where('asn_estado', 'activo');
+    }
+
+    public function getCapacidadDisponibleAttribute()
+    {
+        $ninosAsignados = $this->ninosActivos()->count();
+        return $this->grp_capacidad - $ninosAsignados;
+    }
 }

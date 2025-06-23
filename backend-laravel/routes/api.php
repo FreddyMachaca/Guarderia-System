@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\NinoController;
 use App\Http\Controllers\GrupoController;
+use App\Http\Controllers\AsignacionNinoController;
+use App\Http\Controllers\PersonalController;
 
 /*
 |--------------------------------------------------------------------------
@@ -28,6 +30,8 @@ Route::middleware('api')->group(function () {
 });
 
 Route::middleware('api')->group(function () {
+    
+    // Rutas para el módulo de Niños
     Route::prefix('ninos')->group(function () {
         Route::get('/', [NinoController::class, 'index']);
         Route::post('/', [NinoController::class, 'store']);
@@ -38,11 +42,27 @@ Route::middleware('api')->group(function () {
         Route::delete('/{id}/remover-grupo', [NinoController::class, 'removerGrupo']);
     });
 
-    Route::prefix('grupos')->group(function () {
+    // Rutas para el módulo de Grupos/Aulas
+    Route::group(['prefix' => 'grupos'], function () {
+
+        // Rutas para grupos
         Route::get('/', [GrupoController::class, 'index']);
         Route::post('/', [GrupoController::class, 'store']);
         Route::get('/{id}', [GrupoController::class, 'show']);
         Route::put('/{id}', [GrupoController::class, 'update']);
         Route::delete('/{id}', [GrupoController::class, 'destroy']);
+        Route::get('/responsables/lista', [GrupoController::class, 'getResponsables']);
+        
+        // Rutas para asignaciones
+        Route::get('/{grupoId}/ninos', [AsignacionNinoController::class, 'listarNinosPorGrupo']);
+        Route::post('/asignar-nino', [AsignacionNinoController::class, 'asignarNino']);
+        Route::put('/asignaciones/{asignacionId}/baja', [AsignacionNinoController::class, 'darDeBaja']);
+        Route::get('/ninos/disponibles', [AsignacionNinoController::class, 'getNinosDisponibles']);
+    });
+
+    // Rutas para el personal
+    Route::prefix('personal')->group(function () {
+        Route::get('/', [PersonalController::class, 'index']);
+        Route::get('/lista', [PersonalController::class, 'listaPersonal']);
     });
 });

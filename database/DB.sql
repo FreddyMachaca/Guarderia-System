@@ -14,6 +14,16 @@ CREATE TABLE public.tbl_usr_usuarios (
     usr_fecha_actualizacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+--Usado en el login y autenticación
+CREATE TABLE public.tbl_tkn_tokens (
+    tkn_id SERIAL PRIMARY KEY NOT NULL,
+    tkn_token VARCHAR(255) UNIQUE NOT NULL,
+    tkn_usr_id INT NOT NULL,
+    tkn_estado VARCHAR(20) NOT NULL, -- 'activo', 'inactivo'
+    tkn_fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    tkn_fecha_expiracion TIMESTAMP NOT NULL
+);
+
 -- Tabla de padres
 CREATE TABLE public.tbl_pdr_padres (
     pdr_id SERIAL PRIMARY KEY NOT NULL,
@@ -56,30 +66,6 @@ CREATE TABLE public.tbl_nin_ninos (
     nin_estado VARCHAR(20) -- 'activo' o 'inactivo'
 );
 
--- Tabla de grupos/aulas
-CREATE TABLE public.tbl_grp_grupos (
-    grp_id SERIAL PRIMARY KEY NOT NULL,
-    grp_nombre VARCHAR(100) NOT NULL,
-    grp_descripcion TEXT,
-    grp_capacidad_maxima INT NOT NULL,
-    grp_edad_minima INT NOT NULL,
-    grp_edad_maxima INT NOT NULL,
-    grp_prs_responsable_id INT,
-    grp_estado VARCHAR(20), -- 'activo' o 'inactivo'
-    grp_fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
--- Tabla de asignación niños a grupos
-CREATE TABLE public.tbl_asn_asignaciones_ninos (
-    asn_id SERIAL PRIMARY KEY NOT NULL,
-    asn_nin_id INT NOT NULL,
-    asn_grp_id INT NOT NULL,
-    asn_fecha_asignacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    asn_fecha_baja TIMESTAMP NULL,
-    asn_estado VARCHAR(20),
-    asn_observaciones TEXT
-);
-
 -- Tabla de relación padres-niños
 CREATE TABLE public.tbl_rel_padres_ninos (
     rel_id SERIAL PRIMARY KEY NOT NULL,
@@ -89,12 +75,27 @@ CREATE TABLE public.tbl_rel_padres_ninos (
     rel_fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
---Usado en el login y autenticación
-CREATE TABLE public.tbl_tkn_tokens (
-    tkn_id SERIAL PRIMARY KEY NOT NULL,
-    tkn_token VARCHAR(255) UNIQUE NOT NULL,
-    tkn_usr_id INT NOT NULL,
-    tkn_estado VARCHAR(20) NOT NULL, -- 'activo', 'inactivo'
-    tkn_fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    tkn_fecha_expiracion TIMESTAMP NOT NULL
+-- Tabla de grupos/aulas
+CREATE TABLE public.tbl_grp_grupos (
+    grp_id SERIAL PRIMARY KEY NOT NULL,
+    grp_nombre VARCHAR(100) NOT NULL,
+    grp_descripcion TEXT,
+    grp_capacidad INT NOT NULL,
+    grp_edad_minima INT NOT NULL,
+    grp_edad_maxima INT NOT NULL,
+    grp_responsable_id INT NOT NULL, -- Referencia a tbl_prs_personal.prs_id
+    grp_estado VARCHAR(20) NOT NULL, -- 'activo', 'inactivo'
+    grp_fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    grp_fecha_actualizacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Tabla de asignaciones de niños a grupos
+CREATE TABLE public.tbl_asn_asignaciones_ninos (
+    asn_id SERIAL PRIMARY KEY NOT NULL,
+    asn_nin_id INT NOT NULL, -- Referencia a tbl_nin_ninos.nin_id
+    asn_grp_id INT NOT NULL, -- Referencia a tbl_grp_grupos.grp_id
+    asn_fecha_asignacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    asn_fecha_baja TIMESTAMP NULL,
+    asn_estado VARCHAR(20) NOT NULL, -- 'activo', 'inactivo'
+    asn_observaciones TEXT
 );

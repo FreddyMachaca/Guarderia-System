@@ -4,6 +4,7 @@ import { useApi } from './hooks/useApi';
 import Dashboard from './pages/dashboard/Dashboard';
 import ParentDashboard from './pages/dashboard/ParentDashboard';
 import GestionNinos from './pages/gestionNinos/GestionNinos';
+import GestionGrupos from './pages/grupos/GestionGrupos';
 import './System.css';
 
 const AppSystem = () => {
@@ -22,6 +23,7 @@ const AppSystem = () => {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/parent" element={<ParentDashboard />} />
         <Route path="/gestion-ninos" element={<GestionNinos />} />
+        <Route path="/grupos" element={<GestionGrupos />} />
         
         <Route path="/" element={
           userType === 'parent' ? 

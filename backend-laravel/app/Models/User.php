@@ -12,34 +12,36 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
+    protected $table = 'tbl_usr_usuarios';
+    protected $primaryKey = 'usr_id';
+    public $timestamps = false;
+
     protected $fillable = [
-        'name',
-        'email',
-        'password',
+        'usr_nombre',
+        'usr_apellido',
+        'usr_email',
+        'usr_password',
+        'usr_telefono',
+        'usr_tipo',
+        'usr_estado'
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
-     */
     protected $hidden = [
-        'password',
-        'remember_token',
+        'usr_password',
     ];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
     protected $casts = [
-        'email_verified_at' => 'datetime',
-        'password' => 'hashed',
+        'usr_fecha_creacion' => 'datetime',
+        'usr_fecha_actualizacion' => 'datetime',
     ];
+
+    public function personal()
+    {
+        return $this->hasOne(Personal::class, 'prs_usr_id', 'usr_id');
+    }
+
+    public function padre()
+    {
+        return $this->hasOne(Padre::class, 'pdr_usr_id', 'usr_id');
+    }
 }
