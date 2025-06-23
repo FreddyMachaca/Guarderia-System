@@ -52,7 +52,6 @@ export const useMenus = () => {
     }
   ];
 
-  // Effect para actualizar el menú activo basado en la ruta actual
   useEffect(() => {
     const currentPath = location.pathname;
     const currentMenu = adminMenus.find(menu => currentPath.includes(menu.id));
