@@ -11,7 +11,7 @@ const ListaNinos = ({ onAgregarNino, onEditarNino }) => {
   const [searchInput, setSearchInput] = useState('');
   const [grupoFilter, setGrupoFilter] = useState('');
   const [grupos, setGrupos] = useState([]);
-  const [incluirInactivos, setIncluirInactivos] = useState(false);
+  const [mostrarInactivos, setMostrarInactivos] = useState(false);
   const { get, del } = useApi();
   
   const {
@@ -29,15 +29,17 @@ const ListaNinos = ({ onAgregarNino, onEditarNino }) => {
 
   useEffect(() => {
     cargarNinos();
-  }, [incluirInactivos, currentPage, limit, searchTerm, grupoFilter]);
+  }, [mostrarInactivos, currentPage, limit, searchTerm, grupoFilter]);
 
   const cargarNinos = async () => {
     try {
       setLoading(true);
       const params = new URLSearchParams();
       
-      if (incluirInactivos) {
-        params.append('incluir_inactivos', 'true');
+      if (mostrarInactivos) {
+        params.append('estado', 'inactivo');
+      } else {
+        params.append('estado', 'activo');
       }
       
       if (searchTerm) {
@@ -150,10 +152,10 @@ const ListaNinos = ({ onAgregarNino, onEditarNino }) => {
         <label className="switch-container">
           <input
             type="checkbox"
-            checked={incluirInactivos}
-            onChange={(e) => setIncluirInactivos(e.target.checked)}
+            checked={mostrarInactivos}
+            onChange={(e) => setMostrarInactivos(e.target.checked)}
           />
-          <span className="switch-label">Incluir inactivos</span>
+          <span className="switch-label">Mostrar inactivos</span>
         </label>
       </div>
 

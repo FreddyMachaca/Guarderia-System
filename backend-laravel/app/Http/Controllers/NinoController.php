@@ -14,7 +14,7 @@ class NinoController extends Controller
 {
     public function index(Request $request)
     {
-        $incluirInactivos = $request->query('incluir_inactivos', false);
+        $mostrarInactivos = $request->query('estado', 'activo') === 'inactivo';
         $page = $request->query('page', 1);
         $limit = $request->query('limit', 10);
         $search = $request->query('search', '');
@@ -22,9 +22,8 @@ class NinoController extends Controller
         
         $query = Nino::query();
         
-        if (!$incluirInactivos) {
-            $query->where('nin_estado', 'activo');
-        }
+        // Filtra por estado activo o inactivo
+        $query->where('nin_estado', $mostrarInactivos ? 'inactivo' : 'activo');
         
         if ($search) {
             $query->where(function($q) use ($search) {
