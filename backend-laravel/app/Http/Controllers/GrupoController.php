@@ -79,7 +79,7 @@ class GrupoController extends Controller
         ]);
         
         if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
+            return response()->json(['success' => false, 'errors' => $validator->errors()], 422);
         }
         
         $grupo = new Grupo();
@@ -95,6 +95,7 @@ class GrupoController extends Controller
         $grupo->save();
         
         return response()->json([
+            'success' => true,
             'message' => 'Grupo creado correctamente',
             'grupo' => $grupo
         ], 201);
@@ -115,7 +116,7 @@ class GrupoController extends Controller
         ]);
         
         if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
+            return response()->json(['success' => false, 'errors' => $validator->errors()], 422);
         }
         
         $grupo->grp_nombre = $request->nombre;
@@ -137,6 +138,7 @@ class GrupoController extends Controller
         }
         
         return response()->json([
+            'success' => true,
             'message' => 'Grupo actualizado correctamente',
             'grupo' => $grupo
         ]);

@@ -10,7 +10,7 @@ const FormularioGrupo = ({ grupo, onVolver }) => {
     grp_edad_minima: '',
     grp_edad_maxima: '',
     grp_capacidad: '',
-    grp_educador: '',
+    grp_responsable_id: '',
     grp_estado: 'activo'
   });
   const [loading, setLoading] = useState(false);
@@ -27,7 +27,7 @@ const FormularioGrupo = ({ grupo, onVolver }) => {
         grp_edad_minima: grupo.grp_edad_minima || '',
         grp_edad_maxima: grupo.grp_edad_maxima || '',
         grp_capacidad: grupo.grp_capacidad || '',
-        grp_educador: grupo.grp_educador || '',
+        grp_responsable_id: grupo.grp_responsable_id || '',
         grp_estado: grupo.grp_estado || 'activo'
       });
     }
@@ -69,6 +69,7 @@ const FormularioGrupo = ({ grupo, onVolver }) => {
       newErrors.grp_edad_minima = 'La edad mínima no puede ser mayor que la edad máxima';
     }
     if (!formData.grp_capacidad) newErrors.grp_capacidad = 'La capacidad es requerida';
+    if (!formData.grp_responsable_id) newErrors.grp_responsable_id = 'El responsable es requerido';
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -85,7 +86,15 @@ const FormularioGrupo = ({ grupo, onVolver }) => {
 
     try {
       let response;
-      const datosEnvio = { ...formData };
+      const datosEnvio = {
+        nombre: formData.grp_nombre,
+        descripcion: formData.grp_descripcion,
+        capacidad: parseInt(formData.grp_capacidad),
+        edadMinima: parseInt(formData.grp_edad_minima),
+        edadMaxima: parseInt(formData.grp_edad_maxima),
+        responsableId: parseInt(formData.grp_responsable_id),
+        estado: formData.grp_estado
+      };
       
       if (grupo) {
         response = await put(`/grupos/${grupo.grp_id}`, datosEnvio);
@@ -137,12 +146,12 @@ const FormularioGrupo = ({ grupo, onVolver }) => {
               {errors.grp_nombre && <span className="error-text">{errors.grp_nombre}</span>}
             </div>
             <div className="form-group">
-              <label>Educador Responsable</label>
+              <label>Educador Responsable *</label>
               <select
-                name="grp_educador"
-                value={formData.grp_educador}
+                name="grp_responsable_id"
+                value={formData.grp_responsable_id}
                 onChange={handleInputChange}
-                className={errors.grp_educador ? 'error' : ''}
+                className={errors.grp_responsable_id ? 'error' : ''}
               >
                 <option value="">Seleccione un educador</option>
                 {personal.map(persona => (
@@ -151,7 +160,7 @@ const FormularioGrupo = ({ grupo, onVolver }) => {
                   </option>
                 ))}
               </select>
-              {errors.grp_educador && <span className="error-text">{errors.grp_educador}</span>}
+              {errors.grp_responsable_id && <span className="error-text">{errors.grp_responsable_id}</span>}
             </div>
           </div>
 
@@ -162,7 +171,6 @@ const FormularioGrupo = ({ grupo, onVolver }) => {
                 type="number"
                 name="grp_edad_minima"
                 min="0"
-                max="12"
                 value={formData.grp_edad_minima}
                 onChange={handleInputChange}
                 className={errors.grp_edad_minima ? 'error' : ''}
@@ -175,7 +183,6 @@ const FormularioGrupo = ({ grupo, onVolver }) => {
                 type="number"
                 name="grp_edad_maxima"
                 min="0"
-                max="12"
                 value={formData.grp_edad_maxima}
                 onChange={handleInputChange}
                 className={errors.grp_edad_maxima ? 'error' : ''}
