@@ -30,4 +30,16 @@ class Nino extends Model
         'nin_fecha_nacimiento',
         'nin_fecha_inscripcion'
     ];
+
+    public function asignacionActual()
+    {
+        return $this->hasOne(AsignacionNino::class, 'asn_nin_id', 'nin_id')
+                    ->whereNull('asn_fecha_baja')
+                    ->where('asn_estado', 'activo');
+    }
+
+    public function asignaciones()
+    {
+        return $this->hasMany(AsignacionNino::class, 'asn_nin_id', 'nin_id');
+    }
 }

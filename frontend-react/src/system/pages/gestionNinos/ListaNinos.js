@@ -23,9 +23,12 @@ const ListaNinos = ({ onAgregarNino, onEditarNino }) => {
   } = usePagination();
 
   useEffect(() => {
-    cargarNinos();
     cargarGrupos();
-  }, [incluirInactivos, currentPage, limit]);
+  }, []);
+
+  useEffect(() => {
+    cargarNinos();
+  }, [incluirInactivos, currentPage, limit, searchTerm, grupoFilter]);
 
   const cargarNinos = async () => {
     try {
@@ -36,21 +39,37 @@ const ListaNinos = ({ onAgregarNino, onEditarNino }) => {
         params.append('incluir_inactivos', 'true');
       }
       
+      if (searchTerm) {
+        params.append('search', searchTerm);
+      }
+      
+      if (grupoFilter) {
+        params.append('grupo', grupoFilter);
+      }
+      
       params.append('page', currentPage);
       params.append('limit', limit);
       
       const response = await get(`/ninos?${params}`);
-      if (response.data && response.data.data) {
-        setNinos(response.data.data);
-        updatePagination(response.data.pagination || {
+      if (response.success && response.data) {
+        setNinos(response.data);
+        updatePagination(response.pagination);
+      } else if (response.data) {
+        setNinos(Array.isArray(response.data) ? response.data : []);
+        updatePagination({
           current_page: 1,
           total_pages: 1,
-          total_records: response.data.data.length,
+          total_records: Array.isArray(response.data) ? response.data.length : 0,
           per_page: limit
         });
       } else {
-        const data = response.data || response || [];
-        setNinos(Array.isArray(data) ? data : []);
+        setNinos([]);
+        updatePagination({
+          current_page: 1,
+          total_pages: 1,
+          total_records: 0,
+          per_page: limit
+        });
       }
     } catch (error) {
       console.error('Error al cargar niños:', error);
@@ -71,6 +90,10 @@ const ListaNinos = ({ onAgregarNino, onEditarNino }) => {
     }
   };
 
+  const handleRefresh = () => {
+    cargarNinos();
+  };
+
   const eliminarNino = async (id) => {
     if (window.confirm('¿Está seguro de desactivar este niño?')) {
       try {
@@ -81,18 +104,6 @@ const ListaNinos = ({ onAgregarNino, onEditarNino }) => {
       }
     }
   };
-
-  const handleRefresh = () => {
-    cargarNinos();
-  };
-
-  const ninosFiltrados = Array.isArray(ninos) ? ninos.filter(nino => {
-    const matchSearch = nino.nin_nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                       nino.nin_apellido.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                       nino.nin_ci.includes(searchTerm);
-    const matchGrupo = !grupoFilter || nino.grupo_nombre === grupoFilter;
-    return matchSearch && matchGrupo;
-  }) : [];
 
   if (loading) {
     return <div className="loading">Cargando niños...</div>;
@@ -145,7 +156,7 @@ const ListaNinos = ({ onAgregarNino, onEditarNino }) => {
       </div>
 
       <div className="ninos-grid">
-        {ninosFiltrados.map(nino => (
+        {ninos.map(nino => (
           <div key={nino.nin_id} className="nino-card">
             <div className="nino-foto">
               {nino.nin_foto ? (
@@ -193,22 +204,22 @@ const ListaNinos = ({ onAgregarNino, onEditarNino }) => {
         ))}
       </div>
 
-      {ninosFiltrados.length === 0 && !loading ? (
+      <div style={{marginTop: '1rem'}}>
+        <Pagination
+          currentPage={pagination.current_page}
+          totalPages={pagination.total_pages}
+          totalRecords={pagination.total_records}
+          perPage={pagination.per_page}
+          onPageChange={handlePageChange}
+          onLimitChange={handleLimitChange}
+          onRefresh={handleRefresh}
+        />
+      </div>
+
+      {ninos.length === 0 && !loading && (
         <div className="no-results">
           <i className="pi pi-search"></i>
           <p>No se encontraron niños que coincidan con los filtros</p>
-        </div>
-      ) : (
-        <div style={{marginTop: '1rem'}}>
-          <Pagination
-            currentPage={pagination.current_page}
-            totalPages={pagination.total_pages}
-            totalRecords={pagination.total_records}
-            perPage={pagination.per_page}
-            onPageChange={handlePageChange}
-            onLimitChange={handleLimitChange}
-            onRefresh={handleRefresh}
-          />
         </div>
       )}
     </div>

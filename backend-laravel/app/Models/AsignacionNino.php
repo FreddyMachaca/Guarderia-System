@@ -22,4 +22,14 @@ class AsignacionNino extends Model
         'asn_fecha_asignacion',
         'asn_fecha_baja'
     ];
+
+    public function nino()
+    {
+        return $this->belongsTo(Nino::class, 'asn_nin_id', 'nin_id');
+    }
+
+    public function grupo()
+    {
+        return $this->belongsTo(Grupo::class, 'asn_grp_id', 'grp_id');
+    }
 }

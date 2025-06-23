@@ -4,7 +4,7 @@ const Pagination = ({
     currentPage = 1, 
     totalPages = 1, 
     totalRecords = 0, 
-    perPage = 10, 
+    perPage = 9, 
     onPageChange, 
     onLimitChange, 
     onRefresh 
@@ -172,8 +172,9 @@ const Pagination = ({
                             onChange={handleLimitChange}
                         >
                             <option value={9}>9 por página</option>
+                            <option value={18}>18 por página</option>
                             <option value={24}>24 por página</option>
-                            <option value={50}>50 por página</option>
+                            <option value={30}>30 por página</option>
                         </select>
                         
                         <button 
@@ -192,7 +193,7 @@ const Pagination = ({
                                 onClick={() => currentPage > 1 && onPageChange && onPageChange(currentPage - 1)}
                                 disabled={currentPage === 1}
                             >
-                                ← Anterior
+                                ‹ Anterior
                             </button>
                             
                             {generatePageNumbers().map(page => (
@@ -207,10 +208,10 @@ const Pagination = ({
                             
                             <button 
                                 className={`pagination-btn ${currentPage === totalPages ? 'disabled' : ''}`}
-                                onClick={() => currentPage < totalPages && onPageChange && onPageChange(currentPage + 1)}
+                                onClick={() => currentPage < totalPages && onPageChange && onPageChange(parseInt(currentPage) + 1)}
                                 disabled={currentPage === totalPages}
                             >
-                                Siguiente →
+                                Siguiente ›
                             </button>
                         </div>
                         

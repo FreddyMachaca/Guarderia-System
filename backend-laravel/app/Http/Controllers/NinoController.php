@@ -17,11 +17,27 @@ class NinoController extends Controller
         $incluirInactivos = $request->query('incluir_inactivos', false);
         $page = $request->query('page', 1);
         $limit = $request->query('limit', 10);
+        $search = $request->query('search', '');
+        $grupo = $request->query('grupo', '');
         
         $query = Nino::query();
         
         if (!$incluirInactivos) {
             $query->where('nin_estado', 'activo');
+        }
+        
+        if ($search) {
+            $query->where(function($q) use ($search) {
+                $q->where('nin_nombre', 'ILIKE', "%{$search}%")
+                  ->orWhere('nin_apellido', 'ILIKE', "%{$search}%")
+                  ->orWhere('nin_ci', 'LIKE', "%{$search}%");
+            });
+        }
+        
+        if ($grupo) {
+            $query->whereHas('asignacionActual.grupo', function($q) use ($grupo) {
+                $q->where('grp_nombre', $grupo);
+            });
         }
         
         $result = PaginationService::paginate($query, $page, $limit);

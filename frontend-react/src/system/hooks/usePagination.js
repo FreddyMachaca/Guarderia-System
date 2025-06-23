@@ -13,17 +13,34 @@ const usePagination = (initialPage = 1, initialLimit = 9) => {
     });
 
     const handlePageChange = useCallback((page) => {
-        setCurrentPage(page);
-    }, []);
+        if (page < 1) {
+            setCurrentPage(1);
+        } else if (page > pagination.total_pages) {
+            setCurrentPage(pagination.total_pages);
+        } else {
+            setCurrentPage(page);
+        }
+    }, [pagination.total_pages]);
 
     const handleLimitChange = useCallback((newLimit) => {
         setLimit(newLimit);
         setCurrentPage(1);
+        setPagination(prev => ({
+            ...prev,
+            per_page: newLimit,
+            current_page: 1
+        }));
     }, []);
 
     const updatePagination = useCallback((paginationData) => {
         setPagination(paginationData);
-        setCurrentPage(paginationData.current_page);
+        if (paginationData.current_page > paginationData.total_pages) {
+            setCurrentPage(paginationData.total_pages);
+        } else if (paginationData.current_page < 1) {
+            setCurrentPage(1);
+        } else {
+            setCurrentPage(paginationData.current_page);
+        }
         setLimit(paginationData.per_page);
     }, []);
 
