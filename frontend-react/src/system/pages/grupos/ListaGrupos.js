@@ -46,18 +46,35 @@ const ListaGrupos = ({ onAgregarGrupo, onEditarGrupo, onVerGrupo }) => {
       params.append('limit', limit);
       
       const response = await get(`/grupos?${params}`);
-      if (response.success && response.data) {
+      
+      if (response.success && Array.isArray(response.data)) {
         setGrupos(response.data);
-        updatePagination(response.pagination);
-      } else if (response.data) {
-        setGrupos(Array.isArray(response.data) ? response.data : []);
+        updatePagination(response.pagination || {
+          current_page: 1,
+          total_pages: 1,
+          total_records: response.data.length,
+          per_page: limit
+        });
+      } else if (Array.isArray(response)) {
+        // Si la respuesta es directamente un array (formato antiguo)
+        setGrupos(response);
         updatePagination({
           current_page: 1,
           total_pages: 1,
-          total_records: Array.isArray(response.data) ? response.data.length : 0,
+          total_records: response.length,
+          per_page: limit
+        });
+      } else if (response.data && Array.isArray(response.data)) {
+        // Por si el formato es diferente pero tiene data
+        setGrupos(response.data);
+        updatePagination(response.pagination || {
+          current_page: 1,
+          total_pages: 1,
+          total_records: response.data.length,
           per_page: limit
         });
       } else {
+        console.error('Formato de respuesta no esperado:', response);
         setGrupos([]);
         updatePagination({
           current_page: 1,
@@ -69,6 +86,12 @@ const ListaGrupos = ({ onAgregarGrupo, onEditarGrupo, onVerGrupo }) => {
     } catch (error) {
       console.error('Error al cargar grupos:', error);
       setGrupos([]);
+      updatePagination({
+        current_page: 1,
+        total_pages: 1,
+        total_records: 0,
+        per_page: limit
+      });
     } finally {
       setLoading(false);
     }

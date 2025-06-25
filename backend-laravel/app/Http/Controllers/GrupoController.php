@@ -16,24 +16,23 @@ class GrupoController extends Controller
         
         $gruposFormateados = $grupos->map(function ($grupo) {
             return [
-                'id' => $grupo->grp_id,
-                'nombre' => $grupo->grp_nombre,
-                'descripcion' => $grupo->grp_descripcion,
-                'capacidad' => $grupo->grp_capacidad,
-                'capacidadDisponible' => $grupo->capacidadDisponible,
-                'edadMinima' => $grupo->grp_edad_minima,
-                'edadMaxima' => $grupo->grp_edad_maxima,
-                'responsable' => $grupo->responsable ? [
-                    'id' => $grupo->responsable->prs_id,
-                    'nombre' => $grupo->responsable->nombreCompleto(),
-                    'cargo' => $grupo->responsable->prs_cargo
-                ] : null,
-                'estado' => $grupo->grp_estado,
-                'ninosAsignados' => $grupo->ninosActivos->count(),
+                'grp_id' => $grupo->grp_id,
+                'grp_nombre' => $grupo->grp_nombre,
+                'grp_descripcion' => $grupo->grp_descripcion,
+                'grp_capacidad' => $grupo->grp_capacidad,
+                'grp_edad_minima' => $grupo->grp_edad_minima,
+                'grp_edad_maxima' => $grupo->grp_edad_maxima,
+                'grp_responsable_id' => $grupo->grp_responsable_id,
+                'grp_educador' => $grupo->responsable ? $grupo->responsable->nombreCompleto() : null,
+                'grp_estado' => $grupo->grp_estado,
+                'ocupacion' => $grupo->ninosActivos->count(),
             ];
         });
         
-        return response()->json($gruposFormateados);
+        return response()->json([
+            'success' => true,
+            'data' => $gruposFormateados
+        ]);
     }
     
     public function show($id)
