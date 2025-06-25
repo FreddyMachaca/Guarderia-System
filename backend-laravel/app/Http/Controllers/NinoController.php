@@ -9,6 +9,7 @@ use App\Models\Nino;
 use App\Models\Grupo;
 use App\Models\AsignacionNino;
 use App\Services\PaginationService;
+use Illuminate\Support\Facades\DB;
 
 class NinoController extends Controller
 {
@@ -66,7 +67,8 @@ class NinoController extends Controller
             'nin_foto' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             'nin_alergias' => 'nullable|string',
             'nin_medicamentos' => 'nullable|string',
-            'nin_observaciones' => 'nullable|string'
+            'nin_observaciones' => 'nullable|string',
+            'grupo_id' => 'nullable|integer|exists:tbl_grp_grupos,grp_id'
         ]);
 
         if ($validator->fails()) {
@@ -76,24 +78,66 @@ class NinoController extends Controller
             ], 422);
         }
 
-        $data = $request->all();
-        $data['nin_fecha_inscripcion'] = now();
-        $data['nin_estado'] = 'activo';
+        DB::beginTransaction();
+        try {
+            $data = $request->all();
+            $data['nin_fecha_inscripcion'] = now();
+            $data['nin_estado'] = 'activo';
 
-        if ($request->hasFile('nin_foto')) {
-            $foto = $request->file('nin_foto');
-            $nombreFoto = time() . '_' . $foto->getClientOriginalName();
-            $rutaFoto = $foto->storeAs('ninos/fotos', $nombreFoto, 'public');
-            $data['nin_foto'] = $rutaFoto;
+            if ($request->hasFile('nin_foto')) {
+                $foto = $request->file('nin_foto');
+                $nombreFoto = time() . '_' . $foto->getClientOriginalName();
+                $rutaFoto = $foto->storeAs('ninos/fotos', $nombreFoto, 'public');
+                $data['nin_foto'] = $rutaFoto;
+            }
+
+            $nino = Nino::create($data);
+
+            // Si se proporciona un grupo_id, asignar el niño al grupo
+            if ($request->filled('grupo_id')) {
+                $grupo = Grupo::find($request->grupo_id);
+                
+                // Validar que el grupo exista y tenga capacidad
+                if (!$grupo) {
+                    DB::rollBack();
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'El grupo seleccionado no existe'
+                    ], 404);
+                }
+                
+                // Verificar que la edad del niño esté dentro del rango del grupo
+                if ($nino->nin_edad < $grupo->grp_edad_minima || $nino->nin_edad > $grupo->grp_edad_maxima) {
+                    DB::rollBack();
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'La edad del niño no es compatible con el grupo seleccionado'
+                    ], 422);
+                }
+                
+                AsignacionNino::create([
+                    'asn_nin_id' => $nino->nin_id,
+                    'asn_grp_id' => $grupo->grp_id,
+                    'asn_fecha_asignacion' => now(),
+                    'asn_estado' => 'activo',
+                    'asn_observaciones' => 'Asignación inicial'
+                ]);
+            }
+
+            DB::commit();
+            return response()->json([
+                'success' => true,
+                'message' => 'Niño registrado exitosamente',
+                'data' => $nino
+            ], 201);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            \Log::error('Error al registrar niño: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al registrar el niño: ' . $e->getMessage()
+            ], 500);
         }
-
-        $nino = Nino::create($data);
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Niño registrado exitosamente',
-            'data' => $nino
-        ], 201);
     }
 
     public function show($id)
@@ -140,7 +184,8 @@ class NinoController extends Controller
             'nin_alergias' => 'nullable|string',
             'nin_medicamentos' => 'nullable|string',
             'nin_observaciones' => 'nullable|string',
-            'nin_estado' => 'nullable|in:activo,inactivo'
+            'nin_estado' => 'nullable|in:activo,inactivo',
+            'grupo_id' => 'nullable|integer|exists:tbl_grp_grupos,grp_id'
         ]);
 
         if ($validator->fails()) {
@@ -150,26 +195,91 @@ class NinoController extends Controller
             ], 422);
         }
 
-        $data = $request->all();
+        DB::beginTransaction();
+        try {
+            $data = $request->except(['grupo_id']);
 
-        if ($request->hasFile('nin_foto')) {
-            if ($nino->nin_foto && Storage::disk('public')->exists($nino->nin_foto)) {
-                Storage::disk('public')->delete($nino->nin_foto);
+            if ($request->hasFile('nin_foto')) {
+                if ($nino->nin_foto && Storage::disk('public')->exists($nino->nin_foto)) {
+                    Storage::disk('public')->delete($nino->nin_foto);
+                }
+
+                $foto = $request->file('nin_foto');
+                $nombreFoto = time() . '_' . $foto->getClientOriginalName();
+                $rutaFoto = $foto->storeAs('ninos/fotos', $nombreFoto, 'public');
+                $data['nin_foto'] = $rutaFoto;
             }
 
-            $foto = $request->file('nin_foto');
-            $nombreFoto = time() . '_' . $foto->getClientOriginalName();
-            $rutaFoto = $foto->storeAs('ninos/fotos', $nombreFoto, 'public');
-            $data['nin_foto'] = $rutaFoto;
+            $nino->update($data);
+
+            // Si se proporciona un grupo_id, actualizar la asignación del niño
+            if ($request->filled('grupo_id')) {
+                $grupo = Grupo::find($request->grupo_id);
+                
+                if (!$grupo) {
+                    DB::rollBack();
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'El grupo seleccionado no existe'
+                    ], 404);
+                }
+
+                // Verificar que la edad del niño sea compatible con el grupo
+                if ($nino->nin_edad < $grupo->grp_edad_minima || $nino->nin_edad > $grupo->grp_edad_maxima) {
+                    DB::rollBack();
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'La edad del niño no es compatible con el grupo seleccionado'
+                    ], 422);
+                }
+                
+                // Obtener la asignación actual del niño
+                $asignacionActual = AsignacionNino::where('asn_nin_id', $id)
+                                                ->where('asn_estado', 'activo')
+                                                ->whereNull('asn_fecha_baja')
+                                                ->first();
+                
+                // Si ya tiene una asignación y es diferente al nuevo grupo, dar de baja la anterior
+                if ($asignacionActual) {
+                    if ($asignacionActual->asn_grp_id != $request->grupo_id) {
+                        $asignacionActual->asn_estado = 'inactivo';
+                        $asignacionActual->asn_fecha_baja = now();
+                        $asignacionActual->save();
+                        
+                        AsignacionNino::create([
+                            'asn_nin_id' => $id,
+                            'asn_grp_id' => $request->grupo_id,
+                            'asn_fecha_asignacion' => now(),
+                            'asn_estado' => 'activo',
+                            'asn_observaciones' => 'Cambio de grupo'
+                        ]);
+                    }
+                } else {
+                    // Si no tiene asignación activa, crear una nueva
+                    AsignacionNino::create([
+                        'asn_nin_id' => $id,
+                        'asn_grp_id' => $request->grupo_id,
+                        'asn_fecha_asignacion' => now(),
+                        'asn_estado' => 'activo',
+                        'asn_observaciones' => 'Nueva asignación'
+                    ]);
+                }
+            }
+            
+            DB::commit();
+            return response()->json([
+                'success' => true,
+                'message' => 'Datos del niño actualizados exitosamente',
+                'data' => $nino
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            \Log::error('Error al actualizar niño: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al actualizar el niño: ' . $e->getMessage()
+            ], 500);
         }
-
-        $nino->update($data);
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Datos del niño actualizados exitosamente',
-            'data' => $nino
-        ]);
     }
 
     public function destroy($id)

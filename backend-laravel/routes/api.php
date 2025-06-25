@@ -58,6 +58,9 @@ Route::middleware('api')->group(function () {
         Route::post('/asignar-nino', [AsignacionNinoController::class, 'asignarNino']);
         Route::put('/asignaciones/{asignacionId}/baja', [AsignacionNinoController::class, 'darDeBaja']);
         Route::get('/ninos/disponibles', [AsignacionNinoController::class, 'getNinosDisponibles']);
+        
+        // Rutas para grupos y niños
+        Route::get('grupos/{id}/ninos', [GrupoController::class, 'getNinosPorGrupo']);
     });
 
     // Rutas para el personal

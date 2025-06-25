@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Grupo;
 use App\Models\Personal;
+use App\Models\AsignacionNino;
+use App\Models\Nino;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
@@ -174,5 +176,47 @@ class GrupoController extends Controller
         });
         
         return response()->json($responsables);
+    }
+    
+    public function getNinosPorGrupo($id)
+    {
+        $grupo = Grupo::find($id);
+        
+        if (!$grupo) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Grupo no encontrado'
+            ], 404);
+        }
+        
+        $asignaciones = AsignacionNino::where('asn_grp_id', $id)
+            ->where('asn_estado', 'activo')
+            ->whereNull('asn_fecha_baja')
+            ->get();
+        
+        $ninos = [];
+        
+        foreach ($asignaciones as $asignacion) {
+            $nino = Nino::find($asignacion->asn_nin_id);
+            if ($nino) {
+                $ninos[] = [
+                    'ninoId' => $nino->nin_id,
+                    'nombre' => $nino->nin_nombre,
+                    'apellido' => $nino->nin_apellido,
+                    'edad' => $nino->nin_edad,
+                    'genero' => $nino->nin_genero,
+                    'foto' => $nino->nin_foto,
+                    'estado' => $nino->nin_estado,
+                    'asignacionId' => $asignacion->asn_id,
+                    'fechaAsignacion' => $asignacion->asn_fecha_asignacion,
+                    'estado' => $asignacion->asn_estado
+                ];
+            }
+        }
+        
+        return response()->json([
+            'success' => true,
+            'data' => $ninos
+        ]);
     }
 }

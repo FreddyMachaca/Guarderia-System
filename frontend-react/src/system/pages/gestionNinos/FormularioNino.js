@@ -164,6 +164,11 @@ const FormularioNino = ({ nino, onVolver }) => {
         }
       });
 
+      // Si hay seleccionado un grupo, agregarlo como grupo_id para que el backend lo procese
+      if (formData.asn_grp_id) {
+        formDataToSend.append('grupo_id', formData.asn_grp_id);
+      }
+
       if (foto) {
         formDataToSend.append('nin_foto', foto);
       }

@@ -23,7 +23,17 @@ const ViewGrupo = ({ grupo, onVolver }) => {
         
         const ninosResponse = await get(`/grupos/${grupo.grp_id}/ninos`);
         if (ninosResponse.success && ninosResponse.data) {
-          setNinosAsignados(ninosResponse.data);
+          const ninos = Array.isArray(ninosResponse.data) ? ninosResponse.data : [];
+          const ninosFormateados = ninos.filter(nino => nino.estado === 'activo').map(nino => ({
+            nin_id: nino.ninoId,
+            nin_nombre: nino.nombre,
+            nin_apellido: nino.apellido,
+            nin_edad: nino.edad,
+            nin_genero: nino.genero || 'masculino',
+            nin_estado: 'activo',
+            nin_foto: nino.foto || null
+          }));
+          setNinosAsignados(ninosFormateados);
         } else {
           setNinosAsignados([]);
         }
