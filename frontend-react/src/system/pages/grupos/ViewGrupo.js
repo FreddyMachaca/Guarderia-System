@@ -18,22 +18,19 @@ const ViewGrupo = ({ grupo, onVolver }) => {
     setLoading(true);
     try {
       const response = await get(`/grupos/${grupo.grp_id}`);
-      if (response.success && response.data) {
-        setGrupoData(response.data);
+      if (response) {
+        setGrupoData(response);
         
-        const ninosResponse = await get(`/grupos/${grupo.grp_id}/ninos`);
-        if (ninosResponse.success && ninosResponse.data) {
-          const ninos = Array.isArray(ninosResponse.data) ? ninosResponse.data : [];
-          const ninosFormateados = ninos.filter(nino => nino.estado === 'activo').map(nino => ({
+        if (response.ninosAsignados && Array.isArray(response.ninosAsignados)) {
+          setNinosAsignados(response.ninosAsignados.map(nino => ({
             nin_id: nino.ninoId,
-            nin_nombre: nino.nombre,
-            nin_apellido: nino.apellido,
+            nin_nombre: nino.nombre.split(' ')[0] || '',
+            nin_apellido: nino.nombre.split(' ').slice(1).join(' ') || '',
             nin_edad: nino.edad,
             nin_genero: nino.genero || 'masculino',
             nin_estado: 'activo',
             nin_foto: nino.foto || null
-          }));
-          setNinosAsignados(ninosFormateados);
+          })));
         } else {
           setNinosAsignados([]);
         }
@@ -51,8 +48,8 @@ const ViewGrupo = ({ grupo, onVolver }) => {
   };
 
   const calculaOcupacion = () => {
-    if (!grupoData || !grupoData.grp_capacidad) return 0;
-    return (ninosAsignados.length / grupoData.grp_capacidad) * 100;
+    if (!grupoData || !grupoData.capacidad) return 0;
+    return (ninosAsignados.length / grupoData.capacidad) * 100;
   };
 
   const ocupacion = calculaOcupacion();
@@ -84,16 +81,16 @@ const ViewGrupo = ({ grupo, onVolver }) => {
             <i className="pi pi-building"></i>
           </div>
           <div className="grupo-info-principal">
-            <h3>{grupoData.grp_nombre}</h3>
+            <h3>{grupoData.nombre}</h3>
             <div className="status-badge">
-              <span className={`estado-badge ${grupoData.grp_estado || 'activo'}`}>
-                {grupoData.grp_estado || 'activo'}
+              <span className={`estado-badge ${grupoData.estado || 'activo'}`}>
+                {grupoData.estado || 'activo'}
               </span>
             </div>
             <div className="info-group">
-              <p><i className="pi pi-users"></i> <strong>Rango de edad:</strong> {grupoData.grp_edad_minima} - {grupoData.grp_edad_maxima} años</p>
-              <p><i className="pi pi-th-large"></i> <strong>Capacidad:</strong> {grupoData.grp_capacidad} niños</p>
-              <p><i className="pi pi-user"></i> <strong>Educador:</strong> {grupoData.grp_educador || 'No asignado'}</p>
+              <p><i className="pi pi-users"></i> <strong>Rango de edad:</strong> {grupoData.edadMinima} - {grupoData.edadMaxima} años</p>
+              <p><i className="pi pi-th-large"></i> <strong>Capacidad:</strong> {grupoData.capacidad} niños</p>
+              <p><i className="pi pi-user"></i> <strong>Educador:</strong> {grupoData.responsable ? grupoData.responsable.nombre : 'No asignado'}</p>
             </div>
           </div>
           <div className="ocupacion-container">
@@ -103,7 +100,7 @@ const ViewGrupo = ({ grupo, onVolver }) => {
               <div className="ocupacion-texto">{Math.round(ocupacion)}%</div>
             </div>
             <div className="ocupacion-detalle">
-              {ninosAsignados.length} de {grupoData.grp_capacidad} niños
+              {ninosAsignados.length} de {grupoData.capacidad} niños
             </div>
           </div>
         </div>
@@ -112,8 +109,8 @@ const ViewGrupo = ({ grupo, onVolver }) => {
           <div className="grupo-view-section">
             <h4><i className="pi pi-info-circle"></i> Información General</h4>
             <div className="info-detail">
-              <p><strong>Descripción:</strong> {grupoData.grp_descripcion || 'Sin descripción'}</p>
-              <p><strong>Estado:</strong> {grupoData.grp_estado || 'Activo'}</p>
+              <p><strong>Descripción:</strong> {grupoData.descripcion || 'Sin descripción'}</p>
+              <p><strong>Estado:</strong> {grupoData.estado || 'Activo'}</p>
             </div>
           </div>
 
