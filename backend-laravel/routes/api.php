@@ -7,6 +7,7 @@ use App\Http\Controllers\NinoController;
 use App\Http\Controllers\GrupoController;
 use App\Http\Controllers\AsignacionNinoController;
 use App\Http\Controllers\PersonalController;
+use App\Http\Controllers\PadreController;
 
 /*
 |--------------------------------------------------------------------------
@@ -41,6 +42,16 @@ Route::middleware('api')->group(function () {
         Route::delete('/{id}', [NinoController::class, 'destroy']);
         Route::post('/{id}/asignar-grupo', [NinoController::class, 'asignarGrupo']);
         Route::delete('/{id}/remover-grupo', [NinoController::class, 'removerGrupo']);
+    });
+
+    // Rutas para el módulo de Padres/Tutores
+    Route::prefix('padres')->group(function () {
+        Route::get('/', [PadreController::class, 'index']);
+        Route::post('/', [PadreController::class, 'store']);
+        Route::get('/{id}', [PadreController::class, 'show']);
+        Route::put('/{id}', [PadreController::class, 'update']);
+        Route::delete('/{id}', [PadreController::class, 'destroy']);
+        Route::put('/{id}/reset-password', [PadreController::class, 'resetPassword']);
     });
 
     // Rutas para el módulo de Grupos/Aulas

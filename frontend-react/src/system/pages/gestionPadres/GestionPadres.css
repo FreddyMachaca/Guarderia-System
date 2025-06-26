@@ -1,0 +1,311 @@
+.gestion-padres {
+  display: flex;
+  min-height: 100vh;
+  background-color: #f5f5f5;
+  font-family: 'Poppins', 'Arial', sans-serif;
+}
+
+.lista-padres {
+  background: white;
+  border-radius: 10px;
+  padding: 30px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  width: 100%;
+}
+
+.padre-card {
+  background: white;
+  border: 2px solid #f0f0f0;
+  border-radius: 12px;
+  padding: 20px;
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+}
+
+.padre-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  border-color: #ff6b35;
+}
+
+.padre-icon {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #ff6b35, #e55a2b);
+  color: white;
+  font-size: 2rem;
+  margin-bottom: 15px;
+}
+
+.padre-info {
+  text-align: center;
+  margin-bottom: 15px;
+  flex: 1;
+}
+
+.padre-info h3 {
+  margin: 0 0 10px 0;
+  color: #333;
+  font-size: 1.3rem;
+}
+
+.padre-info p {
+  margin: 5px 0;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.padre-actions {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: auto;
+}
+
+.formulario-padre {
+  background: white;
+  border-radius: 10px;
+  padding: 30px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  max-width: 800px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.padre-form {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.password-input-container {
+  position: relative;
+}
+
+.password-input-container input {
+  padding-right: 50px;
+}
+
+.password-toggle {
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #666;
+  font-size: 1rem;
+  transition: color 0.2s ease;
+}
+
+.password-toggle:hover {
+  color: #ff6b35;
+}
+
+.view-padre {
+  background: white;
+  border-radius: 10px;
+  padding: 30px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  max-width: 1000px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.padre-view-content {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.padre-view-section {
+  background: #fafafa;
+  padding: 25px;
+  border-radius: 10px;
+  border: 1px solid #e0e0e0;
+}
+
+.padre-view-section h4 {
+  margin: 0 0 20px 0;
+  color: #333;
+  font-size: 1.2rem;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #ff6b35;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.padre-view-section h4 i {
+  color: #ff6b35;
+}
+
+.padre-view-section.perfil {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 30px;
+  align-items: center;
+  background: linear-gradient(to right, #fff, #f8f8f8);
+}
+
+.padre-icon-large {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #ff6b35, #e55a2b);
+  color: white;
+  font-size: 3rem;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.padre-info-principal h3 {
+  font-size: 1.8rem;
+  margin: 0 0 10px 0;
+  color: #333;
+}
+
+.password-actions {
+  margin-top: 15px;
+}
+
+.btn-reset-password {
+  background: #28a745;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+}
+
+.btn-reset-password:hover {
+  background: #218838;
+  transform: translateY(-2px);
+}
+
+.reset-password-form {
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 8px;
+  border: 1px solid #dee2e6;
+  margin-top: 10px;
+}
+
+.reset-password-form .form-group {
+  margin-bottom: 15px;
+}
+
+.reset-password-form label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 600;
+  color: #333;
+}
+
+.reset-password-form input {
+  width: 100%;
+  padding: 10px 15px;
+  border: 2px solid #e0e0e0;
+  border-radius: 6px;
+  font-size: 1rem;
+  transition: border-color 0.2s ease;
+}
+
+.reset-password-form input:focus {
+  outline: none;
+  border-color: #ff6b35;
+  box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+}
+
+.reset-password-form .form-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.ninos-asociados {
+  margin-top: 15px;
+}
+
+.ninos-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.nino-item {
+  display: flex;
+  align-items: center;
+  padding: 15px;
+  border-radius: 8px;
+  background: white;
+  border: 1px solid #e0e0e0;
+  transition: all 0.2s ease;
+}
+
+.nino-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+}
+
+.nino-info {
+  flex: 1;
+}
+
+.nino-name {
+  font-weight: 600;
+  color: #333;
+  font-size: 1rem;
+  margin-bottom: 5px;
+}
+
+.nino-details {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.nino-details .estado {
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.nino-details .estado.activo {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.nino-details .estado.inactivo {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+@media (max-width: 768px) {
+  .padre-view-section.perfil {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+  
+  .padre-icon-large {
+    margin: 0 auto 20px;
+  }
+  
+  .info-group p {
+    justify-content: center;
+  }
+}

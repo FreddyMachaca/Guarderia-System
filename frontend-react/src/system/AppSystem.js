@@ -5,6 +5,7 @@ import Dashboard from './pages/dashboard/Dashboard';
 import ParentDashboard from './pages/dashboard/ParentDashboard';
 import GestionNinos from './pages/gestionNinos/GestionNinos';
 import GestionGrupos from './pages/grupos/GestionGrupos';
+import GestionPadres from './pages/gestionPadres/GestionPadres';
 import './System.css';
 
 const AppSystem = () => {
@@ -24,6 +25,7 @@ const AppSystem = () => {
         <Route path="/parent" element={<ParentDashboard />} />
         <Route path="/gestion-ninos" element={<GestionNinos />} />
         <Route path="/grupos" element={<GestionGrupos />} />
+        <Route path="/padres" element={<GestionPadres />} />
         
         <Route path="/" element={
           userType === 'parent' ? 

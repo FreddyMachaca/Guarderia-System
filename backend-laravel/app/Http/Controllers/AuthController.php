@@ -18,7 +18,7 @@ class AuthController extends Controller
 
         $user = DB::table('tbl_usr_usuarios')
             ->where('usr_email', $request->email)
-            ->where('usr_tipo', 'familiar')
+            ->where('usr_tipo', 'Tutor')
             ->where('usr_estado', 'activo')
             ->first();
 

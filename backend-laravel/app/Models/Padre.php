@@ -47,11 +47,22 @@ class Padre extends Model
                 })
                 ->get()
                 ->map(function($padre) {
+                    // Validación adicional de seguridad
+                    $usuario = $padre->usuario;
+                    if (!$usuario) {
+                        return [
+                            'pdr_id' => $padre->pdr_id,
+                            'nombre_completo' => 'Usuario sin datos',
+                            'usr_email' => 'No disponible',
+                            'usr_telefono' => ''
+                        ];
+                    }
+                    
                     return [
                         'pdr_id' => $padre->pdr_id,
-                        'nombre_completo' => $padre->usuario->usr_nombre . ' ' . $padre->usuario->usr_apellido,
-                        'usr_email' => $padre->usuario->usr_email,
-                        'usr_telefono' => $padre->usuario->usr_telefono ?? ''
+                        'nombre_completo' => $usuario->usr_nombre . ' ' . $usuario->usr_apellido,
+                        'usr_email' => $usuario->usr_email,
+                        'usr_telefono' => $usuario->usr_telefono ?? ''
                     ];
                 });
         } catch (\Exception $e) {
