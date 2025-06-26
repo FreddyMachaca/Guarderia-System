@@ -54,14 +54,38 @@ class Nino extends Model
     public function getTutorLegalAttribute()
     {
         $relacion = $this->relacionesPadres()
-                         ->with('padre.usuario')
+                         ->with(['padre.usuario'])
                          ->first();
         
         if ($relacion && $relacion->padre && $relacion->padre->usuario) {
             return [
                 'id' => $relacion->padre->pdr_id,
                 'nombre_completo' => $relacion->padre->usuario->usr_nombre . ' ' . $relacion->padre->usuario->usr_apellido,
-                'parentesco' => $relacion->rel_parentesco
+                'parentesco' => $relacion->rel_parentesco,
+                'email' => $relacion->padre->usuario->usr_email,
+                'telefono' => $relacion->padre->usuario->usr_telefono,
+                'direccion' => $relacion->padre->pdr_direccion,
+                'ci' => $relacion->padre->pdr_ci,
+                'ci_ext' => $relacion->padre->pdr_ci_ext,
+                'contacto_emergencia' => $relacion->padre->pdr_contacto_emergencia,
+                'ocupacion' => $relacion->padre->pdr_ocupacion
+            ];
+        }
+        
+        return null;
+    }
+
+    public function getPrimerTutorAttribute()
+    {
+        $relacion = $this->relacionesPadres()
+                         ->with(['padre.usuario'])
+                         ->first();
+        
+        if ($relacion && $relacion->padre && $relacion->padre->usuario) {
+            return [
+                'pdr_id' => $relacion->padre->pdr_id,
+                'parentesco' => $relacion->rel_parentesco,
+                'nombre_completo' => $relacion->padre->usuario->usr_nombre . ' ' . $relacion->padre->usuario->usr_apellido
             ];
         }
         

@@ -25,7 +25,10 @@ class NinoController extends Controller
         $search = $request->query('search', '');
         $grupo = $request->query('grupo', '');
         
-        $query = Nino::with(['relacionesPadres.padre.usuario']);
+        $query = Nino::with([
+            'relacionesPadres.padre.usuario',
+            'asignacionActual.grupo'
+        ]);
         
         $query->where('nin_estado', $mostrarInactivos ? 'inactivo' : 'activo');
         
@@ -47,6 +50,7 @@ class NinoController extends Controller
         foreach ($result['data'] as $nino) {
             $nino->grupo_actual = $this->getGrupoActual($nino->nin_id);
             $nino->nin_tutor_legal = $nino->tutor_legal;
+            $nino->primer_tutor = $nino->primer_tutor;
         }
 
         return response()->json([
@@ -151,7 +155,8 @@ class NinoController extends Controller
             'relacionesPadres.padre.usuario',
             'relacionesPadres.padre' => function($query) {
                 $query->select('pdr_id', 'pdr_usr_id', 'pdr_direccion', 'pdr_ocupacion', 'pdr_contacto_emergencia', 'pdr_ci', 'pdr_ci_ext', 'pdr_estado');
-            }
+            },
+            'asignacionActual.grupo'
         ])->find($id);
 
         if (!$nino) {
@@ -164,6 +169,7 @@ class NinoController extends Controller
         $nino->grupo_actual = $this->getGrupoActual($id);
         $nino->historial_grupos = $this->getHistorialGrupos($id);
         $nino->nin_tutor_legal = $nino->tutor_legal;
+        $nino->primer_tutor = $nino->primer_tutor;
 
         return response()->json([
             'success' => true,
@@ -436,6 +442,7 @@ class NinoController extends Controller
     {
         $asignacion = AsignacionNino::where('asn_nin_id', $ninoId)
                                    ->where('asn_estado', 'activo')
+                                   ->whereNull('asn_fecha_baja')
                                    ->first();
 
         if ($asignacion) {

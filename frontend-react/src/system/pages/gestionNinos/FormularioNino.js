@@ -49,13 +49,16 @@ const FormularioNino = ({ nino, onVolver }) => {
         }
       };
 
-      const tutorLegalId = nino.relacionesPadres && nino.relacionesPadres.length > 0 
-        ? nino.relacionesPadres[0].rel_pdr_id 
-        : '';
+      let tutorLegalId = '';
+      let parentesco = '';
 
-      const parentesco = nino.relacionesPadres && nino.relacionesPadres.length > 0 
-        ? nino.relacionesPadres[0].rel_parentesco 
-        : '';
+      if (nino.relacionesPadres && nino.relacionesPadres.length > 0) {
+        tutorLegalId = nino.relacionesPadres[0].rel_pdr_id;
+        parentesco = nino.relacionesPadres[0].rel_parentesco;
+      } else if (nino.primer_tutor) {
+        tutorLegalId = nino.primer_tutor.pdr_id;
+        parentesco = nino.primer_tutor.parentesco;
+      }
 
       setFormData({
         nin_nombre: nino.nin_nombre || '',

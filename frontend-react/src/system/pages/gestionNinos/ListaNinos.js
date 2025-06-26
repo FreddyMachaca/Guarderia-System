@@ -111,12 +111,22 @@ const ListaNinos = ({ onAgregarNino, onEditarNino, onVerNino }) => {
   };
   
   const renderNinoCard = (nino) => {
-    const tutorInfo = nino.relacionesPadres && nino.relacionesPadres.length > 0 
-      ? {
-          nombre: `${nino.relacionesPadres[0].padre.usuario.usr_nombre} ${nino.relacionesPadres[0].padre.usuario.usr_apellido}`,
-          parentesco: nino.relacionesPadres[0].rel_parentesco
-        }
-      : null;
+    let tutorInfo = null;
+
+    if (nino.relacionesPadres && nino.relacionesPadres.length > 0) {
+      const relacion = nino.relacionesPadres[0];
+      if (relacion.padre && relacion.padre.usuario) {
+        tutorInfo = {
+          nombre: `${relacion.padre.usuario.usr_nombre} ${relacion.padre.usuario.usr_apellido}`,
+          parentesco: relacion.rel_parentesco
+        };
+      }
+    } else if (nino.primer_tutor) {
+      tutorInfo = {
+        nombre: nino.primer_tutor.nombre_completo,
+        parentesco: nino.primer_tutor.parentesco
+      };
+    }
 
     return (
       <div key={nino.nin_id} className="nino-card">
@@ -196,9 +206,13 @@ const ListaNinos = ({ onAgregarNino, onEditarNino, onVerNino }) => {
       render: (nino) => {
         if (nino.relacionesPadres && nino.relacionesPadres.length > 0) {
           const relacion = nino.relacionesPadres[0];
-          const nombre = `${relacion.padre.usuario.usr_nombre} ${relacion.padre.usuario.usr_apellido}`;
-          const parentesco = relacion.rel_parentesco;
-          return `${nombre} (${parentesco})`;
+          if (relacion.padre && relacion.padre.usuario) {
+            const nombre = `${relacion.padre.usuario.usr_nombre} ${relacion.padre.usuario.usr_apellido}`;
+            const parentesco = relacion.rel_parentesco;
+            return `${nombre} (${parentesco})`;
+          }
+        } else if (nino.primer_tutor) {
+          return `${nino.primer_tutor.nombre_completo} (${nino.primer_tutor.parentesco})`;
         }
         return 'No asignado';
       }

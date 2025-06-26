@@ -56,6 +56,19 @@ const ViewNinos = ({ nino, onVolver }) => {
         ocupacion: padre.pdr_ocupacion || 'No registrada',
         parentesco: relacion.rel_parentesco || 'No especificado'
       };
+    } else if (ninoData.nin_tutor_legal) {
+      return {
+        nombre_completo: ninoData.nin_tutor_legal.nombre_completo || 'No disponible',
+        direccion: ninoData.nin_tutor_legal.direccion || 'No registrada',
+        ci: ninoData.nin_tutor_legal.ci && ninoData.nin_tutor_legal.ci_ext 
+          ? `${ninoData.nin_tutor_legal.ci} ${ninoData.nin_tutor_legal.ci_ext}` 
+          : 'No registrado',
+        telefono: ninoData.nin_tutor_legal.telefono || 'No registrado',
+        email: ninoData.nin_tutor_legal.email || 'No registrado',
+        contacto_emergencia: ninoData.nin_tutor_legal.contacto_emergencia || 'No registrado',
+        ocupacion: ninoData.nin_tutor_legal.ocupacion || 'No registrada',
+        parentesco: ninoData.nin_tutor_legal.parentesco || 'No especificado'
+      };
     }
     return null;
   };
