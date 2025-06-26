@@ -62,9 +62,10 @@ class NinoController extends Controller
             'nin_nombre' => 'required|string|max:100',
             'nin_apellido' => 'required|string|max:100',
             'nin_fecha_nacimiento' => 'required|date',
-            'nin_edad' => 'required|integer|min:0|max:10',
+            'nin_edad' => 'required|integer|min:0',
             'nin_genero' => 'required|in:masculino,femenino',
             'nin_tutor_legal' => 'required|integer|exists:tbl_pdr_padres,pdr_id',
+            'rel_parentesco' => 'required|string|max:50',
             'nin_foto' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             'nin_alergias' => 'nullable|string',
             'nin_medicamentos' => 'nullable|string',
@@ -81,7 +82,7 @@ class NinoController extends Controller
 
         DB::beginTransaction();
         try {
-            $data = $request->except(['nin_tutor_legal', 'grupo_id']);
+            $data = $request->except(['nin_tutor_legal', 'rel_parentesco', 'grupo_id']);
             $data['nin_fecha_inscripcion'] = now();
             $data['nin_estado'] = 'activo';
 
@@ -97,7 +98,7 @@ class NinoController extends Controller
             RelacionPadreNino::create([
                 'rel_pdr_id' => $request->nin_tutor_legal,
                 'rel_nin_id' => $nino->nin_id,
-                'rel_parentesco' => 'tutor'
+                'rel_parentesco' => $request->rel_parentesco
             ]);
 
             if ($request->filled('grupo_id')) {
@@ -185,9 +186,10 @@ class NinoController extends Controller
             'nin_nombre' => 'required|string|max:100',
             'nin_apellido' => 'required|string|max:100',
             'nin_fecha_nacimiento' => 'required|date',
-            'nin_edad' => 'required|integer|min:0|max:10',
+            'nin_edad' => 'required|integer|min:0',
             'nin_genero' => 'required|in:masculino,femenino',
             'nin_tutor_legal' => 'nullable|integer|exists:tbl_pdr_padres,pdr_id',
+            'rel_parentesco' => 'required_with:nin_tutor_legal|string|max:50',
             'nin_foto' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             'nin_alergias' => 'nullable|string',
             'nin_medicamentos' => 'nullable|string',
@@ -205,7 +207,7 @@ class NinoController extends Controller
 
         DB::beginTransaction();
         try {
-            $data = $request->except(['nin_tutor_legal', 'grupo_id']);
+            $data = $request->except(['nin_tutor_legal', 'rel_parentesco', 'grupo_id']);
 
             if ($request->hasFile('nin_foto')) {
                 if ($nino->nin_foto && Storage::disk('public')->exists($nino->nin_foto)) {
@@ -221,19 +223,13 @@ class NinoController extends Controller
             $nino->update($data);
 
             if ($request->filled('nin_tutor_legal')) {
-                $relacionExistente = RelacionPadreNino::where('rel_nin_id', $id)->first();
+                RelacionPadreNino::where('rel_nin_id', $id)->delete();
                 
-                if ($relacionExistente) {
-                    $relacionExistente->update([
-                        'rel_pdr_id' => $request->nin_tutor_legal
-                    ]);
-                } else {
-                    RelacionPadreNino::create([
-                        'rel_pdr_id' => $request->nin_tutor_legal,
-                        'rel_nin_id' => $id,
-                        'rel_parentesco' => 'tutor'
-                    ]);
-                }
+                RelacionPadreNino::create([
+                    'rel_pdr_id' => $request->nin_tutor_legal,
+                    'rel_nin_id' => $id,
+                    'rel_parentesco' => $request->rel_parentesco
+                ]);
             }
 
             if ($request->filled('grupo_id')) {

@@ -54,7 +54,7 @@ const ViewNinos = ({ nino, onVolver }) => {
         email: usuario.usr_email || 'No registrado',
         contacto_emergencia: padre.pdr_contacto_emergencia || 'No registrado',
         ocupacion: padre.pdr_ocupacion || 'No registrada',
-        parentesco: relacion.rel_parentesco || 'tutor'
+        parentesco: relacion.rel_parentesco || 'No especificado'
       };
     }
     return null;
@@ -133,7 +133,7 @@ const ViewNinos = ({ nino, onVolver }) => {
               <div className="info-detail tutor-info">
                 <div className="tutor-card">
                   <h5>{tutorInfo.nombre_completo}</h5>
-                  <p><i className="pi pi-id-card"></i> <strong>Parentesco:</strong> {tutorInfo.parentesco}</p>
+                  <p><i className="pi pi-heart"></i> <strong>Parentesco:</strong> {tutorInfo.parentesco}</p>
                   <p><i className="pi pi-id-card"></i> <strong>Cédula de Identidad:</strong> {tutorInfo.ci}</p>
                   <p><i className="pi pi-phone"></i> <strong>Teléfono:</strong> {tutorInfo.telefono}</p>
                   <p><i className="pi pi-envelope"></i> <strong>Email:</strong> {tutorInfo.email}</p>

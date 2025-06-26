@@ -11,6 +11,7 @@ const FormularioNino = ({ nino, onVolver }) => {
     nin_edad: '',
     nin_genero: '',
     nin_tutor_legal: '',
+    rel_parentesco: '',
     nin_alergias: '',
     nin_medicamentos: '',
     nin_observaciones: '',
@@ -23,6 +24,7 @@ const FormularioNino = ({ nino, onVolver }) => {
   const [padres, setPadres] = useState([]);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
+  const [showParentesco, setShowParentesco] = useState(false);
 
   useEffect(() => {
     cargarGrupos();
@@ -51,6 +53,10 @@ const FormularioNino = ({ nino, onVolver }) => {
         ? nino.relacionesPadres[0].rel_pdr_id 
         : '';
 
+      const parentesco = nino.relacionesPadres && nino.relacionesPadres.length > 0 
+        ? nino.relacionesPadres[0].rel_parentesco 
+        : '';
+
       setFormData({
         nin_nombre: nino.nin_nombre || '',
         nin_apellido: nino.nin_apellido || '',
@@ -58,12 +64,15 @@ const FormularioNino = ({ nino, onVolver }) => {
         nin_edad: nino.nin_edad || '',
         nin_genero: nino.nin_genero || '',
         nin_tutor_legal: tutorLegalId,
+        rel_parentesco: parentesco,
         nin_alergias: nino.nin_alergias || '',
         nin_medicamentos: nino.nin_medicamentos || '',
         nin_observaciones: nino.nin_observaciones || '',
         nin_estado: nino.nin_estado || 'activo',
         asn_grp_id: nino.grupo_actual ? nino.grupo_actual.grp_id : ''
       });
+
+      setShowParentesco(!!tutorLegalId);
       
       if (nino.nin_foto) {
         setPreviewFoto(`${process.env.REACT_APP_API_URL}storage/${nino.nin_foto}`);
@@ -100,6 +109,16 @@ const FormularioNino = ({ nino, onVolver }) => {
       ...prev,
       [name]: value
     }));
+
+    if (name === 'nin_tutor_legal') {
+      setShowParentesco(!!value);
+      if (!value) {
+        setFormData(prev => ({
+          ...prev,
+          rel_parentesco: ''
+        }));
+      }
+    }
 
     if (name === 'nin_fecha_nacimiento' && value) {
       const edad = calcularEdad(value);
@@ -150,6 +169,7 @@ const FormularioNino = ({ nino, onVolver }) => {
     if (!formData.nin_fecha_nacimiento) newErrors.nin_fecha_nacimiento = 'La fecha de nacimiento es requerida';
     if (!formData.nin_genero) newErrors.nin_genero = 'El género es requerido';
     if (!formData.nin_tutor_legal) newErrors.nin_tutor_legal = 'El tutor legal es requerido';
+    if (formData.nin_tutor_legal && !formData.rel_parentesco.trim()) newErrors.rel_parentesco = 'El parentesco es requerido';
 
     // Validar rango de edad si se selecciona un grupo
     if (formData.asn_grp_id && formData.nin_edad) {
@@ -332,6 +352,29 @@ const FormularioNino = ({ nino, onVolver }) => {
             </select>
             {errors.nin_tutor_legal && <span className="error-text">{errors.nin_tutor_legal}</span>}
           </div>
+
+          {showParentesco && (
+            <div className="form-group">
+              <label>Parentesco *</label>
+              <select
+                name="rel_parentesco"
+                value={formData.rel_parentesco}
+                onChange={handleInputChange}
+                className={errors.rel_parentesco ? 'error' : ''}
+              >
+                <option value="">Seleccionar parentesco</option>
+                <option value="padre">Padre</option>
+                <option value="madre">Madre</option>
+                <option value="abuelo">Abuelo</option>
+                <option value="abuela">Abuela</option>
+                <option value="tio">Tío</option>
+                <option value="tia">Tía</option>
+                <option value="tutor">Tutor Legal</option>
+                <option value="otro">Otro</option>
+              </select>
+              {errors.rel_parentesco && <span className="error-text">{errors.rel_parentesco}</span>}
+            </div>
+          )}
         </div>
 
         <div className="form-section">

@@ -111,9 +111,12 @@ const ListaNinos = ({ onAgregarNino, onEditarNino, onVerNino }) => {
   };
   
   const renderNinoCard = (nino) => {
-    const tutorLegal = nino.relacionesPadres && nino.relacionesPadres.length > 0 
-      ? `${nino.relacionesPadres[0].padre.usuario.usr_nombre} ${nino.relacionesPadres[0].padre.usuario.usr_apellido}`
-      : 'No asignado';
+    const tutorInfo = nino.relacionesPadres && nino.relacionesPadres.length > 0 
+      ? {
+          nombre: `${nino.relacionesPadres[0].padre.usuario.usr_nombre} ${nino.relacionesPadres[0].padre.usuario.usr_apellido}`,
+          parentesco: nino.relacionesPadres[0].rel_parentesco
+        }
+      : null;
 
     return (
       <div key={nino.nin_id} className="nino-card">
@@ -129,7 +132,14 @@ const ListaNinos = ({ onAgregarNino, onEditarNino, onVerNino }) => {
         <div className="nino-info">
           <h3>{nino.nin_nombre} {nino.nin_apellido}</h3>
           <p><strong>Edad:</strong> {nino.nin_edad} años</p>
-          <p><strong>Tutor:</strong> {tutorLegal}</p>
+          {tutorInfo ? (
+            <>
+              <p><strong>Tutor:</strong> {tutorInfo.nombre}</p>
+              <p><strong>Parentesco:</strong> {tutorInfo.parentesco}</p>
+            </>
+          ) : (
+            <p><strong>Tutor:</strong> No asignado</p>
+          )}
           <p><strong>Estado:</strong> 
             <span className={`estado ${nino.nin_estado}`}>
               {nino.nin_estado || 'activo'}
@@ -184,9 +194,13 @@ const ListaNinos = ({ onAgregarNino, onEditarNino, onVerNino }) => {
     {
       header: 'Tutor Legal',
       render: (nino) => {
-        return nino.relacionesPadres && nino.relacionesPadres.length > 0 
-          ? `${nino.relacionesPadres[0].padre.usuario.usr_nombre} ${nino.relacionesPadres[0].padre.usuario.usr_apellido}`
-          : 'No asignado';
+        if (nino.relacionesPadres && nino.relacionesPadres.length > 0) {
+          const relacion = nino.relacionesPadres[0];
+          const nombre = `${relacion.padre.usuario.usr_nombre} ${relacion.padre.usuario.usr_apellido}`;
+          const parentesco = relacion.rel_parentesco;
+          return `${nombre} (${parentesco})`;
+        }
+        return 'No asignado';
       }
     },
     {
