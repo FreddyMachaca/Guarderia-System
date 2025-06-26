@@ -6,8 +6,6 @@ const ViewNinos = ({ nino, onVolver }) => {
   const { get } = useApi();
   const [ninoData, setNinoData] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [historialAsistencia, setHistorialAsistencia] = useState([]);
-  const [historialPagos, setHistorialPagos] = useState([]);
 
   useEffect(() => {
     if (nino) {
@@ -21,16 +19,6 @@ const ViewNinos = ({ nino, onVolver }) => {
       const response = await get(`/ninos/${nino.nin_id}`);
       if (response.success && response.data) {
         setNinoData(response.data);
-        
-        const asistenciaResponse = await get(`/asistencia/nino/${nino.nin_id}`);
-        if (asistenciaResponse.success && asistenciaResponse.data) {
-          setHistorialAsistencia(asistenciaResponse.data);
-        }
-        
-        const pagosResponse = await get(`/pagos/nino/${nino.nin_id}`);
-        if (pagosResponse.success && pagosResponse.data) {
-          setHistorialPagos(pagosResponse.data);
-        }
       } else {
         setNinoData(nino);
       }
@@ -52,6 +40,26 @@ const ViewNinos = ({ nino, onVolver }) => {
     });
   };
 
+  const getTutorLegalInfo = () => {
+    if (ninoData.relacionesPadres && ninoData.relacionesPadres.length > 0) {
+      const relacion = ninoData.relacionesPadres[0];
+      const padre = relacion.padre;
+      const usuario = padre.usuario;
+      
+      return {
+        nombre_completo: `${usuario.usr_nombre} ${usuario.usr_apellido}`,
+        direccion: padre.pdr_direccion || 'No registrada',
+        ci: padre.pdr_ci && padre.pdr_ci_ext ? `${padre.pdr_ci} ${padre.pdr_ci_ext}` : 'No registrado',
+        telefono: usuario.usr_telefono || 'No registrado',
+        email: usuario.usr_email || 'No registrado',
+        contacto_emergencia: padre.pdr_contacto_emergencia || 'No registrado',
+        ocupacion: padre.pdr_ocupacion || 'No registrada',
+        parentesco: relacion.rel_parentesco || 'tutor'
+      };
+    }
+    return null;
+  };
+
   if (loading) {
     return <div className="loading">Cargando información...</div>;
   }
@@ -59,6 +67,8 @@ const ViewNinos = ({ nino, onVolver }) => {
   if (!ninoData) {
     return <div className="error-message">No se pudo cargar la información del niño.</div>;
   }
+
+  const tutorInfo = getTutorLegalInfo();
 
   return (
     <div className="view-nino">
@@ -112,14 +122,28 @@ const ViewNinos = ({ nino, onVolver }) => {
           <div className="nino-view-section">
             <h4><i className="pi pi-user"></i> Información Personal</h4>
             <div className="info-detail">
-              <p><strong>Tutor Legal:</strong> {
-                ninoData.relacionesPadres && ninoData.relacionesPadres.length > 0 
-                  ? `${ninoData.relacionesPadres[0].padre.usuario.usr_nombre} ${ninoData.relacionesPadres[0].padre.usuario.usr_apellido}`
-                  : 'No asignado'
-              }</p>
               <p><strong>Estado:</strong> {ninoData.nin_estado || 'Activo'}</p>
+              <p><strong>Fecha de Inscripción:</strong> {formatFecha(ninoData.nin_fecha_inscripcion)}</p>
             </div>
           </div>
+
+          {tutorInfo && (
+            <div className="nino-view-section">
+              <h4><i className="pi pi-user-plus"></i> Información del Tutor Legal</h4>
+              <div className="info-detail tutor-info">
+                <div className="tutor-card">
+                  <h5>{tutorInfo.nombre_completo}</h5>
+                  <p><i className="pi pi-id-card"></i> <strong>Parentesco:</strong> {tutorInfo.parentesco}</p>
+                  <p><i className="pi pi-id-card"></i> <strong>Cédula de Identidad:</strong> {tutorInfo.ci}</p>
+                  <p><i className="pi pi-phone"></i> <strong>Teléfono:</strong> {tutorInfo.telefono}</p>
+                  <p><i className="pi pi-envelope"></i> <strong>Email:</strong> {tutorInfo.email}</p>
+                  <p><i className="pi pi-map-marker"></i> <strong>Dirección:</strong> {tutorInfo.direccion}</p>
+                  <p><i className="pi pi-briefcase"></i> <strong>Ocupación:</strong> {tutorInfo.ocupacion}</p>
+                  <p><i className="pi pi-exclamation-triangle"></i> <strong>Contacto de Emergencia:</strong> {tutorInfo.contacto_emergencia}</p>
+                </div>
+              </div>
+            </div>
+          )}
 
           <div className="nino-view-section">
             <h4><i className="pi pi-heart"></i> Información Médica</h4>
@@ -141,79 +165,42 @@ const ViewNinos = ({ nino, onVolver }) => {
               <h4><i className="pi pi-users"></i> Grupo Asignado</h4>
               <div className="info-detail grupo-info">
                 <p><strong>Nombre del Grupo:</strong> {ninoData.grupo_actual.grp_nombre}</p>
-                <p><strong>Edades:</strong> {ninoData.grupo_actual.grp_edad_minima} - {ninoData.grupo_actual.grp_edad_maxima} años</p>
-                <p><strong>Descripción:</strong> {ninoData.grupo_actual.grp_descripcion || 'Sin descripción'}</p>
+                <p><strong>Fecha de Asignación:</strong> {formatFecha(ninoData.grupo_actual.fecha_asignacion)}</p>
               </div>
             </div>
           )}
-          
-          <div className="nino-view-section">
-            <h4><i className="pi pi-calendar"></i> Historial de Asistencia</h4>
-            <div className="historial-table">
-              {historialAsistencia.length > 0 ? (
+
+          {ninoData.historial_grupos && ninoData.historial_grupos.length > 0 && (
+            <div className="nino-view-section">
+              <h4><i className="pi pi-history"></i> Historial de Grupos</h4>
+              <div className="historial-table">
                 <table>
                   <thead>
                     <tr>
-                      <th>Fecha</th>
-                      <th>Entrada</th>
-                      <th>Salida</th>
+                      <th>Grupo</th>
+                      <th>Fecha Asignación</th>
+                      <th>Fecha Baja</th>
                       <th>Estado</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {historialAsistencia.map((asistencia, index) => (
+                    {ninoData.historial_grupos.map((historial, index) => (
                       <tr key={index}>
-                        <td>{formatFecha(asistencia.ast_fecha)}</td>
-                        <td>{asistencia.ast_hora_entrada || 'No registrado'}</td>
-                        <td>{asistencia.ast_hora_salida || 'No registrado'}</td>
+                        <td>{historial.grp_nombre}</td>
+                        <td>{formatFecha(historial.fecha_asignacion)}</td>
+                        <td>{historial.fecha_baja ? formatFecha(historial.fecha_baja) : 'Actual'}</td>
                         <td>
-                          <span className={`estado ${asistencia.ast_estado}`}>
-                            {asistencia.ast_estado || 'pendiente'}
+                          <span className={`estado ${historial.estado}`}>
+                            {historial.estado}
                           </span>
                         </td>
                       </tr>
                     ))}
                   </tbody>
                 </table>
-              ) : (
-                <p className="no-data">No hay registros de asistencia disponibles</p>
-              )}
+              </div>
             </div>
-          </div>
-          
-          <div className="nino-view-section">
-            <h4><i className="pi pi-money-bill"></i> Historial de Pagos</h4>
-            <div className="historial-table">
-              {historialPagos.length > 0 ? (
-                <table>
-                  <thead>
-                    <tr>
-                      <th>Fecha</th>
-                      <th>Concepto</th>
-                      <th>Monto</th>
-                      <th>Estado</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {historialPagos.map((pago, index) => (
-                      <tr key={index}>
-                        <td>{formatFecha(pago.pag_fecha)}</td>
-                        <td>{pago.pag_concepto}</td>
-                        <td>Bs. {pago.pag_monto}</td>
-                        <td>
-                          <span className={`estado ${pago.pag_estado}`}>
-                            {pago.pag_estado}
-                          </span>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              ) : (
-                <p className="no-data">No hay registros de pagos disponibles</p>
-              )}
-            </div>
-          </div>
+          )}
         </div>
       </div>
 

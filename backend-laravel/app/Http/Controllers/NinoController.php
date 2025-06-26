@@ -146,7 +146,12 @@ class NinoController extends Controller
 
     public function show($id)
     {
-        $nino = Nino::with(['relacionesPadres.padre.usuario'])->find($id);
+        $nino = Nino::with([
+            'relacionesPadres.padre.usuario',
+            'relacionesPadres.padre' => function($query) {
+                $query->select('pdr_id', 'pdr_usr_id', 'pdr_direccion', 'pdr_ocupacion', 'pdr_contacto_emergencia', 'pdr_ci', 'pdr_ci_ext', 'pdr_estado');
+            }
+        ])->find($id);
 
         if (!$nino) {
             return response()->json([
