@@ -124,7 +124,6 @@ const ListaNinos = ({ onAgregarNino, onEditarNino, onVerNino }) => {
         </div>
         <div className="nino-info">
           <h3>{nino.nin_nombre} {nino.nin_apellido}</h3>
-          <p><strong>CI:</strong> {nino.nin_ci} {nino.nin_ci_ext}</p>
           <p><strong>Edad:</strong> {nino.nin_edad} años</p>
           <p><strong>Tutor:</strong> {nino.nin_tutor_legal}</p>
           <p><strong>Estado:</strong> 
@@ -173,10 +172,6 @@ const ListaNinos = ({ onAgregarNino, onEditarNino, onVerNino }) => {
       header: 'Nombre Completo', 
       field: 'nombre_completo',
       render: (nino) => `${nino.nin_nombre} ${nino.nin_apellido}`
-    },
-    { 
-      header: 'CI',
-      render: (nino) => `${nino.nin_ci} ${nino.nin_ci_ext}`
     },
     {
       header: 'Edad',

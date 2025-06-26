@@ -1,101 +1,133 @@
-CREATE DATABASE "guarderia_db";
-\c guarderia_db;
-
-CREATE TABLE public.tbl_usr_usuarios (
-    usr_id SERIAL PRIMARY KEY NOT NULL,
-    usr_nombre VARCHAR(100) NOT NULL,
-    usr_apellido VARCHAR(100) NOT NULL,
-    usr_email VARCHAR(150) UNIQUE NOT NULL,
-    usr_password VARCHAR(255) NOT NULL,
-    usr_telefono VARCHAR(20),
-    usr_tipo VARCHAR(30) NOT NULL, -- 'admin', 'familiar', 'personal'
-    usr_estado VARCHAR(20) NOT NULL, -- 'activo', 'inactivo'
-    usr_fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    usr_fecha_actualizacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+create table if not exists public.tbl_usr_usuarios
+(
+    usr_id                  serial
+        primary key,
+    usr_nombre              varchar(100) not null,
+    usr_apellido            varchar(100) not null,
+    usr_email               varchar(150) not null
+        unique,
+    usr_password            varchar(255) not null,
+    usr_telefono            varchar(20),
+    usr_tipo                varchar(30)  not null,
+    usr_estado              varchar(20)  not null,
+    usr_fecha_creacion      timestamp default CURRENT_TIMESTAMP,
+    usr_fecha_actualizacion timestamp default CURRENT_TIMESTAMP
 );
 
---Usado en el login y autenticación
-CREATE TABLE public.tbl_tkn_tokens (
-    tkn_id SERIAL PRIMARY KEY NOT NULL,
-    tkn_token VARCHAR(255) UNIQUE NOT NULL,
-    tkn_usr_id INT NOT NULL,
-    tkn_estado VARCHAR(20) NOT NULL, -- 'activo', 'inactivo'
-    tkn_fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    tkn_fecha_expiracion TIMESTAMP NOT NULL
+alter table public.tbl_usr_usuarios
+    owner to postgres;
+
+create table if not exists public.tbl_pdr_padres
+(
+    pdr_id                  serial
+        primary key,
+    pdr_usr_id              integer not null,
+    pdr_direccion           text,
+    pdr_ocupacion           varchar(100),
+    pdr_contacto_emergencia varchar(100),
+    pdr_fecha_registro      timestamp default CURRENT_TIMESTAMP,
+    pdr_ci                  varchar(20),
+    pdr_ci_ext              varchar(5),
+    pdr_estado              varchar(20)
 );
 
--- Tabla de padres
-CREATE TABLE public.tbl_pdr_padres (
-    pdr_id SERIAL PRIMARY KEY NOT NULL,
-    pdr_usr_id INT NOT NULL,
-    pdr_direccion TEXT,
-    pdr_ocupacion VARCHAR(100),
-    pdr_contacto_emergencia VARCHAR(100),
-    pdr_telefono_emergencia VARCHAR(20),
-    pdr_fecha_registro TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+alter table public.tbl_pdr_padres
+    owner to postgres;
+
+create table if not exists public.tbl_prs_personal
+(
+    prs_id              serial
+        primary key,
+    prs_usr_id          integer      not null,
+    prs_codigo_empleado varchar(20)  not null
+        unique,
+    prs_cargo           varchar(100) not null,
+    prs_fecha_ingreso   date         not null,
+    prs_salario         numeric(10, 2),
+    prs_horario         varchar(100),
+    prs_fecha_registro  timestamp default CURRENT_TIMESTAMP
 );
 
--- Tabla de personal
-CREATE TABLE public.tbl_prs_personal (
-    prs_id SERIAL PRIMARY KEY NOT NULL,
-    prs_usr_id INT NOT NULL,
-    prs_codigo_empleado VARCHAR(20) UNIQUE NOT NULL,
-    prs_cargo VARCHAR(100) NOT NULL,
-    prs_fecha_ingreso DATE NOT NULL,
-    prs_salario DECIMAL(10,2),
-    prs_horario VARCHAR(100),
-    prs_fecha_registro TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+alter table public.tbl_prs_personal
+    owner to postgres;
+
+create table if not exists public.tbl_nin_ninos
+(
+    nin_id                serial
+        primary key,
+    nin_nombre            varchar(100) not null,
+    nin_apellido          varchar(100) not null,
+    nin_fecha_nacimiento  date         not null,
+    nin_edad              integer      not null,
+    nin_genero            varchar(20)  not null,
+    nin_foto              varchar(255),
+    nin_alergias          text,
+    nin_medicamentos      text,
+    nin_observaciones     text,
+    nin_fecha_inscripcion timestamp default CURRENT_TIMESTAMP,
+    nin_estado            varchar(20)
 );
 
--- Tabla de niños
-CREATE TABLE public.tbl_nin_ninos (
-    nin_id SERIAL PRIMARY KEY NOT NULL,
-    nin_nombre VARCHAR(100) NOT NULL,
-    nin_apellido VARCHAR(100) NOT NULL,
-    nin_fecha_nacimiento DATE NOT NULL,
-    nin_edad INT NOT NULL,
-    nin_genero VARCHAR(20) NOT NULL,
-    nin_ci VARCHAR(20) NOT NULL,
-    nin_ci_ext VARCHAR(5) NOT NULL,
-    nin_tutor_legal VARCHAR(200) NOT NULL,
-    nin_foto VARCHAR(255),
-    nin_alergias TEXT,
-    nin_medicamentos TEXT,
-    nin_observaciones TEXT,
-    nin_fecha_inscripcion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    nin_estado VARCHAR(20) -- 'activo' o 'inactivo'
+alter table public.tbl_nin_ninos
+    owner to postgres;
+
+create table if not exists public.tbl_rel_padres_ninos
+(
+    rel_id             serial
+        primary key,
+    rel_pdr_id         integer     not null,
+    rel_nin_id         integer     not null,
+    rel_parentesco     varchar(20) not null,
+    rel_fecha_creacion timestamp default CURRENT_TIMESTAMP
 );
 
--- Tabla de relación padres-niños
-CREATE TABLE public.tbl_rel_padres_ninos (
-    rel_id SERIAL PRIMARY KEY NOT NULL,
-    rel_pdr_id INT NOT NULL,
-    rel_nin_id INT NOT NULL,
-    rel_parentesco VARCHAR(20) NOT NULL, -- 'padre', 'madre', etc.
-    rel_fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+alter table public.tbl_rel_padres_ninos
+    owner to postgres;
+
+create table if not exists public.tbl_tkn_tokens
+(
+    tkn_id               serial
+        primary key,
+    tkn_token            varchar(255) not null
+        unique,
+    tkn_usr_id           integer      not null,
+    tkn_estado           varchar(20)  not null,
+    tkn_fecha_creacion   timestamp default CURRENT_TIMESTAMP,
+    tkn_fecha_expiracion timestamp    not null
 );
 
--- Tabla de grupos/aulas
-CREATE TABLE public.tbl_grp_grupos (
-    grp_id SERIAL PRIMARY KEY NOT NULL,
-    grp_nombre VARCHAR(100) NOT NULL,
-    grp_descripcion TEXT,
-    grp_capacidad INT NOT NULL,
-    grp_edad_minima INT NOT NULL,
-    grp_edad_maxima INT NOT NULL,
-    grp_responsable_id INT NOT NULL, -- Referencia a tbl_prs_personal.prs_id
-    grp_estado VARCHAR(20) NOT NULL, -- 'activo', 'inactivo'
-    grp_fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    grp_fecha_actualizacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+alter table public.tbl_tkn_tokens
+    owner to postgres;
+
+create table if not exists public.tbl_grp_grupos
+(
+    grp_id                  serial
+        primary key,
+    grp_nombre              varchar(100) not null,
+    grp_descripcion         text,
+    grp_capacidad           integer      not null,
+    grp_edad_minima         integer      not null,
+    grp_edad_maxima         integer      not null,
+    grp_responsable_id      integer      not null,
+    grp_estado              varchar(20)  not null,
+    grp_fecha_creacion      timestamp default CURRENT_TIMESTAMP,
+    grp_fecha_actualizacion timestamp default CURRENT_TIMESTAMP
 );
 
--- Tabla de asignaciones de niños a grupos
-CREATE TABLE public.tbl_asn_asignaciones_ninos (
-    asn_id SERIAL PRIMARY KEY NOT NULL,
-    asn_nin_id INT NOT NULL, -- Referencia a tbl_nin_ninos.nin_id
-    asn_grp_id INT NOT NULL, -- Referencia a tbl_grp_grupos.grp_id
-    asn_fecha_asignacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    asn_fecha_baja TIMESTAMP NULL,
-    asn_estado VARCHAR(20) NOT NULL, -- 'activo', 'inactivo'
-    asn_observaciones TEXT
+alter table public.tbl_grp_grupos
+    owner to postgres;
+
+create table if not exists public.tbl_asn_asignaciones_ninos
+(
+    asn_id               serial
+        primary key,
+    asn_nin_id           integer     not null,
+    asn_grp_id           integer     not null,
+    asn_fecha_asignacion timestamp default CURRENT_TIMESTAMP,
+    asn_fecha_baja       timestamp,
+    asn_estado           varchar(20) not null,
+    asn_observaciones    text
 );
+
+alter table public.tbl_asn_asignaciones_ninos
+    owner to postgres;

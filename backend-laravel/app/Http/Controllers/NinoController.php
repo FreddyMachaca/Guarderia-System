@@ -29,8 +29,7 @@ class NinoController extends Controller
         if ($search) {
             $query->where(function($q) use ($search) {
                 $q->where('nin_nombre', 'ILIKE', "%{$search}%")
-                  ->orWhere('nin_apellido', 'ILIKE', "%{$search}%")
-                  ->orWhere('nin_ci', 'LIKE', "%{$search}%");
+                  ->orWhere('nin_apellido', 'ILIKE', "%{$search}%");
             });
         }
         
@@ -61,8 +60,6 @@ class NinoController extends Controller
             'nin_fecha_nacimiento' => 'required|date',
             'nin_edad' => 'required|integer|min:0|max:10',
             'nin_genero' => 'required|in:masculino,femenino',
-            'nin_ci' => 'required|string|max:20',
-            'nin_ci_ext' => 'required|string|max:5',
             'nin_tutor_legal' => 'required|string|max:200',
             'nin_foto' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             'nin_alergias' => 'nullable|string',
@@ -177,8 +174,6 @@ class NinoController extends Controller
             'nin_fecha_nacimiento' => 'required|date',
             'nin_edad' => 'required|integer|min:0|max:10',
             'nin_genero' => 'required|in:masculino,femenino',
-            'nin_ci' => 'required|string|max:20',
-            'nin_ci_ext' => 'required|string|max:5',
             'nin_tutor_legal' => 'required|string|max:200',
             'nin_foto' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             'nin_alergias' => 'nullable|string',

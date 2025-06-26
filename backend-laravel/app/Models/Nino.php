@@ -16,8 +16,6 @@ class Nino extends Model
         'nin_fecha_nacimiento',
         'nin_edad',
         'nin_genero',
-        'nin_ci',
-        'nin_ci_ext',
         'nin_tutor_legal',
         'nin_foto',
         'nin_alergias',

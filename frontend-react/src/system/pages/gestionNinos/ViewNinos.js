@@ -98,7 +98,6 @@ const ViewNinos = ({ nino, onVolver }) => {
               </span>
             </div>
             <div className="info-group">
-              <p><i className="pi pi-id-card"></i> <strong>CI:</strong> {ninoData.nin_ci} {ninoData.nin_ci_ext}</p>
               <p><i className="pi pi-calendar"></i> <strong>Fecha de Nacimiento:</strong> {formatFecha(ninoData.nin_fecha_nacimiento)}</p>
               <p><i className="pi pi-user"></i> <strong>Edad:</strong> {ninoData.nin_edad} años</p>
               <p><i className="pi pi-venus-mars"></i> <strong>Género:</strong> {ninoData.nin_genero === 'masculino' ? 'Masculino' : 'Femenino'}</p>

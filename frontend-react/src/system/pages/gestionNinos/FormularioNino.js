@@ -10,8 +10,6 @@ const FormularioNino = ({ nino, onVolver }) => {
     nin_fecha_nacimiento: '',
     nin_edad: '',
     nin_genero: '',
-    nin_ci: '',
-    nin_ci_ext: 'LP',
     nin_tutor_legal: '',
     nin_alergias: '',
     nin_medicamentos: '',
@@ -24,10 +22,6 @@ const FormularioNino = ({ nino, onVolver }) => {
   const [grupos, setGrupos] = useState([]);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
-
-  const extensionesCI = [
-    'LP', 'CB', 'SC', 'PT', 'TJ', 'OR', 'CH', 'BE', 'PD'
-  ];
 
   useEffect(() => {
     cargarGrupos();
@@ -57,8 +51,6 @@ const FormularioNino = ({ nino, onVolver }) => {
         nin_fecha_nacimiento: formatearFecha(nino.nin_fecha_nacimiento),
         nin_edad: nino.nin_edad || '',
         nin_genero: nino.nin_genero || '',
-        nin_ci: nino.nin_ci || '',
-        nin_ci_ext: nino.nin_ci_ext || 'LP',
         nin_tutor_legal: nino.nin_tutor_legal || '',
         nin_alergias: nino.nin_alergias || '',
         nin_medicamentos: nino.nin_medicamentos || '',
@@ -139,7 +131,6 @@ const FormularioNino = ({ nino, onVolver }) => {
     if (!formData.nin_apellido.trim()) newErrors.nin_apellido = 'El apellido es requerido';
     if (!formData.nin_fecha_nacimiento) newErrors.nin_fecha_nacimiento = 'La fecha de nacimiento es requerida';
     if (!formData.nin_genero) newErrors.nin_genero = 'El género es requerido';
-    if (!formData.nin_ci.trim()) newErrors.nin_ci = 'El CI es requerido';
     if (!formData.nin_tutor_legal.trim()) newErrors.nin_tutor_legal = 'El tutor legal es requerido';
 
     setErrors(newErrors);
@@ -290,33 +281,6 @@ const FormularioNino = ({ nino, onVolver }) => {
                 <option value="femenino">Femenino</option>
               </select>
               {errors.nin_genero && <span className="error-text">{errors.nin_genero}</span>}
-            </div>
-          </div>
-
-          <div className="form-row">
-            <div className="form-group">
-              <label>CI *</label>
-              <input
-                type="text"
-                name="nin_ci"
-                value={formData.nin_ci}
-                onChange={handleInputChange}
-                className={errors.nin_ci ? 'error' : ''}
-                placeholder="Número de CI"
-              />
-              {errors.nin_ci && <span className="error-text">{errors.nin_ci}</span>}
-            </div>
-            <div className="form-group">
-              <label>Extensión *</label>
-              <select
-                name="nin_ci_ext"
-                value={formData.nin_ci_ext}
-                onChange={handleInputChange}
-              >
-                {extensionesCI.map(ext => (
-                  <option key={ext} value={ext}>{ext}</option>
-                ))}
-              </select>
             </div>
           </div>
 

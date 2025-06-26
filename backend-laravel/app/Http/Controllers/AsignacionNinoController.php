@@ -142,8 +142,7 @@ class AsignacionNinoController extends Controller
                 'id' => $nino->nin_id,
                 'nombre' => $nino->nin_nombre . ' ' . $nino->nin_apellido,
                 'edad' => $nino->nin_edad,
-                'genero' => $nino->nin_genero,
-                'ci' => $nino->nin_ci . ' ' . $nino->nin_ci_ext
+                'genero' => $nino->nin_genero
             ];
         });
         
