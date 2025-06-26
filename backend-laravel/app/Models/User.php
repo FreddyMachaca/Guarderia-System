@@ -44,4 +44,9 @@ class User extends Authenticatable
     {
         return $this->hasOne(Padre::class, 'pdr_usr_id', 'usr_id');
     }
+
+    public function getNombreCompletoAttribute()
+    {
+        return $this->usr_nombre . ' ' . $this->usr_apellido;
+    }
 }

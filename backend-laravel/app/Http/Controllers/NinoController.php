@@ -8,6 +8,10 @@ use Illuminate\Support\Facades\Validator;
 use App\Models\Nino;
 use App\Models\Grupo;
 use App\Models\AsignacionNino;
+use App\Models\Padre;
+use App\Models\RelacionPadreNino;
+use App\Models\User;
+
 use App\Services\PaginationService;
 use Illuminate\Support\Facades\DB;
 
@@ -21,9 +25,8 @@ class NinoController extends Controller
         $search = $request->query('search', '');
         $grupo = $request->query('grupo', '');
         
-        $query = Nino::query();
+        $query = Nino::with(['relacionesPadres.padre.usuario']);
         
-        // Filtra por estado activo o inactivo
         $query->where('nin_estado', $mostrarInactivos ? 'inactivo' : 'activo');
         
         if ($search) {
@@ -43,6 +46,7 @@ class NinoController extends Controller
         
         foreach ($result['data'] as $nino) {
             $nino->grupo_actual = $this->getGrupoActual($nino->nin_id);
+            $nino->nin_tutor_legal = $nino->tutor_legal;
         }
 
         return response()->json([
@@ -60,7 +64,7 @@ class NinoController extends Controller
             'nin_fecha_nacimiento' => 'required|date',
             'nin_edad' => 'required|integer|min:0|max:10',
             'nin_genero' => 'required|in:masculino,femenino',
-            'nin_tutor_legal' => 'required|string|max:200',
+            'padre_id' => 'required|integer|exists:tbl_pdr_padres,pdr_id',
             'nin_foto' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             'nin_alergias' => 'nullable|string',
             'nin_medicamentos' => 'nullable|string',
@@ -77,7 +81,7 @@ class NinoController extends Controller
 
         DB::beginTransaction();
         try {
-            $data = $request->all();
+            $data = $request->except(['padre_id', 'grupo_id']);
             $data['nin_fecha_inscripcion'] = now();
             $data['nin_estado'] = 'activo';
 
@@ -90,11 +94,15 @@ class NinoController extends Controller
 
             $nino = Nino::create($data);
 
-            // Si se proporciona un grupo_id, asignar el niño al grupo
+            RelacionPadreNino::create([
+                'rel_pdr_id' => $request->padre_id,
+                'rel_nin_id' => $nino->nin_id,
+                'rel_parentesco' => 'tutor'
+            ]);
+
             if ($request->filled('grupo_id')) {
                 $grupo = Grupo::find($request->grupo_id);
                 
-                // Validar que el grupo exista y tenga capacidad
                 if (!$grupo) {
                     DB::rollBack();
                     return response()->json([
@@ -103,7 +111,6 @@ class NinoController extends Controller
                     ], 404);
                 }
                 
-                // Verificar que la edad del niño esté dentro del rango del grupo
                 if ($nino->nin_edad < $grupo->grp_edad_minima || $nino->nin_edad > $grupo->grp_edad_maxima) {
                     DB::rollBack();
                     return response()->json([
@@ -139,7 +146,7 @@ class NinoController extends Controller
 
     public function show($id)
     {
-        $nino = Nino::find($id);
+        $nino = Nino::with(['relacionesPadres.padre.usuario'])->find($id);
 
         if (!$nino) {
             return response()->json([
@@ -150,6 +157,7 @@ class NinoController extends Controller
 
         $nino->grupo_actual = $this->getGrupoActual($id);
         $nino->historial_grupos = $this->getHistorialGrupos($id);
+        $nino->nin_tutor_legal = $nino->tutor_legal;
 
         return response()->json([
             'success' => true,
@@ -174,7 +182,7 @@ class NinoController extends Controller
             'nin_fecha_nacimiento' => 'required|date',
             'nin_edad' => 'required|integer|min:0|max:10',
             'nin_genero' => 'required|in:masculino,femenino',
-            'nin_tutor_legal' => 'required|string|max:200',
+            'padre_id' => 'nullable|integer|exists:tbl_pdr_padres,pdr_id',
             'nin_foto' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             'nin_alergias' => 'nullable|string',
             'nin_medicamentos' => 'nullable|string',
@@ -192,7 +200,7 @@ class NinoController extends Controller
 
         DB::beginTransaction();
         try {
-            $data = $request->except(['grupo_id']);
+            $data = $request->except(['padre_id', 'grupo_id']);
 
             if ($request->hasFile('nin_foto')) {
                 if ($nino->nin_foto && Storage::disk('public')->exists($nino->nin_foto)) {
@@ -207,7 +215,15 @@ class NinoController extends Controller
 
             $nino->update($data);
 
-            // Si se proporciona un grupo_id, actualizar la asignación del niño
+            if ($request->filled('padre_id')) {
+                RelacionPadreNino::updateOrCreate([
+                    'rel_nin_id' => $id
+                ], [
+                    'rel_pdr_id' => $request->padre_id,
+                    'rel_parentesco' => 'tutor'
+                ]);
+            }
+
             if ($request->filled('grupo_id')) {
                 $grupo = Grupo::find($request->grupo_id);
                 
@@ -219,7 +235,6 @@ class NinoController extends Controller
                     ], 404);
                 }
 
-                // Verificar que la edad del niño sea compatible con el grupo
                 if ($nino->nin_edad < $grupo->grp_edad_minima || $nino->nin_edad > $grupo->grp_edad_maxima) {
                     DB::rollBack();
                     return response()->json([
@@ -228,13 +243,11 @@ class NinoController extends Controller
                     ], 422);
                 }
                 
-                // Obtener la asignación actual del niño
                 $asignacionActual = AsignacionNino::where('asn_nin_id', $id)
                                                 ->where('asn_estado', 'activo')
                                                 ->whereNull('asn_fecha_baja')
                                                 ->first();
                 
-                // Si ya tiene una asignación y es diferente al nuevo grupo, dar de baja la anterior
                 if ($asignacionActual) {
                     if ($asignacionActual->asn_grp_id != $request->grupo_id) {
                         $asignacionActual->asn_estado = 'inactivo';
@@ -250,7 +263,6 @@ class NinoController extends Controller
                         ]);
                     }
                 } else {
-                    // Si no tiene asignación activa, crear una nueva
                     AsignacionNino::create([
                         'asn_nin_id' => $id,
                         'asn_grp_id' => $request->grupo_id,
@@ -393,6 +405,26 @@ class NinoController extends Controller
         ]);
     }
 
+    public function getPadresDisponibles()
+    {
+        $padres = Padre::with('usuario')
+                      ->where('pdr_estado', 'activo')
+                      ->get()
+                      ->map(function($padre) {
+                          return [
+                              'pdr_id' => $padre->pdr_id,
+                              'nombre_completo' => $padre->usuario->nombre_completo,
+                              'usr_email' => $padre->usuario->usr_email,
+                              'usr_telefono' => $padre->usuario->usr_telefono
+                          ];
+                      });
+
+        return response()->json([
+            'success' => true,
+            'data' => $padres
+        ]);
+    }
+
     private function getGrupoActual($ninoId)
     {
         $asignacion = AsignacionNino::where('asn_nin_id', $ninoId)
@@ -430,5 +462,13 @@ class NinoController extends Controller
         }
 
         return $historial;
+    }
+
+    private function crearOAsignarTutor($ninoId, $nombreTutor)
+    {
+    }
+
+    private function actualizarTutor($ninoId, $nombreTutor)
+    {
     }
 }

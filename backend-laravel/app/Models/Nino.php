@@ -16,7 +16,6 @@ class Nino extends Model
         'nin_fecha_nacimiento',
         'nin_edad',
         'nin_genero',
-        'nin_tutor_legal',
         'nin_foto',
         'nin_alergias',
         'nin_medicamentos',
@@ -39,5 +38,30 @@ class Nino extends Model
     public function asignaciones()
     {
         return $this->hasMany(AsignacionNino::class, 'asn_nin_id', 'nin_id');
+    }
+
+    public function relacionesPadres()
+    {
+        return $this->hasMany(RelacionPadreNino::class, 'rel_nin_id', 'nin_id');
+    }
+
+    public function padres()
+    {
+        return $this->belongsToMany(Padre::class, 'tbl_rel_padres_ninos', 'rel_nin_id', 'rel_pdr_id')
+                    ->withPivot('rel_parentesco');
+    }
+
+    public function getTutorLegalAttribute()
+    {
+        $relacion = $this->relacionesPadres()
+                         ->whereIn('rel_parentesco', ['padre', 'madre', 'tutor'])
+                         ->with('padre.usuario')
+                         ->first();
+        
+        if ($relacion && $relacion->padre && $relacion->padre->usuario) {
+            return $relacion->padre->usuario->usr_nombre . ' ' . $relacion->padre->usuario->usr_apellido;
+        }
+        
+        return 'No asignado';
     }
 }

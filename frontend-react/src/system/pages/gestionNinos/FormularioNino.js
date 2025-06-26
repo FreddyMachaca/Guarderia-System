@@ -133,6 +133,20 @@ const FormularioNino = ({ nino, onVolver }) => {
     if (!formData.nin_genero) newErrors.nin_genero = 'El género es requerido';
     if (!formData.nin_tutor_legal.trim()) newErrors.nin_tutor_legal = 'El tutor legal es requerido';
 
+    // Validar rango de edad si se selecciona un grupo
+    if (formData.asn_grp_id && formData.nin_edad) {
+      const grupoSeleccionado = grupos.find(grupo => grupo.grp_id == formData.asn_grp_id);
+      if (grupoSeleccionado) {
+        const edad = parseInt(formData.nin_edad);
+        const edadMinima = parseInt(grupoSeleccionado.grp_edad_minima);
+        const edadMaxima = parseInt(grupoSeleccionado.grp_edad_maxima);
+        
+        if (edad < edadMinima || edad > edadMaxima) {
+          newErrors.asn_grp_id = `La edad del niño (${edad} años) está fuera del rango permitido para este grupo (${edadMinima}-${edadMaxima} años)`;
+        }
+      }
+    }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -188,7 +202,6 @@ const FormularioNino = ({ nino, onVolver }) => {
 
       if (response.ok) {
         const result = await response.json();
-        console.log('Guardado exitosamente:', result);
         onVolver();
       } else {
         const errorData = await response.json();
@@ -358,6 +371,7 @@ const FormularioNino = ({ nino, onVolver }) => {
               name="asn_grp_id"
               value={formData.asn_grp_id}
               onChange={handleInputChange}
+              className={errors.asn_grp_id ? 'error' : ''}
             >
               <option value="">Sin asignar</option>
               {Array.isArray(grupos) && grupos.map(grupo => (
@@ -366,6 +380,7 @@ const FormularioNino = ({ nino, onVolver }) => {
                 </option>
               ))}
             </select>
+            {errors.asn_grp_id && <span className="error-text">{errors.asn_grp_id}</span>}
           </div>
         </div>
 
