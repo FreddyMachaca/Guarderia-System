@@ -51,21 +51,44 @@ export const useMenus = () => {
     }
   ];
 
+  const parentMenus = [
+    {
+      id: 'dashboard',
+      title: 'Dashboard',
+      icon: 'pi pi-home',
+      path: '/system/parent-dashboard'
+    },
+    {
+      id: 'mis-hijos',
+      title: 'Mis Hijos',
+      icon: 'pi pi-users',
+      path: '/system/mis-hijos'
+    },
+    {
+      id: 'pagos',
+      title: 'Pagos',
+      icon: 'pi pi-money-bill',
+      path: '/system/pagos'
+    },
+  ];
+
   useEffect(() => {
     const currentPath = location.pathname;
-    const currentMenu = adminMenus.find(menu => currentPath.includes(menu.id));
+    const allMenus = [...adminMenus, ...parentMenus];
+    const currentMenu = allMenus.find(menu => currentPath.includes(menu.id));
     if (currentMenu) {
       setActiveMenu(currentMenu.id);
     }
-  }, [location.pathname, adminMenus]);
+  }, [location.pathname]);
 
   const setMenu = useCallback((menuId) => {
     setActiveMenu(menuId);
-    const menu = adminMenus.find(m => m.id === menuId);
+    const allMenus = [...adminMenus, ...parentMenus];
+    const menu = allMenus.find(m => m.id === menuId);
     if (menu) {
       navigate(menu.path);
     }
-  }, [adminMenus, navigate]);
+  }, [navigate]);
 
   const toggleMenu = useCallback(() => {
     setIsMenuOpen(prev => !prev);
@@ -79,6 +102,7 @@ export const useMenus = () => {
     activeMenu,
     isMenuOpen,
     adminMenus,
+    parentMenus,
     setMenu,
     toggleMenu,
     closeMenu
