@@ -15,22 +15,16 @@ export const useMenus = () => {
       path: '/system/dashboard'
     },
     {
-      id: 'gestion-ninos',
-      title: 'Gestión de Niños',
-      icon: 'pi pi-users',
-      path: '/system/gestion-ninos'
-    },
-    {
-      id: 'personal',
-      title: 'Personal',
-      icon: 'pi pi-user-plus',
-      path: '/system/personal'
-    },
-    {
       id: 'padres',
       title: 'Padres',
       icon: 'pi pi-heart',
       path: '/system/padres'
+    },
+    {
+      id: 'gestion-ninos',
+      title: 'Gestión de Niños',
+      icon: 'pi pi-users',
+      path: '/system/gestion-ninos'
     },
     {
       id: 'grupos',
@@ -39,10 +33,15 @@ export const useMenus = () => {
       path: '/system/grupos'
     },
     {
-      id: 'actividades',
-      title: 'Actividades',
-      icon: 'pi pi-calendar',
-      path: '/system/actividades'
+      id: 'personal',
+      title: 'Personal',
+      icon: 'pi pi-user-plus',
+      path: '/system/personal'
+    },
+    {
+      id: 'mensualidades',
+      title: 'Mensualidades',
+      icon: 'pi pi-money-bill',
     },
     {
       id: 'reportes',
