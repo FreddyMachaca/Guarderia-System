@@ -112,7 +112,11 @@ const ViewNinos = ({ nino, onVolver }) => {
           <div className="nino-view-section">
             <h4><i className="pi pi-user"></i> Información Personal</h4>
             <div className="info-detail">
-              <p><strong>Tutor Legal:</strong> {ninoData.nin_tutor_legal}</p>
+              <p><strong>Tutor Legal:</strong> {
+                ninoData.relacionesPadres && ninoData.relacionesPadres.length > 0 
+                  ? `${ninoData.relacionesPadres[0].padre.usuario.usr_nombre} ${ninoData.relacionesPadres[0].padre.usuario.usr_apellido}`
+                  : 'No asignado'
+              }</p>
               <p><strong>Estado:</strong> {ninoData.nin_estado || 'Activo'}</p>
             </div>
           </div>

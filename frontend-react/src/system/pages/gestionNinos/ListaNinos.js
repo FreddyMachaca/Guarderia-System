@@ -111,6 +111,10 @@ const ListaNinos = ({ onAgregarNino, onEditarNino, onVerNino }) => {
   };
   
   const renderNinoCard = (nino) => {
+    const tutorLegal = nino.relacionesPadres && nino.relacionesPadres.length > 0 
+      ? `${nino.relacionesPadres[0].padre.usuario.usr_nombre} ${nino.relacionesPadres[0].padre.usuario.usr_apellido}`
+      : 'No asignado';
+
     return (
       <div key={nino.nin_id} className="nino-card">
         <div className="nino-foto">
@@ -125,7 +129,7 @@ const ListaNinos = ({ onAgregarNino, onEditarNino, onVerNino }) => {
         <div className="nino-info">
           <h3>{nino.nin_nombre} {nino.nin_apellido}</h3>
           <p><strong>Edad:</strong> {nino.nin_edad} años</p>
-          <p><strong>Tutor:</strong> {nino.nin_tutor_legal}</p>
+          <p><strong>Tutor:</strong> {tutorLegal}</p>
           <p><strong>Estado:</strong> 
             <span className={`estado ${nino.nin_estado}`}>
               {nino.nin_estado || 'activo'}
@@ -179,7 +183,11 @@ const ListaNinos = ({ onAgregarNino, onEditarNino, onVerNino }) => {
     },
     {
       header: 'Tutor Legal',
-      field: 'nin_tutor_legal'
+      render: (nino) => {
+        return nino.relacionesPadres && nino.relacionesPadres.length > 0 
+          ? `${nino.relacionesPadres[0].padre.usuario.usr_nombre} ${nino.relacionesPadres[0].padre.usuario.usr_apellido}`
+          : 'No asignado';
+      }
     },
     {
       header: 'Estado',

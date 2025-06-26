@@ -35,6 +35,7 @@ Route::middleware('api')->group(function () {
     Route::prefix('ninos')->group(function () {
         Route::get('/', [NinoController::class, 'index']);
         Route::post('/', [NinoController::class, 'store']);
+        Route::get('/padres-disponibles', [NinoController::class, 'getPadresDisponibles']);
         Route::get('/{id}', [NinoController::class, 'show']);
         Route::put('/{id}', [NinoController::class, 'update']);
         Route::delete('/{id}', [NinoController::class, 'destroy']);

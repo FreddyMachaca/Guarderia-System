@@ -20,11 +20,13 @@ const FormularioNino = ({ nino, onVolver }) => {
   const [foto, setFoto] = useState(null);
   const [previewFoto, setPreviewFoto] = useState(null);
   const [grupos, setGrupos] = useState([]);
+  const [padres, setPadres] = useState([]);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
     cargarGrupos();
+    cargarPadres();
     if (nino) {
       const formatearFecha = (fecha) => {
         if (!fecha) return '';
@@ -45,13 +47,17 @@ const FormularioNino = ({ nino, onVolver }) => {
         }
       };
 
+      const tutorLegalId = nino.relacionesPadres && nino.relacionesPadres.length > 0 
+        ? nino.relacionesPadres[0].rel_pdr_id 
+        : '';
+
       setFormData({
         nin_nombre: nino.nin_nombre || '',
         nin_apellido: nino.nin_apellido || '',
         nin_fecha_nacimiento: formatearFecha(nino.nin_fecha_nacimiento),
         nin_edad: nino.nin_edad || '',
         nin_genero: nino.nin_genero || '',
-        nin_tutor_legal: nino.nin_tutor_legal || '',
+        nin_tutor_legal: tutorLegalId,
         nin_alergias: nino.nin_alergias || '',
         nin_medicamentos: nino.nin_medicamentos || '',
         nin_observaciones: nino.nin_observaciones || '',
@@ -73,6 +79,18 @@ const FormularioNino = ({ nino, onVolver }) => {
     } catch (error) {
       console.error('Error al cargar grupos:', error);
       setGrupos([]);
+    }
+  };
+
+  const cargarPadres = async () => {
+    try {
+      const response = await get('/ninos/padres-disponibles');
+      if (response.success && response.data) {
+        setPadres(response.data);
+      }
+    } catch (error) {
+      console.error('Error al cargar padres:', error);
+      setPadres([]);
     }
   };
 
@@ -131,7 +149,7 @@ const FormularioNino = ({ nino, onVolver }) => {
     if (!formData.nin_apellido.trim()) newErrors.nin_apellido = 'El apellido es requerido';
     if (!formData.nin_fecha_nacimiento) newErrors.nin_fecha_nacimiento = 'La fecha de nacimiento es requerida';
     if (!formData.nin_genero) newErrors.nin_genero = 'El género es requerido';
-    if (!formData.nin_tutor_legal.trim()) newErrors.nin_tutor_legal = 'El tutor legal es requerido';
+    if (!formData.nin_tutor_legal) newErrors.nin_tutor_legal = 'El tutor legal es requerido';
 
     // Validar rango de edad si se selecciona un grupo
     if (formData.asn_grp_id && formData.nin_edad) {
@@ -299,14 +317,19 @@ const FormularioNino = ({ nino, onVolver }) => {
 
           <div className="form-group">
             <label>Tutor Legal *</label>
-            <input
-              type="text"
+            <select
               name="nin_tutor_legal"
               value={formData.nin_tutor_legal}
               onChange={handleInputChange}
               className={errors.nin_tutor_legal ? 'error' : ''}
-              placeholder="Nombre completo del tutor legal"
-            />
+            >
+              <option value="">Seleccionar tutor legal</option>
+              {padres.map(padre => (
+                <option key={padre.pdr_id} value={padre.pdr_id}>
+                  {padre.nombre_completo}
+                </option>
+              ))}
+            </select>
             {errors.nin_tutor_legal && <span className="error-text">{errors.nin_tutor_legal}</span>}
           </div>
         </div>

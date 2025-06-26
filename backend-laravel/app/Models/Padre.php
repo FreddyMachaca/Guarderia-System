@@ -35,4 +35,28 @@ class Padre extends Model
         return $this->belongsToMany(Nino::class, 'tbl_rel_padres_ninos', 'rel_pdr_id', 'rel_nin_id')
                     ->withPivot('rel_parentesco');
     }
+
+    public static function getPadresActivos()
+    {
+        try {
+            return self::with('usuario')
+                ->where('pdr_estado', 'activo')
+                ->whereHas('usuario', function($query) {
+                    $query->where('usr_tipo', 'Tutor')
+                          ->where('usr_estado', 'activo');
+                })
+                ->get()
+                ->map(function($padre) {
+                    return [
+                        'pdr_id' => $padre->pdr_id,
+                        'nombre_completo' => $padre->usuario->usr_nombre . ' ' . $padre->usuario->usr_apellido,
+                        'usr_email' => $padre->usuario->usr_email,
+                        'usr_telefono' => $padre->usuario->usr_telefono ?? ''
+                    ];
+                });
+        } catch (\Exception $e) {
+            \Log::error('Error en getPadresActivos: ' . $e->getMessage());
+            return collect([]);
+        }
+    }
 }

@@ -64,7 +64,7 @@ class NinoController extends Controller
             'nin_fecha_nacimiento' => 'required|date',
             'nin_edad' => 'required|integer|min:0|max:10',
             'nin_genero' => 'required|in:masculino,femenino',
-            'padre_id' => 'required|integer|exists:tbl_pdr_padres,pdr_id',
+            'nin_tutor_legal' => 'required|integer|exists:tbl_pdr_padres,pdr_id',
             'nin_foto' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             'nin_alergias' => 'nullable|string',
             'nin_medicamentos' => 'nullable|string',
@@ -81,7 +81,7 @@ class NinoController extends Controller
 
         DB::beginTransaction();
         try {
-            $data = $request->except(['padre_id', 'grupo_id']);
+            $data = $request->except(['nin_tutor_legal', 'grupo_id']);
             $data['nin_fecha_inscripcion'] = now();
             $data['nin_estado'] = 'activo';
 
@@ -95,7 +95,7 @@ class NinoController extends Controller
             $nino = Nino::create($data);
 
             RelacionPadreNino::create([
-                'rel_pdr_id' => $request->padre_id,
+                'rel_pdr_id' => $request->nin_tutor_legal,
                 'rel_nin_id' => $nino->nin_id,
                 'rel_parentesco' => 'tutor'
             ]);
@@ -182,7 +182,7 @@ class NinoController extends Controller
             'nin_fecha_nacimiento' => 'required|date',
             'nin_edad' => 'required|integer|min:0|max:10',
             'nin_genero' => 'required|in:masculino,femenino',
-            'padre_id' => 'nullable|integer|exists:tbl_pdr_padres,pdr_id',
+            'nin_tutor_legal' => 'nullable|integer|exists:tbl_pdr_padres,pdr_id',
             'nin_foto' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             'nin_alergias' => 'nullable|string',
             'nin_medicamentos' => 'nullable|string',
@@ -200,7 +200,7 @@ class NinoController extends Controller
 
         DB::beginTransaction();
         try {
-            $data = $request->except(['padre_id', 'grupo_id']);
+            $data = $request->except(['nin_tutor_legal', 'grupo_id']);
 
             if ($request->hasFile('nin_foto')) {
                 if ($nino->nin_foto && Storage::disk('public')->exists($nino->nin_foto)) {
@@ -215,13 +215,20 @@ class NinoController extends Controller
 
             $nino->update($data);
 
-            if ($request->filled('padre_id')) {
-                RelacionPadreNino::updateOrCreate([
-                    'rel_nin_id' => $id
-                ], [
-                    'rel_pdr_id' => $request->padre_id,
-                    'rel_parentesco' => 'tutor'
-                ]);
+            if ($request->filled('nin_tutor_legal')) {
+                $relacionExistente = RelacionPadreNino::where('rel_nin_id', $id)->first();
+                
+                if ($relacionExistente) {
+                    $relacionExistente->update([
+                        'rel_pdr_id' => $request->nin_tutor_legal
+                    ]);
+                } else {
+                    RelacionPadreNino::create([
+                        'rel_pdr_id' => $request->nin_tutor_legal,
+                        'rel_nin_id' => $id,
+                        'rel_parentesco' => 'tutor'
+                    ]);
+                }
             }
 
             if ($request->filled('grupo_id')) {
@@ -407,22 +414,21 @@ class NinoController extends Controller
 
     public function getPadresDisponibles()
     {
-        $padres = Padre::with('usuario')
-                      ->where('pdr_estado', 'activo')
-                      ->get()
-                      ->map(function($padre) {
-                          return [
-                              'pdr_id' => $padre->pdr_id,
-                              'nombre_completo' => $padre->usuario->nombre_completo,
-                              'usr_email' => $padre->usuario->usr_email,
-                              'usr_telefono' => $padre->usuario->usr_telefono
-                          ];
-                      });
+        try {
+            $padres = Padre::getPadresActivos();
 
-        return response()->json([
-            'success' => true,
-            'data' => $padres
-        ]);
+            return response()->json([
+                'success' => true,
+                'data' => $padres
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('Error al obtener padres disponibles: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al cargar padres disponibles',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
     private function getGrupoActual($ninoId)
