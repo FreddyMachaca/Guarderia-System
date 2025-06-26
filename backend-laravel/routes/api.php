@@ -75,9 +75,14 @@ Route::middleware('api')->group(function () {
         Route::get('grupos/{id}/ninos', [GrupoController::class, 'getNinosPorGrupo']);
     });
 
-    // Rutas para el personal
+    // Rutas para el módulo de Personal
     Route::prefix('personal')->group(function () {
         Route::get('/', [PersonalController::class, 'index']);
+        Route::post('/', [PersonalController::class, 'store']);
         Route::get('/lista', [PersonalController::class, 'listaPersonal']);
+        Route::get('/{id}', [PersonalController::class, 'show']);
+        Route::put('/{id}', [PersonalController::class, 'update']);
+        Route::delete('/{id}', [PersonalController::class, 'destroy']);
+        Route::post('/{id}/reset-password', [PersonalController::class, 'resetPassword']);
     });
 });

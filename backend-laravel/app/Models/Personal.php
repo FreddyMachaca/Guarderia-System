@@ -20,6 +20,12 @@ class Personal extends Model
         'prs_fecha_ingreso',
         'prs_salario',
         'prs_horario',
+        'prs_fecha_registro'
+    ];
+
+    protected $dates = [
+        'prs_fecha_ingreso',
+        'prs_fecha_registro'
     ];
     
     public function usuario()
@@ -29,7 +35,7 @@ class Personal extends Model
 
     public function grupos()
     {
-        return $this->hasMany(Grupo::class, 'grp_educador', 'prs_id');
+        return $this->hasMany(Grupo::class, 'grp_responsable_id', 'prs_id');
     }
 
     public function nombreCompleto()
@@ -38,5 +44,10 @@ class Personal extends Model
             return $this->usuario->usr_nombre . ' ' . $this->usuario->usr_apellido;
         }
         return 'Sin nombre';
+    }
+
+    public function getNombreCompletoAttribute()
+    {
+        return $this->nombreCompleto();
     }
 }
