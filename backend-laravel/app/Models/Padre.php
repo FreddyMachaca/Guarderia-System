@@ -11,6 +11,7 @@ class Padre extends Model
     public $timestamps = false;
 
     protected $fillable = [
+        'pdr_id',
         'pdr_usr_id',
         'pdr_direccion',
         'pdr_ocupacion',

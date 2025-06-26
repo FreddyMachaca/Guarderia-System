@@ -97,7 +97,11 @@ class PadreController extends Controller
 
         DB::beginTransaction();
         try {
+            $maxUsrId = DB::table('tbl_usr_usuarios')->max('usr_id') ?? 0;
+            $nextUsrId = $maxUsrId + 1;
+
             $usuario = User::create([
+                'usr_id' => $nextUsrId,
                 'usr_nombre' => $request->usr_nombre,
                 'usr_apellido' => $request->usr_apellido,
                 'usr_email' => $request->usr_email,
@@ -111,7 +115,11 @@ class PadreController extends Controller
 
             $contactoEmergencia = $request->contacto_emergencia_nombre . ' - ' . $request->contacto_emergencia_numero;
 
+            $maxPdrId = DB::table('tbl_pdr_padres')->max('pdr_id') ?? 0;
+            $nextPdrId = $maxPdrId + 1;
+
             $padre = Padre::create([
+                'pdr_id' => $nextPdrId,
                 'pdr_usr_id' => $usuario->usr_id,
                 'pdr_direccion' => $request->pdr_direccion,
                 'pdr_ocupacion' => $request->pdr_ocupacion,
