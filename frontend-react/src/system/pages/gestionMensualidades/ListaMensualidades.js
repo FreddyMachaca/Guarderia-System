@@ -208,7 +208,7 @@ const ListaMensualidades = ({ onAgregarMensualidad, onEditarMensualidad, onVerMe
               onClick={() => sincronizarNinos(mensualidad)}
               title="Sincronizar niños"
             >
-              <i className="pi pi-refresh"></i>
+              <i className="pi pi-sync"></i>
             </button>
           )}
           <button 
