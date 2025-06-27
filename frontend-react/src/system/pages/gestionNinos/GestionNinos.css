@@ -929,3 +929,29 @@
   color: #6c757d;
   width: 16px;
 }
+
+.foto-requirements {
+  margin-bottom: 15px;
+  padding: 12px;
+  background-color: #e3f2fd;
+  border: 1px solid #bbdefb;
+  border-radius: 6px;
+}
+
+.requirements-text {
+  margin: 0;
+  color: #1976d2;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.requirements-text i {
+  color: #1976d2;
+  font-size: 1rem;
+}
+
+.requirements-text strong {
+  font-weight: 600;
+}

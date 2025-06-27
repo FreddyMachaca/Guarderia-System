@@ -142,6 +142,22 @@ const FormularioNino = ({ nino, onVolver }) => {
   const handleFotoChange = (e) => {
     const file = e.target.files[0];
     if (file) {
+      const maxSize = 2 * 1024 * 1024;
+      const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif'];
+      
+      if (!allowedTypes.includes(file.type)) {
+        alert(`Formato de imagen no permitido. Solo se permiten archivos: JPEG, PNG, JPG, GIF`);
+        e.target.value = '';
+        return;
+      }
+      
+      if (file.size > maxSize) {
+        const fileSizeMB = (file.size / (1024 * 1024)).toFixed(2);
+        alert(`La imagen es demasiado grande (${fileSizeMB} MB). El tamaño máximo permitido es 2 MB.`);
+        e.target.value = '';
+        return;
+      }
+      
       setFoto(file);
       const reader = new FileReader();
       reader.onload = (e) => {
@@ -382,6 +398,12 @@ const FormularioNino = ({ nino, onVolver }) => {
 
         <div className="form-section">
           <h3>Foto del Niño</h3>
+          <div className="foto-requirements">
+            <p className="requirements-text">
+              <i className="pi pi-info-circle"></i>
+              <strong>Requisitos de la imagen:</strong> Formatos permitidos: JPEG, PNG, JPG, GIF | Tamaño máximo: 2 MB
+            </p>
+          </div>
           <div className="foto-upload">
             <div className="foto-preview">
               {previewFoto ? (
@@ -397,7 +419,7 @@ const FormularioNino = ({ nino, onVolver }) => {
               <input
                 type="file"
                 id="foto"
-                accept="image/*"
+                accept="image/jpeg,image/png,image/jpg,image/gif"
                 onChange={handleFotoChange}
               />
               <label htmlFor="foto" className="btn-upload">
