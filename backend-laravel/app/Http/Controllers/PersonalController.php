@@ -80,7 +80,7 @@ class PersonalController extends Controller
             'prs_salario' => 'nullable|numeric|min:0',
             'prs_horario' => 'nullable|string|max:100',
             'prs_ci' => 'nullable|string|max:20',
-            'prs_ci_expedido' => 'nullable|string|max:5',
+            'prs_ci_expedido' => 'nullable|string|max:10',
             'prs_foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
         ], [
             'prs_foto.image' => 'El archivo debe ser una imagen válida.',
@@ -214,7 +214,7 @@ class PersonalController extends Controller
             'prs_salario' => 'nullable|numeric|min:0',
             'prs_horario' => 'nullable|string|max:100',
             'prs_ci' => 'nullable|string|max:20',
-            'prs_ci_expedido' => 'nullable|string|max:5',
+            'prs_ci_expedido' => 'nullable|string|max:10',
             'prs_foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'usr_estado' => 'nullable|in:activo,inactivo'
         ], [

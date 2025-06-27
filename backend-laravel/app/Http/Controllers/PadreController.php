@@ -83,7 +83,7 @@ class PadreController extends Controller
             'pdr_direccion' => 'nullable|string',
             'pdr_ocupacion' => 'nullable|string|max:100',
             'pdr_ci' => 'required|string|max:20',
-            'pdr_ci_ext' => 'required|string|max:5',
+            'pdr_ci_ext' => 'required|string|max:10',
             'contacto_emergencia_nombre' => 'required|string|max:50',
             'contacto_emergencia_numero' => 'required|string|max:20'
         ]);
@@ -202,7 +202,7 @@ class PadreController extends Controller
             'pdr_direccion' => 'nullable|string',
             'pdr_ocupacion' => 'nullable|string|max:100',
             'pdr_ci' => 'required|string|max:20',
-            'pdr_ci_ext' => 'required|string|max:5',
+            'pdr_ci_ext' => 'required|string|max:10',
             'contacto_emergencia_nombre' => 'required|string|max:50',
             'contacto_emergencia_numero' => 'required|string|max:20',
             'pdr_estado' => 'nullable|in:activo,inactivo'

@@ -151,7 +151,7 @@ const ViewPersonal = ({ empleado, onVolver }) => {
               <p><strong>Nombre Completo:</strong> {nombreCompleto}</p>
               <p><strong>Email:</strong> {usuario.usr_email || 'No registrado'}</p>
               <p><strong>Teléfono:</strong> {usuario.usr_telefono || 'No registrado'}</p>
-              {empleadoData.prs_ci && (
+              {empleadoData.prs_ci && empleadoData.prs_ci_expedido && (
                 <p><strong>Cédula de Identidad:</strong> {empleadoData.prs_ci} {empleadoData.prs_ci_expedido}</p>
               )}
               <p><strong>Estado:</strong> {usuario.usr_estado || 'Activo'}</p>

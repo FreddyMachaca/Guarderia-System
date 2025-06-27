@@ -184,14 +184,15 @@ const FormularioPadre = ({ padre, onVolver }) => {
               >
                 <option value="">Seleccionar</option>
                 <option value="LP">La Paz</option>
-                <option value="CB">Cochabamba</option>
-                <option value="SC">Santa Cruz</option>
+                <option value="SCZ">Santa Cruz</option>
+                <option value="CBBA">Cochabamba</option>
                 <option value="OR">Oruro</option>
                 <option value="PT">Potosí</option>
-                <option value="TJ">Tarija</option>
+                <option value="TJA">Tarija</option>
                 <option value="CH">Chuquisaca</option>
-                <option value="BN">Beni</option>
+                <option value="BE">Beni</option>
                 <option value="PD">Pando</option>
+                <option value="EX">Extranjero</option>
               </select>
               {errors.pdr_ci_ext && <span className="error-text">{errors.pdr_ci_ext}</span>}
             </div>
