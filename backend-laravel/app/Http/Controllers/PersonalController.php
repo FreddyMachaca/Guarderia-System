@@ -82,11 +82,16 @@ class PersonalController extends Controller
             'prs_ci' => 'nullable|string|max:20',
             'prs_ci_expedido' => 'nullable|string|max:5',
             'prs_foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
+        ], [
+            'prs_foto.image' => 'El archivo debe ser una imagen válida.',
+            'prs_foto.mimes' => 'Solo se permiten imágenes en formato: JPEG, PNG, JPG, GIF.',
+            'prs_foto.max' => 'La imagen no puede superar los 2 MB de tamaño.'
         ]);
 
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
+                'message' => 'Error en la validación de datos',
                 'errors' => $validator->errors()
             ], 422);
         }
@@ -212,11 +217,16 @@ class PersonalController extends Controller
             'prs_ci_expedido' => 'nullable|string|max:5',
             'prs_foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'usr_estado' => 'nullable|in:activo,inactivo'
+        ], [
+            'prs_foto.image' => 'El archivo debe ser una imagen válida.',
+            'prs_foto.mimes' => 'Solo se permiten imágenes en formato: JPEG, PNG, JPG, GIF.',
+            'prs_foto.max' => 'La imagen no puede superar los 2 MB de tamaño.'
         ]);
 
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
+                'message' => 'Error en la validación de datos',
                 'errors' => $validator->errors()
             ], 422);
         }
