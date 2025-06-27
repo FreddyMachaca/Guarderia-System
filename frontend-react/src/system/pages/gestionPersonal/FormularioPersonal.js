@@ -334,32 +334,61 @@ const FormularioPersonal = ({ personal, onVolver }) => {
               </div>
             </div>
 
-            <div className="form-row">
-              <div className="form-group">
-                <label>Email *</label>
-                <input
-                  type="email"
-                  name="usr_email"
-                  value={formData.usr_email}
-                  onChange={handleInputChange}
-                  className={errors.usr_email ? 'error' : ''}
-                  placeholder="ejemplo@correo.com"
-                />
-                {errors.usr_email && <span className="error-text">{errors.usr_email}</span>}
+            {personal ? (
+              <>
+                <div className="form-group">
+                  <label>Email *</label>
+                  <input
+                    type="email"
+                    name="usr_email"
+                    value={formData.usr_email}
+                    onChange={handleInputChange}
+                    className={errors.usr_email ? 'error' : ''}
+                    placeholder="ejemplo@correo.com"
+                  />
+                  {errors.usr_email && <span className="error-text">{errors.usr_email}</span>}
+                </div>
+                <div className="form-group">
+                  <label>Nueva Contraseña (dejar vacío para mantener contraseña actual)</label>
+                  <input
+                    type="password"
+                    name="usr_password"
+                    value={formData.usr_password}
+                    onChange={handleInputChange}
+                    className={errors.usr_password ? 'error' : ''}
+                    placeholder="Dejar vacío para mantener actual"
+                  />
+                  {errors.usr_password && <span className="error-text">{errors.usr_password}</span>}
+                </div>
+              </>
+            ) : (
+              <div className="form-row">
+                <div className="form-group">
+                  <label>Email *</label>
+                  <input
+                    type="email"
+                    name="usr_email"
+                    value={formData.usr_email}
+                    onChange={handleInputChange}
+                    className={errors.usr_email ? 'error' : ''}
+                    placeholder="ejemplo@correo.com"
+                  />
+                  {errors.usr_email && <span className="error-text">{errors.usr_email}</span>}
+                </div>
+                <div className="form-group">
+                  <label>Contraseña *</label>
+                  <input
+                    type="password"
+                    name="usr_password"
+                    value={formData.usr_password}
+                    onChange={handleInputChange}
+                    className={errors.usr_password ? 'error' : ''}
+                    placeholder="Mínimo 6 caracteres"
+                  />
+                  {errors.usr_password && <span className="error-text">{errors.usr_password}</span>}
+                </div>
               </div>
-              <div className="form-group">
-                <label>{personal ? 'Nueva Contraseña (dejar vacío para mantener actual)' : 'Contraseña *'}</label>
-                <input
-                  type="password"
-                  name="usr_password"
-                  value={formData.usr_password}
-                  onChange={handleInputChange}
-                  className={errors.usr_password ? 'error' : ''}
-                  placeholder={personal ? 'Dejar vacío para mantener actual' : 'Mínimo 6 caracteres'}
-                />
-                {errors.usr_password && <span className="error-text">{errors.usr_password}</span>}
-              </div>
-            </div>
+            )}
 
             <div className="form-group">
               <label>Teléfono</label>

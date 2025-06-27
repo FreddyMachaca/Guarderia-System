@@ -277,7 +277,7 @@ const FormularioPadre = ({ padre, onVolver }) => {
           </div>
 
           <div className="form-group">
-            <label>{padre ? 'Nueva Contraseña (dejar vacío para mantener actual)' : 'Contraseña *'}</label>
+            <label>{padre ? 'Nueva Contraseña (dejar vacío para mantene contraseña actual)' : 'Contraseña *'}</label>
             <div className="password-input-container">
               <input
                 type={showPassword ? 'text' : 'password'}
