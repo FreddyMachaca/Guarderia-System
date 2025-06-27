@@ -8,6 +8,7 @@ import GestionGrupos from './pages/grupos/GestionGrupos';
 import GestionPadres from './pages/gestionPadres/GestionPadres';
 import GestionPersonal from './pages/gestionPersonal/GestionPersonal';
 import GestionMensualidades from './pages/gestionMensualidades/GestionMensualidades';
+import GestionReportes from './pages/reportes/GestionReportes';
 import './System.css';
 
 const AppSystem = () => {
@@ -30,6 +31,7 @@ const AppSystem = () => {
         <Route path="/padres" element={<GestionPadres />} />
         <Route path="/personal" element={<GestionPersonal />} />
         <Route path="/mensualidades" element={<GestionMensualidades />} />
+        <Route path="/reportes" element={<GestionReportes />} />
         
         <Route path="/" element={
           userType === 'parent' ? 

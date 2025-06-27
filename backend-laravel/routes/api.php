@@ -103,4 +103,13 @@ Route::middleware('api')->group(function () {
         Route::get('/{id}/sincronizar-ninos', [MensualidadController::class, 'sincronizarNinos']);
         Route::get('/{id}/verificar-sincronizacion', [MensualidadController::class, 'verificarSincronizacion']);
     });
+
+    // Rutas para reportes
+    Route::prefix('reportes')->group(function () {
+        Route::get('/ingresos', [App\Http\Controllers\ReporteController::class, 'reporteIngresos']);
+        Route::get('/ninos-inscritos', [App\Http\Controllers\ReporteController::class, 'reporteNinosInscritos']);
+        Route::get('/grupos', [App\Http\Controllers\ReporteController::class, 'reporteGrupos']);
+        Route::get('/pagos', [App\Http\Controllers\ReporteController::class, 'reportePagos']);
+        Route::get('/asignaciones', [App\Http\Controllers\ReporteController::class, 'reporteAsistencia']);
+    });
 });
