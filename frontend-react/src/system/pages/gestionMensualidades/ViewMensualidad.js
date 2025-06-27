@@ -269,13 +269,15 @@ const ViewMensualidad = ({ mensualidad, onVolver, onRegistrarPago }) => {
                                 </>
                               ) : (
                                 <>
-                                  <button
-                                    className="btn-edit-small"
-                                    onClick={() => handleEditPrecio(ninoMensualidad)}
-                                    title="Editar precio"
-                                  >
-                                    <i className="pi pi-pencil"></i>
-                                  </button>
+                                  {ninoMensualidad.mnc_estado_pago !== 'pagado' && (
+                                    <button
+                                      className="btn-edit-small"
+                                      onClick={() => handleEditPrecio(ninoMensualidad)}
+                                      title="Editar precio"
+                                    >
+                                      <i className="pi pi-pencil"></i>
+                                    </button>
+                                  )}
                                   {ninoMensualidad.mnc_estado_pago !== 'pagado' && (
                                     <button
                                       className="btn-pay-small"
