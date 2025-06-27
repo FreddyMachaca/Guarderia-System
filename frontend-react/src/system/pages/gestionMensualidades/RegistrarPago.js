@@ -17,10 +17,15 @@ const RegistrarPago = ({ mensualidadNino, onVolver }) => {
 
   useEffect(() => {
     if (mensualidadNino) {
+      // Calculate saldo_pendiente if it's not already defined
+      const saldoPendiente = mensualidadNino.saldo_pendiente !== undefined ? 
+        mensualidadNino.saldo_pendiente : 
+        mensualidadNino.mnc_precio_final - (mensualidadNino.mnc_monto_pagado || 0);
+      
       setFormData(prev => ({
         ...prev,
         mnc_id: mensualidadNino.mnc_id,
-        monto: mensualidadNino.saldo_pendiente?.toString() || ''
+        monto: saldoPendiente.toString() || ''
       }));
     }
   }, [mensualidadNino]);
@@ -53,10 +58,15 @@ const RegistrarPago = ({ mensualidadNino, onVolver }) => {
 
     if (!formData.monto) {
       newErrors.monto = 'El monto es requerido';
-    } else if (parseFloat(formData.monto) <= 0) {
+    } else if (isNaN(parseFloat(formData.monto)) || parseFloat(formData.monto) <= 0) {
       newErrors.monto = 'El monto debe ser mayor a 0';
-    } else if (parseFloat(formData.monto) > mensualidadNino.saldo_pendiente) {
-      newErrors.monto = `El monto no puede ser mayor al saldo pendiente (${formatMonto(mensualidadNino.saldo_pendiente)})`;
+    } else {
+      const montoFloat = parseFloat(formData.monto);
+      const saldoPendiente = mensualidadNino.saldo_pendiente;
+      
+      if (montoFloat > saldoPendiente) {
+        newErrors.monto = `El monto no puede ser mayor al saldo pendiente (${formatMonto(saldoPendiente)})`;
+      }
     }
 
     if (!formData.metodo_pago) {
@@ -111,6 +121,16 @@ const RegistrarPago = ({ mensualidadNino, onVolver }) => {
       } else {
         if (response.errors) {
           setErrors(response.errors);
+        } else if (response.data && response.data.saldo_pendiente) {
+          // Si el servidor nos devuelve el saldo pendiente actualizado en data
+          setErrors({
+            monto: `El monto excede el saldo pendiente (${formatMonto(response.data.saldo_pendiente)})`
+          });
+        } else if (response.saldo_pendiente) {
+          // Si el servidor nos devuelve el saldo pendiente actualizado
+          setErrors({
+            monto: `El monto excede el saldo pendiente (${formatMonto(response.saldo_pendiente)})`
+          });
         } else {
           alert(response.message || 'Error al registrar el pago');
         }
@@ -154,7 +174,11 @@ const RegistrarPago = ({ mensualidadNino, onVolver }) => {
           </div>
           <div className="mensualidad-info-row mensualidad-saldo-pendiente">
             <span className="label">Saldo Pendiente:</span>
-            <span className="value">{formatMonto(mensualidadNino.saldo_pendiente)}</span>
+            <span className="value">{formatMonto(
+              mensualidadNino.saldo_pendiente !== undefined ? 
+              mensualidadNino.saldo_pendiente : 
+              mensualidadNino.mnc_precio_final - (mensualidadNino.mnc_monto_pagado || 0)
+            )}</span>
           </div>
         </div>
       </div>

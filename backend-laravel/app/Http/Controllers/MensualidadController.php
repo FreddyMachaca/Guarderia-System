@@ -364,12 +364,14 @@ class MensualidadController extends Controller
             ], 422);
         }
 
-        $saldoPendiente = $mensualidadNino->saldo_pendiente;
+        // Calcula el saldo pendiente de manera precisa
+        $saldoPendiente = $mensualidadNino->mnc_precio_final - ($mensualidadNino->mnc_monto_pagado ?? 0);
 
         if ($request->monto > $saldoPendiente) {
             return response()->json([
                 'success' => false,
-                'message' => 'El monto excede el saldo pendiente de Bs. ' . number_format($saldoPendiente, 2)
+                'message' => 'El monto de pago excede el saldo pendiente de Bs. ' . number_format($saldoPendiente, 2),
+                'saldo_pendiente' => $saldoPendiente
             ], 422);
         }
 

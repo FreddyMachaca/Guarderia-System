@@ -80,6 +80,15 @@ export const useApi = () => {
     } catch (err) {
       setLoading(false);
       setError(err.response?.data?.message || err.message);
+      
+      if (err.response && err.response.status === 422) {
+        return {
+          success: false,
+          ...err.response.data,
+          message: err.response.data.message || 'Error de validación'
+        };
+      }
+      
       throw err;
     }
   }, []);

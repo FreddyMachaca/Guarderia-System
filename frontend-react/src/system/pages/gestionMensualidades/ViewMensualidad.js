@@ -235,7 +235,11 @@ const ViewMensualidad = ({ mensualidad, onVolver, onRegistrarPago }) => {
                             )}
                           </td>
                           <td>{formatMonto(ninoMensualidad.mnc_monto_pagado || 0)}</td>
-                          <td>{formatMonto(ninoMensualidad.saldo_pendiente)}</td>
+                          <td>{formatMonto(
+                            ninoMensualidad.saldo_pendiente !== undefined ? 
+                            ninoMensualidad.saldo_pendiente : 
+                            ninoMensualidad.mnc_precio_final - (ninoMensualidad.mnc_monto_pagado || 0)
+                          )}</td>
                           <td>
                             <span className={`estado-pago ${getEstadoPagoClass(ninoMensualidad.mnc_estado_pago)}`}>
                               {ninoMensualidad.mnc_estado_pago}
