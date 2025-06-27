@@ -100,7 +100,11 @@ const ListaPersonal = ({ onAgregarPersonal, onEditarPersonal, onVerPersonal }) =
         <div className="personal-foto">
           {empleado.prs_foto ? (
             <img 
-              src={`${process.env.REACT_APP_API_URL}/storage/${empleado.prs_foto}`} 
+              src={
+                empleado.prs_foto.startsWith('http')
+                  ? empleado.prs_foto
+                  : `${process.env.REACT_APP_API_URL}storage/${empleado.prs_foto}`
+              }
               alt={nombreCompleto}
               onError={(e) => {
                 e.target.onerror = null;

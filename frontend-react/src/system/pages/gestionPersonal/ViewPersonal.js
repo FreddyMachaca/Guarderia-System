@@ -108,9 +108,11 @@ const ViewPersonal = ({ empleado, onVolver }) => {
           <div className="personal-foto-grande">
             {empleadoData.prs_foto ? (
               <img 
-                src={empleadoData.prs_foto.startsWith('http') 
-                  ? empleadoData.prs_foto 
-                  : `${process.env.REACT_APP_API_URL}/storage/${empleadoData.prs_foto}`} 
+                src={
+                  empleadoData.prs_foto.startsWith('http')
+                    ? empleadoData.prs_foto
+                    : `${process.env.REACT_APP_API_URL}storage/${empleadoData.prs_foto}`
+                } 
                 alt={nombreCompleto} 
                 onError={(e) => {
                   e.target.onerror = null;
