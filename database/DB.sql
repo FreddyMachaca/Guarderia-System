@@ -45,7 +45,10 @@ create table if not exists public.tbl_prs_personal
     prs_fecha_ingreso   date         not null,
     prs_salario         numeric(10, 2),
     prs_horario         varchar(100),
-    prs_fecha_registro  timestamp default CURRENT_TIMESTAMP
+    prs_fecha_registro  timestamp default CURRENT_TIMESTAMP,
+    prs_ci              varchar(20),
+    prs_ci_expedido     varchar(5),
+    prs_foto            varchar(255)
 );
 
 alter table public.tbl_prs_personal

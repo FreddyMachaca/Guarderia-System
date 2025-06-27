@@ -14,13 +14,17 @@ class Personal extends Model
     public $timestamps = false;
 
     protected $fillable = [
+        'prs_id',
         'prs_usr_id',
         'prs_codigo_empleado',
         'prs_cargo',
         'prs_fecha_ingreso',
         'prs_salario',
         'prs_horario',
-        'prs_fecha_registro'
+        'prs_fecha_registro',
+        'prs_ci',
+        'prs_ci_expedido',
+        'prs_foto'
     ];
 
     protected $dates = [

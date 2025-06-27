@@ -97,13 +97,29 @@ const ListaPersonal = ({ onAgregarPersonal, onEditarPersonal, onVerPersonal }) =
     
     return (
       <div key={empleado.prs_id} className="personal-card">
-        <div className="personal-icon">
-          <i className="pi pi-user"></i>
+        <div className="personal-foto">
+          {empleado.prs_foto ? (
+            <img 
+              src={`${process.env.REACT_APP_API_URL}/storage/${empleado.prs_foto}`} 
+              alt={nombreCompleto}
+              onError={(e) => {
+                e.target.onerror = null;
+                e.target.style.display = 'none';
+                e.target.nextSibling.style.display = 'flex';
+              }}
+            />
+          ) : null}
+          <div className="foto-placeholder" style={{display: empleado.prs_foto ? 'none' : 'flex'}}>
+            <i className="pi pi-user"></i>
+          </div>
         </div>
         <div className="personal-info">
           <h3>{nombreCompleto}</h3>
           <p><strong>Código:</strong> {empleado.prs_codigo_empleado}</p>
           <p><strong>Cargo:</strong> {empleado.prs_cargo}</p>
+          {empleado.prs_ci && empleado.prs_ci_expedido && (
+            <p><strong>CI:</strong> {empleado.prs_ci} {empleado.prs_ci_expedido}</p>
+          )}
           <p><strong>Email:</strong> {usuario.usr_email || 'No registrado'}</p>
           <p><strong>Teléfono:</strong> {usuario.usr_telefono || 'No registrado'}</p>
           <p><strong>Fecha de ingreso:</strong> {empleado.prs_fecha_ingreso || 'No registrada'}</p>

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Storage;
 use App\Models\Personal;
 use App\Models\User;
 use App\Services\PaginationService;
@@ -77,7 +78,10 @@ class PersonalController extends Controller
             'prs_cargo' => 'required|string|max:100',
             'prs_fecha_ingreso' => 'required|date',
             'prs_salario' => 'nullable|numeric|min:0',
-            'prs_horario' => 'nullable|string|max:100'
+            'prs_horario' => 'nullable|string|max:100',
+            'prs_ci' => 'nullable|string|max:20',
+            'prs_ci_expedido' => 'nullable|string|max:5',
+            'prs_foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
         ]);
 
         if ($validator->fails()) {
@@ -108,7 +112,7 @@ class PersonalController extends Controller
             $maxPrsId = DB::table('tbl_prs_personal')->max('prs_id') ?? 0;
             $nextPrsId = $maxPrsId + 1;
 
-            $personal = Personal::create([
+            $personalData = [
                 'prs_id' => $nextPrsId,
                 'prs_usr_id' => $usuario->usr_id,
                 'prs_codigo_empleado' => $request->prs_codigo_empleado,
@@ -116,8 +120,19 @@ class PersonalController extends Controller
                 'prs_fecha_ingreso' => $request->prs_fecha_ingreso,
                 'prs_salario' => $request->prs_salario,
                 'prs_horario' => $request->prs_horario,
+                'prs_ci' => $request->prs_ci,
+                'prs_ci_expedido' => $request->prs_ci_expedido,
                 'prs_fecha_registro' => now()
-            ]);
+            ];
+
+            if ($request->hasFile('prs_foto')) {
+                $foto = $request->file('prs_foto');
+                $nombreFoto = time() . '_' . uniqid() . '.' . $foto->getClientOriginalExtension();
+                $rutaFoto = $foto->storeAs('personal/fotos', $nombreFoto, 'public');
+                $personalData['prs_foto'] = $rutaFoto;
+            }
+
+            $personal = Personal::create($personalData);
 
             DB::commit();
             return response()->json([
@@ -146,12 +161,22 @@ class PersonalController extends Controller
             ], 404);
         }
 
+        if (!$personal->usuario) {
+            $personal->usuario = (object)[
+                'usr_nombre' => 'Usuario',
+                'usr_apellido' => 'Sin datos',
+                'usr_email' => 'No disponible',
+                'usr_telefono' => null,
+                'usr_estado' => 'inactivo'
+            ];
+        }
+
         $personal->grupos_asignados = $personal->grupos->map(function($grupo) {
             return [
                 'grp_id' => $grupo->grp_id,
                 'grp_nombre' => $grupo->grp_nombre,
                 'grp_estado' => $grupo->grp_estado,
-                'ninos_asignados' => $grupo->ninosActivos->count()
+                'ninos_asignados' => $grupo->ninosActivos ? $grupo->ninosActivos->count() : 0
             ];
         });
 
@@ -183,6 +208,9 @@ class PersonalController extends Controller
             'prs_fecha_ingreso' => 'required|date',
             'prs_salario' => 'nullable|numeric|min:0',
             'prs_horario' => 'nullable|string|max:100',
+            'prs_ci' => 'nullable|string|max:20',
+            'prs_ci_expedido' => 'nullable|string|max:5',
+            'prs_foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'usr_estado' => 'nullable|in:activo,inactivo'
         ]);
 
@@ -213,13 +241,28 @@ class PersonalController extends Controller
 
             $personal->usuario->update($updateUserData);
 
-            $personal->update([
+            $updatePersonalData = [
                 'prs_codigo_empleado' => $request->prs_codigo_empleado,
                 'prs_cargo' => $request->prs_cargo,
                 'prs_fecha_ingreso' => $request->prs_fecha_ingreso,
                 'prs_salario' => $request->prs_salario,
-                'prs_horario' => $request->prs_horario
-            ]);
+                'prs_horario' => $request->prs_horario,
+                'prs_ci' => $request->prs_ci,
+                'prs_ci_expedido' => $request->prs_ci_expedido
+            ];
+
+            if ($request->hasFile('prs_foto')) {
+                if ($personal->prs_foto && Storage::disk('public')->exists($personal->prs_foto)) {
+                    Storage::disk('public')->delete($personal->prs_foto);
+                }
+
+                $foto = $request->file('prs_foto');
+                $nombreFoto = time() . '_' . uniqid() . '.' . $foto->getClientOriginalExtension();
+                $rutaFoto = $foto->storeAs('personal/fotos', $nombreFoto, 'public');
+                $updatePersonalData['prs_foto'] = $rutaFoto;
+            }
+
+            $personal->update($updatePersonalData);
 
             DB::commit();
             return response()->json([

@@ -105,8 +105,23 @@ const ViewPersonal = ({ empleado, onVolver }) => {
 
       <div className="personal-view-content">
         <div className="personal-view-section perfil">
-          <div className="personal-icon-large">
-            <i className="pi pi-user"></i>
+          <div className="personal-foto-grande">
+            {empleadoData.prs_foto ? (
+              <img 
+                src={empleadoData.prs_foto.startsWith('http') 
+                  ? empleadoData.prs_foto 
+                  : `${process.env.REACT_APP_API_URL}/storage/${empleadoData.prs_foto}`} 
+                alt={nombreCompleto} 
+                onError={(e) => {
+                  e.target.onerror = null;
+                  e.target.src = 'https://via.placeholder.com/150?text=Sin+Imagen';
+                }}
+              />
+            ) : (
+              <div className="foto-placeholder-grande">
+                <i className="pi pi-user"></i>
+              </div>
+            )}
           </div>
           <div className="personal-info-principal">
             <h3>{nombreCompleto}</h3>
@@ -118,6 +133,9 @@ const ViewPersonal = ({ empleado, onVolver }) => {
             <div className="info-group">
               <p><i className="pi pi-id-card"></i> <strong>Código:</strong> {empleadoData.prs_codigo_empleado}</p>
               <p><i className="pi pi-briefcase"></i> <strong>Cargo:</strong> {empleadoData.prs_cargo}</p>
+              {empleadoData.prs_ci && empleadoData.prs_ci_expedido && (
+                <p><i className="pi pi-id-card"></i> <strong>CI:</strong> {empleadoData.prs_ci} {empleadoData.prs_ci_expedido}</p>
+              )}
               <p><i className="pi pi-envelope"></i> <strong>Email:</strong> {usuario.usr_email || 'No registrado'}</p>
               <p><i className="pi pi-phone"></i> <strong>Teléfono:</strong> {usuario.usr_telefono || 'No registrado'}</p>
             </div>
@@ -131,6 +149,9 @@ const ViewPersonal = ({ empleado, onVolver }) => {
               <p><strong>Nombre Completo:</strong> {nombreCompleto}</p>
               <p><strong>Email:</strong> {usuario.usr_email || 'No registrado'}</p>
               <p><strong>Teléfono:</strong> {usuario.usr_telefono || 'No registrado'}</p>
+              {empleadoData.prs_ci && (
+                <p><strong>Cédula de Identidad:</strong> {empleadoData.prs_ci} {empleadoData.prs_ci_expedido}</p>
+              )}
               <p><strong>Estado:</strong> {usuario.usr_estado || 'Activo'}</p>
             </div>
           </div>
