@@ -42,6 +42,7 @@ export const useMenus = () => {
       id: 'mensualidades',
       title: 'Mensualidades',
       icon: 'pi pi-money-bill',
+      path: '/system/mensualidades'
     },
     {
       id: 'reportes',

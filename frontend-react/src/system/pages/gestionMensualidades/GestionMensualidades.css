@@ -1,0 +1,590 @@
+.gestion-mensualidades {
+  display: flex;
+  min-height: 100vh;
+  background-color: #f5f5f5;
+  font-family: 'Poppins', 'Arial', sans-serif;
+}
+
+.lista-mensualidades {
+  background: white;
+  border-radius: 10px;
+  padding: 30px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  width: 100%;
+}
+
+.mensualidad-card {
+  background: white;
+  border: 2px solid #f0f0f0;
+  border-radius: 12px;
+  padding: 20px;
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.mensualidad-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  border-color: #4ecdc4;
+}
+
+.mensualidad-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.mensualidad-mes-anio h3 {
+  margin: 0 0 5px 0;
+  color: #333;
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+
+.mensualidad-grupo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.mensualidad-grupo i {
+  color: #4ecdc4;
+}
+
+.mensualidad-info {
+  flex: 1;
+  margin-bottom: 15px;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  font-size: 0.9rem;
+}
+
+.info-row .label {
+  color: #666;
+  font-weight: 500;
+}
+
+.info-row .value {
+  font-weight: 600;
+  color: #333;
+}
+
+.info-row .value.success {
+  color: #28a745;
+}
+
+.info-row .value.warning {
+  color: #ffc107;
+}
+
+.info-row .value.danger {
+  color: #dc3545;
+}
+
+.mensualidad-actions {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: auto;
+  padding-top: 15px;
+  border-top: 1px solid #f0f0f0;
+}
+
+.estado-badge {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.estado-badge.activo {
+  background-color: #e8f5e8;
+  color: #2d5a2d;
+}
+
+.estado-badge.inactivo {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+.formulario-mensualidad {
+  background: white;
+  border-radius: 10px;
+  padding: 30px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  max-width: 800px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.mensualidad-form {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.view-mensualidad {
+  background: white;
+  border-radius: 10px;
+  padding: 30px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.mensualidad-view-content {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.mensualidad-view-section {
+  background: #fafafa;
+  padding: 25px;
+  border-radius: 10px;
+  border: 1px solid #e0e0e0;
+}
+
+.mensualidad-view-section h4 {
+  margin: 0 0 20px 0;
+  color: #333;
+  font-size: 1.2rem;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #4ecdc4;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.mensualidad-view-section h4 i {
+  color: #4ecdc4;
+}
+
+.mensualidad-view-section.principal {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 30px;
+  align-items: center;
+  background: linear-gradient(to right, #fff, #f8f8f8);
+}
+
+.mensualidad-icon-large {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #4ecdc4, #26A69A);
+  color: white;
+  font-size: 3rem;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.mensualidad-info-principal {
+  flex: 1;
+}
+
+.mensualidad-info-principal h3 {
+  font-size: 1.8rem;
+  margin: 0 0 10px 0;
+  color: #333;
+}
+
+.mensualidad-grupo-info {
+  background: #f0f8ff;
+  padding: 15px;
+  border-radius: 8px;
+  border-left: 4px solid #4ecdc4;
+}
+
+.mensualidad-info-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.mensualidad-info-group p {
+  margin: 0;
+  color: #555;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.mensualidad-info-group p i {
+  color: #ff6b35;
+  font-size: 1.2rem;
+}
+
+.resumen-financiero {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  min-width: 200px;
+}
+
+.resumen-item {
+  text-align: center;
+  padding: 15px;
+  border-radius: 10px;
+  border: 2px solid transparent;
+}
+
+.resumen-item.recaudado {
+  background: rgba(40, 167, 69, 0.1);
+  border-color: rgba(40, 167, 69, 0.2);
+}
+
+.resumen-item.pendiente {
+  background: rgba(255, 193, 7, 0.1);
+  border-color: rgba(255, 193, 7, 0.2);
+}
+
+.resumen-item.porcentaje {
+  background: rgba(78, 205, 196, 0.1);
+  border-color: rgba(78, 205, 196, 0.2);
+}
+
+.resumen-valor {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 5px;
+}
+
+.resumen-valor.success {
+  color: #28a745;
+}
+
+.resumen-valor.warning {
+  color: #ffc107;
+}
+
+.resumen-valor.danger {
+  color: #dc3545;
+}
+
+.resumen-label {
+  font-size: 0.9rem;
+  color: #666;
+  font-weight: 500;
+}
+
+.ninos-mensualidad {
+  margin-top: 15px;
+}
+
+.table-container {
+  overflow-x: auto;
+}
+
+.ninos-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+
+.ninos-table th,
+.ninos-table td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.ninos-table th {
+  background-color: #f8f9fa;
+  font-weight: 600;
+  color: #495057;
+}
+
+.ninos-table tr:hover {
+  background-color: #f9f9f9;
+}
+
+.nino-info {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.nino-nombre {
+  font-weight: 600;
+  color: #333;
+}
+
+.nino-edad {
+  font-size: 0.8rem;
+  color: #666;
+}
+
+.estado-pago {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.estado-pago.pagado {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.estado-pago.parcial {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+.estado-pago.pendiente {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+.acciones-nino {
+  display: flex;
+  gap: 5px;
+}
+
+.btn-edit-small,
+.btn-save-small,
+.btn-cancel-small,
+.btn-pay-small {
+  width: 30px;
+  height: 30px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  font-size: 0.8rem;
+}
+
+.btn-edit-small {
+  background: #4ecdc4;
+  color: white;
+}
+
+.btn-edit-small:hover {
+  background: #45b7aa;
+  transform: translateY(-2px);
+}
+
+.btn-save-small {
+  background: #28a745;
+  color: white;
+}
+
+.btn-save-small:hover {
+  background: #218838;
+  transform: translateY(-2px);
+}
+
+.btn-cancel-small {
+  background: #6c757d;
+  color: white;
+}
+
+.btn-cancel-small:hover {
+  background: #5a6268;
+  transform: translateY(-2px);
+}
+
+.btn-pay-small {
+  background: #4a6bff;
+  color: white;
+}
+
+.btn-pay-small:hover {
+  background: #3451cc;
+  transform: translateY(-2px);
+}
+
+.input-precio,
+.input-descuento {
+  width: 80px;
+  padding: 4px 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+.registrar-pago {
+  background: white;
+  border-radius: 10px;
+  padding: 30px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  max-width: 800px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.pago-info {
+  margin-bottom: 30px;
+}
+
+.nino-info-card {
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 10px;
+  border: 1px solid #e0e0e0;
+}
+
+.nino-info-card h3 {
+  margin: 0 0 15px 0;
+  color: #333;
+  font-size: 1.2rem;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #4ecdc4;
+}
+
+.mensualidad-nino-info-card {
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 10px;
+  border: 1px solid #e0e0e0;
+}
+
+.mensualidad-nino-info-card h3 {
+  margin: 0 0 15px 0;
+  color: #333;
+  font-size: 1.2rem;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #4ecdc4;
+}
+
+.mensualidad-info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  padding: 8px 0;
+}
+
+.mensualidad-info-row .label {
+  font-weight: 500;
+  color: #666;
+}
+
+.mensualidad-info-row .value {
+  font-weight: 600;
+  color: #333;
+}
+
+.mensualidad-info-row.mensualidad-saldo-pendiente .value {
+  color: #dc3545;
+  font-size: 1.1rem;
+}
+
+.pago-form {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.select-mes,
+.input-anio,
+.select-grupo {
+  padding: 12px 15px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 1rem;
+  min-width: 150px;
+  transition: all 0.2s ease;
+}
+
+.select-mes:focus,
+.input-anio:focus,
+.select-grupo:focus {
+  outline: none;
+  border-color: #4ecdc4;
+}
+
+@media (max-width: 768px) {
+  .mensualidad-view-section.principal {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+  
+  .mensualidad-icon-large {
+    margin: 0 auto 20px;
+  }
+  
+  .resumen-financiero {
+    flex-direction: row;
+    justify-content: space-around;
+  }
+  
+  .table-container {
+    border-radius: 0;
+    box-shadow: none;
+  }
+  
+  .ninos-table th,
+  .ninos-table td {
+    padding: 8px;
+    font-size: 0.85rem;
+  }
+  
+  .acciones-nino {
+    flex-direction: column;
+    gap: 3px;
+  }
+  
+  .btn-edit-small,
+  .btn-save-small,
+  .btn-cancel-small,
+  .btn-pay-small {
+    width: 25px;
+    height: 25px; 
+    font-size: 0.7rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .mensualidad-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  
+  .mensualidad-card {
+    padding: 15px;
+  }
+  
+  .resumen-financiero {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .resumen-item {
+    padding: 10px;
+  }
+  
+  .resumen-valor {
+    font-size: 1.2rem;
+  }
+  
+  .formulario-mensualidad,
+  .view-mensualidad,
+  .registrar-pago {
+    padding: 20px 15px;
+  }
+}

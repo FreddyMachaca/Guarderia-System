@@ -8,6 +8,7 @@ use App\Http\Controllers\GrupoController;
 use App\Http\Controllers\AsignacionNinoController;
 use App\Http\Controllers\PersonalController;
 use App\Http\Controllers\PadreController;
+use App\Http\Controllers\MensualidadController;
 
 /*
 |--------------------------------------------------------------------------
@@ -84,5 +85,18 @@ Route::middleware('api')->group(function () {
         Route::put('/{id}', [PersonalController::class, 'update']);
         Route::delete('/{id}', [PersonalController::class, 'destroy']);
         Route::post('/{id}/reset-password', [PersonalController::class, 'resetPassword']);
+    });
+
+    // Rutas para el módulo de Mensualidades
+    Route::prefix('mensualidades')->group(function () {
+        Route::get('/', [MensualidadController::class, 'index']);
+        Route::post('/', [MensualidadController::class, 'store']);
+        Route::get('/grupos', [MensualidadController::class, 'obtenerGrupos']);
+        Route::get('/reporte', [MensualidadController::class, 'reporteMensual']);
+        Route::get('/{id}', [MensualidadController::class, 'show']);
+        Route::put('/{id}', [MensualidadController::class, 'update']);
+        Route::delete('/{id}', [MensualidadController::class, 'destroy']);
+        Route::put('/{mensualidadId}/nino/{ninoId}/precio', [MensualidadController::class, 'actualizarPrecioNino']);
+        Route::post('/pago', [MensualidadController::class, 'registrarPago']);
     });
 });

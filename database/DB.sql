@@ -134,3 +134,57 @@ create table if not exists public.tbl_asn_asignaciones_ninos
 
 alter table public.tbl_asn_asignaciones_ninos
     owner to postgres;
+
+create table if not exists public.tbl_msg_mensualidades_grupo
+(
+    msg_id                  serial
+        primary key,
+    msg_grp_id              integer not null,
+    msg_precio_base         numeric(10, 2) not null,
+    msg_mes                 integer not null,
+    msg_anio                integer not null,
+    msg_estado              varchar(20) not null,
+    msg_fecha_creacion      timestamp default CURRENT_TIMESTAMP,
+    msg_fecha_vencimiento   date not null,
+    msg_observaciones       text
+);
+
+alter table public.tbl_msg_mensualidades_grupo
+    owner to postgres;
+
+create table if not exists public.tbl_mnc_mensualidades_nino
+(
+    mnc_id                  serial
+        primary key,
+    mnc_msg_id              integer not null,
+    mnc_nin_id              integer not null,
+    mnc_precio_final        numeric(10, 2) not null,
+    mnc_descuento           numeric(10, 2),
+    mnc_monto_pagado        numeric(10, 2),
+    mnc_estado_pago         varchar(20) not null,
+    mnc_fecha_pago          timestamp,
+    mnc_metodo_pago         varchar(30),
+    mnc_numero_recibo       varchar(50),
+    mnc_observaciones       text,
+    mnc_fecha_creacion      timestamp default CURRENT_TIMESTAMP
+);
+
+alter table public.tbl_mnc_mensualidades_nino
+    owner to postgres;
+
+create table if not exists public.tbl_pgm_pagos_mensualidad
+(
+    pgm_id                  serial
+        primary key,
+    pgm_mnc_id              integer not null,
+    pgm_monto               numeric(10, 2) not null,
+    pgm_fecha_pago          timestamp not null,
+    pgm_metodo_pago         varchar(30) not null,
+    pgm_numero_recibo       varchar(50),
+    pgm_observaciones       text,
+    pgm_registrado_por      integer not null,
+    pgm_fecha_registro      timestamp default CURRENT_TIMESTAMP
+);
+
+alter table public.tbl_pgm_pagos_mensualidad
+    owner to postgres;
