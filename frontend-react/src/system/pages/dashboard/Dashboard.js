@@ -66,7 +66,7 @@ const Dashboard = () => {
             <div className="dashboard-card">
               <h3>Personal Activo</h3>
               <div className="card-value">0</div>
-              <div className="card-description">Maestros y administradores</div>
+              <div className="card-description">Personal</div>
             </div>
             
             <div className="dashboard-card">
