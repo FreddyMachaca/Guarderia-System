@@ -114,7 +114,7 @@ const FormularioPersonal = ({ personal, onVolver }) => {
     if (empleado.prs_foto) {
       const fotoUrl = empleado.prs_foto.startsWith('http') 
         ? empleado.prs_foto 
-        : `${process.env.REACT_APP_API_URL}/storage/${empleado.prs_foto}`;
+        : `${process.env.REACT_APP_API_URL}storage/${empleado.prs_foto}`;
       setPreviewFoto(fotoUrl);
     }
   };
