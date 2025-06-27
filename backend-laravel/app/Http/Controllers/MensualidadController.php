@@ -42,9 +42,20 @@ class MensualidadController extends Controller
         $result = PaginationService::paginate($query, $page, $limit);
 
         foreach ($result['data'] as $mensualidad) {
+            $ninosActivos = AsignacionNino::where('asn_grp_id', $mensualidad->msg_grp_id)
+                                         ->where('asn_estado', 'activo')
+                                         ->whereNull('asn_fecha_baja')
+                                         ->count();
+            
+            $ninosEnMensualidad = $mensualidad->mensualidadesNinos()->count();
+            
             $mensualidad->total_recaudado = $mensualidad->total_recaudado;
             $mensualidad->total_pendiente = $mensualidad->total_pendiente;
             $mensualidad->cantidad_ninos = $mensualidad->cantidad_ninos;
+            $mensualidad->ninos_activos_grupo = $ninosActivos;
+            $mensualidad->ninos_en_mensualidad = $ninosEnMensualidad;
+            $mensualidad->necesita_sincronizacion = $ninosActivos > $ninosEnMensualidad;
+            $mensualidad->ninos_faltantes = max(0, $ninosActivos - $ninosEnMensualidad);
         }
 
         return response()->json([
@@ -143,9 +154,20 @@ class MensualidadController extends Controller
             ], 404);
         }
 
+        $ninosActivos = AsignacionNino::where('asn_grp_id', $mensualidad->msg_grp_id)
+                                     ->where('asn_estado', 'activo')
+                                     ->whereNull('asn_fecha_baja')
+                                     ->count();
+        
+        $ninosEnMensualidad = $mensualidad->mensualidadesNinos()->count();
+
         $mensualidad->total_recaudado = $mensualidad->total_recaudado;
         $mensualidad->total_pendiente = $mensualidad->total_pendiente;
         $mensualidad->cantidad_ninos = $mensualidad->cantidad_ninos;
+        $mensualidad->ninos_activos_grupo = $ninosActivos;
+        $mensualidad->ninos_en_mensualidad = $ninosEnMensualidad;
+        $mensualidad->necesita_sincronizacion = $ninosActivos > $ninosEnMensualidad;
+        $mensualidad->ninos_faltantes = max(0, $ninosActivos - $ninosEnMensualidad);
 
         return response()->json([
             'success' => true,
@@ -393,6 +415,93 @@ class MensualidadController extends Controller
         return response()->json([
             'success' => true,
             'data' => $reporte
+        ]);
+    }
+
+    public function sincronizarNinos($id)
+    {
+        $mensualidadGrupo = MensualidadGrupo::find($id);
+
+        if (!$mensualidadGrupo) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Mensualidad no encontrada'
+            ], 404);
+        }
+
+        $ninosActivos = AsignacionNino::where('asn_grp_id', $mensualidadGrupo->msg_grp_id)
+                                     ->where('asn_estado', 'activo')
+                                     ->whereNull('asn_fecha_baja')
+                                     ->pluck('asn_nin_id');
+
+        $ninosEnMensualidad = $mensualidadGrupo->mensualidadesNinos()
+                                              ->pluck('mnc_nin_id');
+
+        $ninosFaltantes = $ninosActivos->diff($ninosEnMensualidad);
+
+        if ($ninosFaltantes->isEmpty()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'No hay niños nuevos para agregar',
+                'ninos_agregados' => 0
+            ]);
+        }
+
+        DB::beginTransaction();
+        try {
+            foreach ($ninosFaltantes as $ninoId) {
+                MensualidadNino::create([
+                    'mnc_msg_id' => $mensualidadGrupo->msg_id,
+                    'mnc_nin_id' => $ninoId,
+                    'mnc_precio_final' => $mensualidadGrupo->msg_precio_base,
+                    'mnc_descuento' => 0,
+                    'mnc_monto_pagado' => 0,
+                    'mnc_estado_pago' => 'pendiente',
+                    'mnc_fecha_creacion' => now()
+                ]);
+            }
+
+            DB::commit();
+            return response()->json([
+                'success' => true,
+                'message' => 'Niños sincronizados exitosamente',
+                'ninos_agregados' => $ninosFaltantes->count()
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al sincronizar niños: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function verificarSincronizacion($id)
+    {
+        $mensualidadGrupo = MensualidadGrupo::find($id);
+
+        if (!$mensualidadGrupo) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Mensualidad no encontrada'
+            ], 404);
+        }
+
+        $ninosActivos = AsignacionNino::where('asn_grp_id', $mensualidadGrupo->msg_grp_id)
+                                     ->where('asn_estado', 'activo')
+                                     ->whereNull('asn_fecha_baja')
+                                     ->count();
+
+        $ninosEnMensualidad = $mensualidadGrupo->mensualidadesNinos()->count();
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'ninos_activos_grupo' => $ninosActivos,
+                'ninos_en_mensualidad' => $ninosEnMensualidad,
+                'necesita_sincronizacion' => $ninosActivos > $ninosEnMensualidad,
+                'ninos_faltantes' => max(0, $ninosActivos - $ninosEnMensualidad)
+            ]
         ]);
     }
 }

@@ -13,7 +13,7 @@ const ListaMensualidades = ({ onAgregarMensualidad, onEditarMensualidad, onVerMe
   const [grupoFilter, setGrupoFilter] = useState('');
   const [grupos, setGrupos] = useState([]);
   const [viewType, setViewType] = useState('card');
-  const { get, del } = useApi();
+  const { get, del, post } = useApi();
   
   const {
     currentPage,
@@ -115,6 +115,23 @@ const ListaMensualidades = ({ onAgregarMensualidad, onEditarMensualidad, onVerMe
     }
   };
 
+  const sincronizarNinos = async (mensualidad) => {
+    if (window.confirm(`¿Sincronizar ${mensualidad.ninos_faltantes} niños faltantes en la mensualidad de ${formatMes(mensualidad.msg_mes)} ${mensualidad.msg_anio}?`)) {
+      try {
+        const response = await post(`/mensualidades/${mensualidad.msg_id}/sincronizar-ninos`);
+        if (response.success) {
+          alert(`${response.ninos_agregados} niños agregados exitosamente`);
+          cargarMensualidades();
+        } else {
+          alert(response.message || 'Error al sincronizar niños');
+        }
+      } catch (error) {
+        console.error('Error al sincronizar niños:', error);
+        alert('Error al sincronizar niños');
+      }
+    }
+  };
+
   const formatMes = (mes) => {
     const mesObj = meses.find(m => m.value === mes);
     return mesObj ? mesObj.label : mes;
@@ -129,8 +146,9 @@ const ListaMensualidades = ({ onAgregarMensualidad, onEditarMensualidad, onVerMe
   };
 
   const renderMensualidadCard = (mensualidad) => {
-    const porcentajeCobrado = mensualidad.cantidad_ninos > 0 
-      ? ((mensualidad.total_recaudado / (mensualidad.msg_precio_base * mensualidad.cantidad_ninos)) * 100).toFixed(1)
+    const totalEsperado = (mensualidad.msg_precio_base || 0) * (mensualidad.ninos_activos_grupo || 0);
+    const porcentajeCobrado = totalEsperado > 0 
+      ? (((mensualidad.total_recaudado || 0) / totalEsperado) * 100).toFixed(1)
       : 0;
 
     return (
@@ -154,16 +172,20 @@ const ListaMensualidades = ({ onAgregarMensualidad, onEditarMensualidad, onVerMe
             <span className="value">{formatMonto(mensualidad.msg_precio_base)}</span>
           </div>
           <div className="info-row">
-            <span className="label">Niños:</span>
-            <span className="value">{mensualidad.cantidad_ninos}</span>
+            <span className="label">Niños Activos:</span>
+            <span className="value">{mensualidad.ninos_activos_grupo || 0}</span>
+          </div>
+          <div className="info-row">
+            <span className="label">En Mensualidad:</span>
+            <span className="value">{mensualidad.ninos_en_mensualidad || 0}</span>
           </div>
           <div className="info-row">
             <span className="label">Recaudado:</span>
-            <span className="value success">{formatMonto(mensualidad.total_recaudado)}</span>
+            <span className="value success">{formatMonto(mensualidad.total_recaudado || 0)}</span>
           </div>
           <div className="info-row">
             <span className="label">Pendiente:</span>
-            <span className="value warning">{formatMonto(mensualidad.total_pendiente)}</span>
+            <span className="value warning">{formatMonto(mensualidad.total_pendiente || 0)}</span>
           </div>
           <div className="info-row">
             <span className="label">% Cobrado:</span>
@@ -171,9 +193,24 @@ const ListaMensualidades = ({ onAgregarMensualidad, onEditarMensualidad, onVerMe
               {porcentajeCobrado}%
             </span>
           </div>
+          {mensualidad.necesita_sincronizacion && (
+            <div className="info-row warning-row">
+              <span className="label">⚠️ Faltan:</span>
+              <span className="value warning">{mensualidad.ninos_faltantes} niños</span>
+            </div>
+          )}
         </div>
 
         <div className="mensualidad-actions">
+          {mensualidad.necesita_sincronizacion && (
+            <button 
+              className="btn-sync"
+              onClick={() => sincronizarNinos(mensualidad)}
+              title="Sincronizar niños"
+            >
+              <i className="pi pi-refresh"></i>
+            </button>
+          )}
           <button 
             className="btn-view"
             onClick={() => onVerMensualidad(mensualidad)}
@@ -215,15 +252,22 @@ const ListaMensualidades = ({ onAgregarMensualidad, onEditarMensualidad, onVerMe
     },
     {
       header: 'Niños',
-      field: 'cantidad_ninos'
+      render: (mensualidad) => (
+        <div>
+          <span>{mensualidad.ninos_en_mensualidad || 0}/{mensualidad.ninos_activos_grupo || 0}</span>
+          {mensualidad.necesita_sincronizacion && (
+            <i className="pi pi-exclamation-triangle" style={{color: 'orange', marginLeft: '5px'}} title="Necesita sincronización"></i>
+          )}
+        </div>
+      )
     },
     {
       header: 'Recaudado',
-      render: (mensualidad) => formatMonto(mensualidad.total_recaudado)
+      render: (mensualidad) => formatMonto(mensualidad.total_recaudado || 0)
     },
     {
       header: 'Pendiente',
-      render: (mensualidad) => formatMonto(mensualidad.total_pendiente)
+      render: (mensualidad) => formatMonto(mensualidad.total_pendiente || 0)
     },
     {
       header: 'Estado',

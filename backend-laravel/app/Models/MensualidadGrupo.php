@@ -53,4 +53,17 @@ class MensualidadGrupo extends Model
     {
         return $this->mensualidadesNinos()->count();
     }
+
+    public function getNinosActivosGrupoAttribute()
+    {
+        return AsignacionNino::where('asn_grp_id', $this->msg_grp_id)
+                            ->where('asn_estado', 'activo')
+                            ->whereNull('asn_fecha_baja')
+                            ->count();
+    }
+
+    public function getNecesitaSincronizacionAttribute()
+    {
+        return $this->ninos_activos_grupo > $this->cantidad_ninos;
+    }
 }

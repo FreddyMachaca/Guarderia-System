@@ -74,6 +74,14 @@ const FormularioMensualidad = ({ mensualidad, onVolver }) => {
     }
   };
 
+  const getGrupoInfo = () => {
+    if (formData.msg_grp_id) {
+      const grupo = grupos.find(g => g.grp_id == formData.msg_grp_id);
+      return grupo;
+    }
+    return null;
+  };
+
   const validarFormulario = () => {
     const newErrors = {};
 
@@ -171,11 +179,19 @@ const FormularioMensualidad = ({ mensualidad, onVolver }) => {
                 <option value="">Seleccionar grupo</option>
                 {grupos.map(grupo => (
                   <option key={grupo.grp_id} value={grupo.grp_id}>
-                    {grupo.grp_nombre}
+                    {grupo.grp_nombre} ({grupo.ninos_activos || 0} niños activos)
                   </option>
                 ))}
               </select>
               {errors.msg_grp_id && <span className="error-text">{errors.msg_grp_id}</span>}
+              {getGrupoInfo() && (
+                <div className="grupo-info">
+                  <small>
+                    ℹ️ Este grupo tiene {getGrupoInfo().ninos_activos || 0} niños activos. 
+                    Se crearán mensualidades individuales para cada uno.
+                  </small>
+                </div>
+              )}
             </div>
             <div className="form-group">
               <label>Precio Base (Bs) *</label>

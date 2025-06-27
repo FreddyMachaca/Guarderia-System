@@ -98,5 +98,8 @@ Route::middleware('api')->group(function () {
         Route::delete('/{id}', [MensualidadController::class, 'destroy']);
         Route::put('/{mensualidadId}/nino/{ninoId}/precio', [MensualidadController::class, 'actualizarPrecioNino']);
         Route::post('/pago', [MensualidadController::class, 'registrarPago']);
+        Route::post('/{id}/sincronizar-ninos', [MensualidadController::class, 'sincronizarNinos']);
+        Route::get('/{id}/sincronizar-ninos', [MensualidadController::class, 'sincronizarNinos']);
+        Route::get('/{id}/verificar-sincronizacion', [MensualidadController::class, 'verificarSincronizacion']);
     });
 });

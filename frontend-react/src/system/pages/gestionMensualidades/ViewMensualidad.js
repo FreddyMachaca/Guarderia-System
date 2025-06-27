@@ -91,9 +91,9 @@ const ViewMensualidad = ({ mensualidad, onVolver, onRegistrarPago }) => {
   };
 
   const calcularPorcentajeCobrado = () => {
-    if (!mensualidadData || mensualidadData.cantidad_ninos === 0) return 0;
-    const totalEsperado = mensualidadData.msg_precio_base * mensualidadData.cantidad_ninos;
-    return ((mensualidadData.total_recaudado / totalEsperado) * 100).toFixed(1);
+    if (!mensualidadData || (mensualidadData.cantidad_ninos || 0) === 0) return 0;
+    const totalEsperado = (mensualidadData.msg_precio_base || 0) * (mensualidadData.cantidad_ninos || 0);
+    return totalEsperado > 0 ? (((mensualidadData.total_recaudado || 0) / totalEsperado) * 100).toFixed(1) : 0;
   };
 
   if (loading) {
@@ -135,16 +135,25 @@ const ViewMensualidad = ({ mensualidad, onVolver, onRegistrarPago }) => {
             <div className="mensualidad-info-group">
               <p><i className="pi pi-tag"></i> <strong>Precio Base:</strong> {formatMonto(mensualidadData.msg_precio_base)}</p>
               <p><i className="pi pi-calendar"></i> <strong>Vence:</strong> {formatFecha(mensualidadData.msg_fecha_vencimiento)}</p>
-              <p><i className="pi pi-users"></i> <strong>Niños:</strong> {mensualidadData.cantidad_ninos}</p>
+              <p><i className="pi pi-users"></i> <strong>Niños Asignados:</strong> {mensualidadData.cantidad_ninos || 0}</p>
+              {mensualidadData.ninos_activos_grupo && mensualidadData.ninos_activos_grupo !== mensualidadData.cantidad_ninos && (
+                <p><i className="pi pi-exclamation-triangle"></i> <strong>Niños Activos en Grupo:</strong> {mensualidadData.ninos_activos_grupo}</p>
+              )}
+              {mensualidadData.necesita_sincronizacion && (
+                <div className="warning-message">
+                  <i className="pi pi-exclamation-triangle"></i>
+                  <span>Hay niños del grupo que no están incluidos en esta mensualidad</span>
+                </div>
+              )}
             </div>
           </div>
           <div className="resumen-financiero">
             <div className="resumen-item recaudado">
-              <div className="resumen-valor">{formatMonto(mensualidadData.total_recaudado)}</div>
+              <div className="resumen-valor">{formatMonto(mensualidadData.total_recaudado || 0)}</div>
               <div className="resumen-label">Recaudado</div>
             </div>
             <div className="resumen-item pendiente">
-              <div className="resumen-valor">{formatMonto(mensualidadData.total_pendiente)}</div>
+              <div className="resumen-valor">{formatMonto(mensualidadData.total_pendiente || 0)}</div>
               <div className="resumen-label">Pendiente</div>
             </div>
             <div className="resumen-item porcentaje">

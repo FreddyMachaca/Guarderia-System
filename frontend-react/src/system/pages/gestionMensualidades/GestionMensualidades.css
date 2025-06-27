@@ -517,6 +517,44 @@
   border-color: #4ecdc4;
 }
 
+.warning-row {
+  background-color: #fff3cd;
+  border-left: 4px solid #ffc107;
+  padding: 0.5rem;
+  margin: 0.5rem 0;
+  border-radius: 0.25rem;
+}
+
+.warning-message {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: #fff3cd;
+  color: #856404;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  border: 1px solid #ffeaa7;
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.warning-message i {
+  color: #f39c12;
+  font-size: 1.1rem;
+}
+
+.mensualidad-card .warning-row .value {
+  color: #856404;
+  font-weight: 600;
+}
+
+.mensualidad-info-group .warning-message {
+  margin-top: 1rem;
+  background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Responsive adjustments */
 @media (max-width: 768px) {
   .mensualidad-view-section.principal {
     grid-template-columns: 1fr;
@@ -555,6 +593,11 @@
     width: 25px;
     height: 25px; 
     font-size: 0.7rem;
+  }
+  
+  .warning-message {
+    font-size: 0.8rem;
+    padding: 0.6rem;
   }
 }
 
