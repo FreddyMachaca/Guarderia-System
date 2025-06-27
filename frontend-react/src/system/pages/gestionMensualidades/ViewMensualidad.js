@@ -189,6 +189,7 @@ const ViewMensualidad = ({ mensualidad, onVolver, onRegistrarPago }) => {
                         <th>Pagado</th>
                         <th>Saldo</th>
                         <th>Estado</th>
+                        <th>Fecha Pago</th>
                         <th>Acciones</th>
                       </tr>
                     </thead>
@@ -239,6 +240,9 @@ const ViewMensualidad = ({ mensualidad, onVolver, onRegistrarPago }) => {
                             <span className={`estado-pago ${getEstadoPagoClass(ninoMensualidad.mnc_estado_pago)}`}>
                               {ninoMensualidad.mnc_estado_pago}
                             </span>
+                          </td>
+                          <td>
+                            {ninoMensualidad.mnc_fecha_pago ? formatFecha(ninoMensualidad.mnc_fecha_pago) : 'Sin pago'}
                           </td>
                           <td>
                             <div className="acciones-nino">

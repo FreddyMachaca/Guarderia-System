@@ -3,7 +3,7 @@ import { useApi } from '../../hooks/useApi';
 import './GestionMensualidades.css';
 
 const RegistrarPago = ({ mensualidadNino, onVolver }) => {
-  const { post } = useApi();
+  const { post, getCurrentUser, getCurrentUserId } = useApi();
   const [formData, setFormData] = useState({
     mnc_id: '',
     monto: '',
@@ -89,9 +89,18 @@ const RegistrarPago = ({ mensualidadNino, onVolver }) => {
     setLoading(true);
 
     try {
+      const currentUser = getCurrentUser();
+      const currentUserId = getCurrentUserId();
+
       const dataToSend = {
         ...formData,
-        monto: parseFloat(formData.monto)
+        monto: parseFloat(formData.monto),
+        registrado_por: currentUserId,
+        registrado_por_info: currentUser ? {
+          id: currentUserId,
+          nombre: currentUser.name || `${currentUser.usr_nombre || ''} ${currentUser.usr_apellido || ''}`.trim(),
+          tipo: currentUser.type || 'staff'
+        } : null
       };
 
       const response = await post('/mensualidades/pago', dataToSend);

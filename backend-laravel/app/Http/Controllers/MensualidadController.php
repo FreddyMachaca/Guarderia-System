@@ -293,6 +293,34 @@ class MensualidadController extends Controller
         ]);
     }
 
+    private function getCurrentUserId(Request $request)
+    {
+        if (auth()->check()) {
+            return auth()->id();
+        }
+
+        $token = $request->header('Authorization');
+        if (!$token) {
+            return null;
+        }
+
+        $token = str_replace('Bearer ', '', $token);
+        $tokenData = DB::table('tbl_tkn_tokens')
+            ->where('tkn_token', $token)
+            ->where('tkn_estado', 'activo')
+            ->first();
+
+        if ($tokenData) {
+            return $tokenData->tkn_usr_id;
+        }
+
+        if ($request->has('registrado_por')) {
+            return $request->registrado_por;
+        }
+
+        return null;
+    }
+
     public function registrarPago(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -301,7 +329,8 @@ class MensualidadController extends Controller
             'metodo_pago' => 'required|in:efectivo,transferencia,cheque,tarjeta',
             'numero_recibo' => 'nullable|string|max:50',
             'fecha_pago' => 'required|date',
-            'observaciones' => 'nullable|string'
+            'observaciones' => 'nullable|string',
+            'registrado_por' => 'nullable|integer'
         ]);
 
         if ($validator->fails()) {
@@ -311,7 +340,22 @@ class MensualidadController extends Controller
             ], 422);
         }
 
+        $currentUserId = $this->getCurrentUserId($request);
+        if (!$currentUserId) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Usuario no autenticado o no identificado'
+            ], 401);
+        }
+
         $mensualidadNino = MensualidadNino::find($request->mnc_id);
+
+        if (!$mensualidadNino) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Mensualidad del niño no encontrada'
+            ], 404);
+        }
 
         if ($mensualidadNino->mnc_estado_pago === 'pagado') {
             return response()->json([
@@ -338,7 +382,7 @@ class MensualidadController extends Controller
                 'pgm_metodo_pago' => $request->metodo_pago,
                 'pgm_numero_recibo' => $request->numero_recibo,
                 'pgm_observaciones' => $request->observaciones,
-                'pgm_registrado_por' => auth()->id(),
+                'pgm_registrado_por' => $currentUserId,
                 'pgm_fecha_registro' => now()
             ]);
 
@@ -358,10 +402,17 @@ class MensualidadController extends Controller
                 'success' => true,
                 'message' => 'Pago registrado exitosamente',
                 'estado_pago' => $nuevoEstado,
-                'saldo_restante' => $mensualidadNino->mnc_precio_final - $nuevoMontoPagado
+                'saldo_restante' => max(0, $mensualidadNino->mnc_precio_final - $nuevoMontoPagado),
+                'registrado_por' => $currentUserId
             ]);
         } catch (\Exception $e) {
             DB::rollBack();
+            \Log::error('Error al registrar pago: ' . $e->getMessage(), [
+                'request' => $request->all(),
+                'user_id' => $currentUserId,
+                'trace' => $e->getTraceAsString()
+            ]);
+            
             return response()->json([
                 'success' => false,
                 'message' => 'Error al registrar pago: ' . $e->getMessage()

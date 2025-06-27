@@ -129,6 +129,29 @@ class AuthController extends Controller
         return response()->json($user);
     }
 
+    public function getCurrentUserId(Request $request)
+    {
+        $token = $request->header('Authorization');
+        if (!$token) {
+            return response()->json(['message' => 'Token no proporcionado'], 401);
+        }
+
+        $token = str_replace('Bearer ', '', $token);
+        $tokenData = DB::table('tbl_tkn_tokens')
+            ->where('tkn_token', $token)
+            ->where('tkn_estado', 'activo')
+            ->first();
+
+        if (!$tokenData) {
+            return response()->json(['message' => 'Token inválido'], 401);
+        }
+
+        return response()->json([
+            'success' => true,
+            'user_id' => $tokenData->tkn_usr_id
+        ]);
+    }
+
     private function generateToken($userId)
     {
         return base64_encode($userId . '|' . time() . '|' . rand(1000, 9999));

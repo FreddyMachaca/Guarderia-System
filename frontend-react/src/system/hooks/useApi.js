@@ -121,6 +121,15 @@ export const useApi = () => {
     return userData ? JSON.parse(userData) : null;
   }, []);
 
+  const getCurrentUserId = useCallback(() => {
+    const userData = localStorage.getItem(`${STORAGE_KEY}_user`);
+    if (userData) {
+      const user = JSON.parse(userData);
+      return user.id || user.usr_id || user.prs_id || null;
+    }
+    return null;
+  }, []);
+
   const isAuthenticated = useCallback(() => {
     return !!localStorage.getItem(`${STORAGE_KEY}_token`);
   }, []);
@@ -136,6 +145,7 @@ export const useApi = () => {
     login,
     logout,
     getCurrentUser,
+    getCurrentUserId,
     isAuthenticated,
     setError
   };

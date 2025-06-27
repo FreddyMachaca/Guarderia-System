@@ -28,6 +28,7 @@ Route::middleware('api')->group(function () {
         Route::post('/login/staff', [AuthController::class, 'loginStaff']);
         Route::post('/logout', [AuthController::class, 'logout']);
         Route::get('/user', [AuthController::class, 'user']);
+        Route::get('/current-user-id', [AuthController::class, 'getCurrentUserId']);
     });
 });
 
