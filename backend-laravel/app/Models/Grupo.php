@@ -42,6 +42,13 @@ class Grupo extends Model
                     ->where('asn_estado', 'activo');
     }
 
+    public function asignacionesActivas()
+    {
+        return $this->hasMany(AsignacionNino::class, 'asn_grp_id', 'grp_id')
+                    ->whereNull('asn_fecha_baja')
+                    ->where('asn_estado', 'activo');
+    }
+
     public function getCapacidadDisponibleAttribute()
     {
         $ninosAsignados = $this->ninosActivos()->count();
