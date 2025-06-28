@@ -201,7 +201,7 @@ const ViewNinos = ({ nino, onVolver }) => {
                       <tr key={index}>
                         <td>{historial.grp_nombre}</td>
                         <td>{formatFecha(historial.fecha_asignacion)}</td>
-                        <td>{historial.fecha_baja ? formatFecha(historial.fecha_baja) : 'Actual'}</td>
+                        <td>{historial.fecha_baja ? formatFecha(historial.fecha_baja) : 'Sin fecha de baja'}</td>
                         <td>
                           <span className={`estado ${historial.estado}`}>
                             {historial.estado}
