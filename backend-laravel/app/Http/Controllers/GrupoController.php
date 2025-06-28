@@ -260,15 +260,20 @@ class GrupoController extends Controller
     {
         $grupo = Grupo::findOrFail($id);
         
+        // Verificar si el grupo tiene asignaciones activas
+        $asignacionesActivas = $grupo->ninosActivos()->count();
+        
+        if ($asignacionesActivas > 0) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No es posible desactivar el aula porque tiene niños asignados con mensualidades pagas. Debe reasignar los niños antes de desactivar el aula.',
+                'error' => 'ASIGNACIONES_ACTIVAS'
+            ], 422);
+        }
+        
         $grupo->grp_estado = 'inactivo';
         $grupo->grp_fecha_actualizacion = now();
         $grupo->save();
-        
-        $grupo->ninosActivos()->update([
-            'asn_fecha_baja' => now(),
-            'asn_estado' => 'inactivo',
-            'asn_observaciones' => 'Baja automática por inactivación del grupo'
-        ]);
         
         return response()->json([
             'success' => true,
