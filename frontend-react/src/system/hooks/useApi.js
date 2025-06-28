@@ -79,7 +79,8 @@ export const useApi = () => {
       return response.data;
     } catch (err) {
       setLoading(false);
-      setError(err.response?.data?.message || err.message);
+      const errorMessage = err.response?.data?.message || err.message;
+      setError(errorMessage);
       
       if (err.response && err.response.status === 422) {
         return {
@@ -89,6 +90,15 @@ export const useApi = () => {
         };
       }
       
+      if (err.response && err.response.status === 500) {
+        console.error('Error del servidor en:', endpoint, err.response?.data);
+        return {
+          success: false,
+          data: null,
+          message: 'Error interno del servidor'
+        };
+      }
+      console.error('Error en API:', err);
       throw err;
     }
   }, []);

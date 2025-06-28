@@ -18,7 +18,9 @@ class DashboardController extends Controller
     public function estadisticasBasicas()
     {
         $ninos = Nino::where('nin_estado', 'activo')->count();
-        $personal = Personal::where('per_estado', 'activo')->count();
+        $personal = Personal::whereHas('usuario', function($q) {
+            $q->where('usr_estado', 'activo');
+        })->count();
         $padres = Padre::where('pdr_estado', 'activo')->count();
         $actividades = 0;
 
@@ -90,10 +92,10 @@ class DashboardController extends Controller
         $query = PagoMensualidad::whereBetween('pgm_fecha_pago', [$fechaInicio, $fechaFin]);
 
         $groupBy = match($periodo) {
-            'semanal' => 'DATE(pgm_fecha_pago)',
-            'mensual' => 'DATE(pgm_fecha_pago)',
-            'anual' => 'MONTH(pgm_fecha_pago)',
-            default => 'MONTH(pgm_fecha_pago)'
+            'semanal' => 'pgm_fecha_pago::date',
+            'mensual' => 'pgm_fecha_pago::date',
+            'anual' => 'EXTRACT(MONTH FROM pgm_fecha_pago)',
+            default => 'EXTRACT(MONTH FROM pgm_fecha_pago)'
         };
 
         $ingresos = $query->select(
@@ -173,7 +175,7 @@ class DashboardController extends Controller
     {
         $anio = $request->input('anio', date('Y'));
         
-        $pagos = PagoMensualidad::whereYear('pgm_fecha_pago', $anio)
+        $pagos = PagoMensualidad::whereRaw('EXTRACT(YEAR FROM pgm_fecha_pago) = ?', [$anio])
             ->select('pgm_fecha_pago', DB::raw('COUNT(*) as cantidad'))
             ->groupBy('pgm_fecha_pago')
             ->get();
@@ -238,7 +240,7 @@ class DashboardController extends Controller
         $historialPagos = PagoMensualidad::whereHas('mensualidadNino.nino.relacionesPadres', function($query) use ($padre) {
             $query->where('rel_pdr_id', $padre->pdr_id);
         })->whereBetween('pgm_fecha_pago', [Carbon::now()->subMonths(6), Carbon::now()])
-          ->select(DB::raw('MONTH(pgm_fecha_pago) as mes'), DB::raw('SUM(pgm_monto) as total'))
+          ->select(DB::raw('EXTRACT(MONTH FROM pgm_fecha_pago) as mes'), DB::raw('SUM(pgm_monto) as total'))
           ->groupBy('mes')
           ->orderBy('mes')
           ->get();

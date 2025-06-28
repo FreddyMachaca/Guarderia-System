@@ -37,7 +37,7 @@ const DashboardAnalytics = () => {
         estadisticasRes,
         pagosRes,
         gruposRes
-      ] = await Promise.all([
+      ] = await Promise.allSettled([
         get(`/dashboard/ingresos?fecha_inicio=${fechas.inicio}&fecha_fin=${fechas.fin}&periodo=${dateFilter}`),
         get(`/dashboard/ninos?fecha_inicio=${fechas.inicio}&fecha_fin=${fechas.fin}`),
         get('/dashboard/estadisticas'),
@@ -45,16 +45,30 @@ const DashboardAnalytics = () => {
         get('/dashboard/ninos-por-grupo')
       ]);
 
+      const ingresosData = ingresosRes.status === 'fulfilled' ? ingresosRes.value?.data || [] : [];
+      const ninosData = ninosRes.status === 'fulfilled' ? ninosRes.value?.data || [] : [];
+      const estadisticasData = estadisticasRes.status === 'fulfilled' ? estadisticasRes.value?.data || {} : {};
+      const pagosData = pagosRes.status === 'fulfilled' ? pagosRes.value?.data || [] : [];
+      const gruposData = gruposRes.status === 'fulfilled' ? gruposRes.value?.data || [] : [];
+
       setDashboardData({
-        ingresos: ingresosRes.data || [],
-        ninos: ninosRes.data || [],
-        estadisticas: estadisticasRes.data || {},
-        pagosPorMetodo: pagosRes.data || [],
-        ninosPorGrupo: gruposRes.data || [],
-        distribucionEdades: procesarDistribucionEdades(ninosRes.data || [])
+        ingresos: validarDatosIngresos(ingresosData),
+        ninos: ninosData,
+        estadisticas: estadisticasData,
+        pagosPorMetodo: validarDatosPagos(pagosData),
+        ninosPorGrupo: validarDatosGrupos(gruposData),
+        distribucionEdades: procesarDistribucionEdades(ninosData)
       });
     } catch (error) {
       console.error('Error al cargar datos del dashboard:', error);
+      setDashboardData({
+        ingresos: [],
+        ninos: [],
+        estadisticas: {},
+        pagosPorMetodo: [],
+        ninosPorGrupo: [],
+        distribucionEdades: []
+      });
     } finally {
       setLoading(false);
     }
@@ -86,18 +100,57 @@ const DashboardAnalytics = () => {
     };
   };
 
+  const validarDatosIngresos = (data) => {
+    if (!Array.isArray(data) || data.length === 0) {
+      return [{ x: 'Sin datos', y: 0 }];
+    }
+    return data.map(item => ({
+      x: item.x || 'Sin fecha',
+      y: Number(item.y) || 0
+    })).filter(item => !isNaN(item.y));
+  };
+
+  const validarDatosPagos = (data) => {
+    if (!Array.isArray(data) || data.length === 0) {
+      return [{ id: 'Sin datos', label: 'Sin datos', value: 1 }];
+    }
+    return data.map(item => ({
+      id: item.id || 'Sin método',
+      label: item.label || item.id || 'Sin método',
+      value: Number(item.value) || 0
+    })).filter(item => item.value > 0);
+  };
+
+  const validarDatosGrupos = (data) => {
+    if (!Array.isArray(data) || data.length === 0) {
+      return [{ grupo: 'Sin datos', cantidad: 0 }];
+    }
+    return data.map(item => ({
+      grupo: item.grupo || 'Sin grupo',
+      cantidad: Number(item.cantidad) || 0
+    }));
+  };
+
   const procesarDistribucionEdades = (ninos) => {
+    if (!Array.isArray(ninos) || ninos.length === 0) {
+      return [{ id: 'Sin datos', label: 'Sin datos', value: 1 }];
+    }
+
     const edades = {};
     ninos.forEach(nino => {
       const edad = nino.nin_edad;
-      edades[edad] = (edades[edad] || 0) + 1;
+      if (edad !== undefined && edad !== null && !isNaN(edad)) {
+        edades[edad] = (edades[edad] || 0) + 1;
+      }
     });
 
-    return Object.entries(edades).map(([edad, cantidad]) => ({
+    const resultado = Object.entries(edades).map(([edad, cantidad]) => ({
       id: `${edad} años`,
       label: `${edad} años`,
       value: cantidad
     }));
+
+    return resultado.length > 0 ? resultado : [{ id: 'Sin datos', label: 'Sin datos', value: 1 }];
   };
 
   const formatearMoneda = (valor) => {
@@ -202,56 +255,62 @@ const DashboardAnalytics = () => {
             <div className="chart-subtitle">Evolución de ingresos en el período seleccionado</div>
           </div>
           <div className="chart-content">
-            <ResponsiveLine
-              data={[{
-                id: 'ingresos',
-                data: dashboardData.ingresos
-              }]}
-              margin={{ top: 20, right: 30, bottom: 50, left: 80 }}
-              xScale={{ type: 'point' }}
-              yScale={{ type: 'linear', min: 'auto', max: 'auto', stacked: false }}
-              curve="cardinal"
-              axisTop={null}
-              axisRight={null}
-              axisBottom={{
-                orient: 'bottom',
-                tickSize: 5,
-                tickPadding: 5,
-                tickRotation: -45
-              }}
-              axisLeft={{
-                orient: 'left',
-                tickSize: 5,
-                tickPadding: 5,
-                tickRotation: 0,
-                format: value => formatearMoneda(value)
-              }}
-              pointSize={8}
-              pointColor={{ from: 'color', modifiers: [] }}
-              pointBorderWidth={2}
-              pointBorderColor={{ from: 'serieColor' }}
-              enableSlices="x"
-              useMesh={true}
-              colors={['#4ecdc4']}
-              animate={true}
-              motionConfig="wobbly"
-              theme={{
-                grid: {
-                  line: {
-                    stroke: '#e0e0e0',
-                    strokeWidth: 1
-                  }
-                },
-                axis: {
-                  ticks: {
-                    text: {
-                      fontSize: 12,
-                      fill: '#666'
+            {dashboardData.ingresos.length > 0 ? (
+              <ResponsiveLine
+                data={[{
+                  id: 'ingresos',
+                  data: dashboardData.ingresos
+                }]}
+                margin={{ top: 20, right: 30, bottom: 50, left: 80 }}
+                xScale={{ type: 'point' }}
+                yScale={{ type: 'linear', min: 0, max: 'auto', stacked: false }}
+                curve="cardinal"
+                axisTop={null}
+                axisRight={null}
+                axisBottom={{
+                  orient: 'bottom',
+                  tickSize: 5,
+                  tickPadding: 5,
+                  tickRotation: -45
+                }}
+                axisLeft={{
+                  orient: 'left',
+                  tickSize: 5,
+                  tickPadding: 5,
+                  tickRotation: 0,
+                  format: value => formatearMoneda(value)
+                }}
+                pointSize={8}
+                pointColor={{ from: 'color', modifiers: [] }}
+                pointBorderWidth={2}
+                pointBorderColor={{ from: 'serieColor' }}
+                enableSlices="x"
+                useMesh={true}
+                colors={['#4ecdc4']}
+                animate={true}
+                motionConfig="wobbly"
+                theme={{
+                  grid: {
+                    line: {
+                      stroke: '#e0e0e0',
+                      strokeWidth: 1
+                    }
+                  },
+                  axis: {
+                    ticks: {
+                      text: {
+                        fontSize: 12,
+                        fill: '#666'
+                      }
                     }
                   }
-                }
-              }}
-            />
+                }}
+              />
+            ) : (
+              <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '300px' }}>
+                <p>No hay datos de ingresos disponibles</p>
+              </div>
+            )}
           </div>
         </div>
 
@@ -261,33 +320,39 @@ const DashboardAnalytics = () => {
             <div className="chart-subtitle">Preferencias de pago de los padres</div>
           </div>
           <div className="chart-content">
-            <ResponsivePie
-              data={dashboardData.pagosPorMetodo}
-              margin={{ top: 20, right: 80, bottom: 20, left: 80 }}
-              innerRadius={0.4}
-              padAngle={2}
-              cornerRadius={8}
-              activeOuterRadiusOffset={8}
-              colors={['#4ecdc4', '#ff6b35', '#4a6bff', '#f7931e', '#9b59b6']}
-              borderWidth={2}
-              borderColor={{ from: 'color', modifiers: [['darker', 0.2]] }}
-              arcLinkLabelsSkipAngle={10}
-              arcLinkLabelsTextColor="#333333"
-              arcLinkLabelsThickness={2}
-              arcLinkLabelsColor={{ from: 'color' }}
-              arcLabelsSkipAngle={10}
-              arcLabelsTextColor="#ffffff"
-              animate={true}
-              motionConfig="gentle"
-              theme={{
-                labels: {
-                  text: {
-                    fontSize: 12,
-                    fontWeight: 600
+            {dashboardData.pagosPorMetodo.length > 0 ? (
+              <ResponsivePie
+                data={dashboardData.pagosPorMetodo}
+                margin={{ top: 20, right: 80, bottom: 20, left: 80 }}
+                innerRadius={0.4}
+                padAngle={2}
+                cornerRadius={8}
+                activeOuterRadiusOffset={8}
+                colors={['#4ecdc4', '#ff6b35', '#4a6bff', '#f7931e', '#9b59b6']}
+                borderWidth={2}
+                borderColor={{ from: 'color', modifiers: [['darker', 0.2]] }}
+                arcLinkLabelsSkipAngle={10}
+                arcLinkLabelsTextColor="#333333"
+                arcLinkLabelsThickness={2}
+                arcLinkLabelsColor={{ from: 'color' }}
+                arcLabelsSkipAngle={10}
+                arcLabelsTextColor="#ffffff"
+                animate={true}
+                motionConfig="gentle"
+                theme={{
+                  labels: {
+                    text: {
+                      fontSize: 12,
+                      fontWeight: 600
+                    }
                   }
-                }
-              }}
-            />
+                }}
+              />
+            ) : (
+              <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '300px' }}>
+                <p>No hay datos de métodos de pago disponibles</p>
+              </div>
+            )}
           </div>
         </div>
 
@@ -297,42 +362,48 @@ const DashboardAnalytics = () => {
             <div className="chart-subtitle">Distribución actual de niños</div>
           </div>
           <div className="chart-content">
-            <ResponsiveBar
-              data={dashboardData.ninosPorGrupo}
-              keys={['cantidad']}
-              indexBy="grupo"
-              margin={{ top: 20, right: 30, bottom: 50, left: 80 }}
-              padding={0.3}
-              valueScale={{ type: 'linear' }}
-              indexScale={{ type: 'band', round: true }}
-              colors={['#4ecdc4']}
-              borderColor={{ from: 'color', modifiers: [['darker', 1.6]] }}
-              axisTop={null}
-              axisRight={null}
-              axisBottom={{
-                tickSize: 5,
-                tickPadding: 5,
-                tickRotation: -45
-              }}
-              axisLeft={{
-                tickSize: 5,
-                tickPadding: 5,
-                tickRotation: 0
-              }}
-              labelSkipWidth={12}
-              labelSkipHeight={12}
-              labelTextColor="#ffffff"
-              animate={true}
-              motionConfig="wobbly"
-              theme={{
-                grid: {
-                  line: {
-                    stroke: '#e0e0e0',
-                    strokeWidth: 1
+            {dashboardData.ninosPorGrupo.length > 0 ? (
+              <ResponsiveBar
+                data={dashboardData.ninosPorGrupo}
+                keys={['cantidad']}
+                indexBy="grupo"
+                margin={{ top: 20, right: 30, bottom: 50, left: 80 }}
+                padding={0.3}
+                valueScale={{ type: 'linear' }}
+                indexScale={{ type: 'band', round: true }}
+                colors={['#4ecdc4']}
+                borderColor={{ from: 'color', modifiers: [['darker', 1.6]] }}
+                axisTop={null}
+                axisRight={null}
+                axisBottom={{
+                  tickSize: 5,
+                  tickPadding: 5,
+                  tickRotation: -45
+                }}
+                axisLeft={{
+                  tickSize: 5,
+                  tickPadding: 5,
+                  tickRotation: 0
+                }}
+                labelSkipWidth={12}
+                labelSkipHeight={12}
+                labelTextColor="#ffffff"
+                animate={true}
+                motionConfig="wobbly"
+                theme={{
+                  grid: {
+                    line: {
+                      stroke: '#e0e0e0',
+                      strokeWidth: 1
+                    }
                   }
-                }
-              }}
-            />
+                }}
+              />
+            ) : (
+              <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '300px' }}>
+                <p>No hay datos de grupos disponibles</p>
+              </div>
+            )}
           </div>
         </div>
 
@@ -342,23 +413,29 @@ const DashboardAnalytics = () => {
             <div className="chart-subtitle">Rango de edades de los niños</div>
           </div>
           <div className="chart-content">
-            <ResponsiveCirclePacking
-              data={{
-                name: 'edades',
-                children: dashboardData.distribucionEdades
-              }}
-              margin={{ top: 20, right: 20, bottom: 20, left: 20 }}
-              id="id"
-              value="value"
-              colors={['#4ecdc4', '#ff6b35', '#4a6bff', '#f7931e', '#9b59b6', '#e74c3c']}
-              childColor={{ from: 'color', modifiers: [['brighter', 0.4]] }}
-              padding={4}
-              enableLabels={true}
-              labelsSkipRadius={10}
-              labelTextColor="#ffffff"
-              animate={true}
-              motionConfig="gentle"
-            />
+            {dashboardData.distribucionEdades.length > 0 ? (
+              <ResponsiveCirclePacking
+                data={{
+                  name: 'edades',
+                  children: dashboardData.distribucionEdades
+                }}
+                margin={{ top: 20, right: 20, bottom: 20, left: 20 }}
+                id="id"
+                value="value"
+                colors={['#4ecdc4', '#ff6b35', '#4a6bff', '#f7931e', '#9b59b6', '#e74c3c']}
+                childColor={{ from: 'color', modifiers: [['brighter', 0.4]] }}
+                padding={4}
+                enableLabels={true}
+                labelsSkipRadius={10}
+                labelTextColor="#ffffff"
+                animate={true}
+                motionConfig="gentle"
+              />
+            ) : (
+              <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '300px' }}>
+                <p>No hay datos de edades disponibles</p>
+              </div>
+            )}
           </div>
         </div>
       </div>
