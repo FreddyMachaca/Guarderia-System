@@ -87,6 +87,7 @@ Route::middleware('api')->group(function () {
         Route::put('/{id}', [PersonalController::class, 'update']);
         Route::delete('/{id}', [PersonalController::class, 'destroy']);
         Route::post('/{id}/reset-password', [PersonalController::class, 'resetPassword']);
+        Route::put('/{id}/activar', [PersonalController::class, 'activar']); // Nueva ruta para activar personal
     });
 
     // Rutas para el módulo de Mensualidades

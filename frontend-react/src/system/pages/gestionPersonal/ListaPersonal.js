@@ -12,7 +12,7 @@ const ListaPersonal = ({ onAgregarPersonal, onEditarPersonal, onVerPersonal }) =
   const [searchInput, setSearchInput] = useState('');
   const [mostrarInactivos, setMostrarInactivos] = useState(false);
   const [viewType, setViewType] = useState('card'); 
-  const { get, del } = useApi();
+  const { get, del, put } = useApi();
   
   const {
     currentPage,
@@ -89,6 +89,22 @@ const ListaPersonal = ({ onAgregarPersonal, onEditarPersonal, onVerPersonal }) =
     }
   };
   
+  const activarPersonal = async (empleado) => {
+    if (window.confirm('¿Está seguro de activar este empleado?')) {
+      try {
+        const response = await put(`/personal/${empleado.prs_id}/activar`);
+        if (response.success) {
+          cargarPersonal();
+        } else {
+          alert(response.message || 'Error al activar empleado');
+        }
+      } catch (error) {
+        console.error('Error al activar empleado:', error);
+        alert('Error al activar empleado');
+      }
+    }
+  };
+  
   const renderPersonalCard = (empleado) => {
     const usuario = empleado.usuario || {};
     const nombreCompleto = usuario.usr_nombre && usuario.usr_apellido 
@@ -149,13 +165,21 @@ const ListaPersonal = ({ onAgregarPersonal, onEditarPersonal, onVerPersonal }) =
           >
             <i className="pi pi-pencil"></i>
           </button>
-          {(usuario.usr_estado !== 'inactivo') && (
+          {(usuario.usr_estado === 'activo' || !usuario.usr_estado) ? (
             <button 
               className="btn-delete"
               onClick={() => eliminarPersonal(empleado)}
               title="Desactivar"
             >
               <i className="pi pi-ban"></i>
+            </button>
+          ) : (
+            <button 
+              className="btn-activate"
+              onClick={() => activarPersonal(empleado)}
+              title="Activar"
+            >
+              <i className="pi pi-check-circle"></i>
             </button>
           )}
         </div>
@@ -273,6 +297,7 @@ const ListaPersonal = ({ onAgregarPersonal, onEditarPersonal, onVerPersonal }) =
         onEdit={onEditarPersonal}
         onDelete={eliminarPersonal}
         onView={onVerPersonal}
+        onActivate={activarPersonal}
         emptyMessage="No se encontró personal que coincida con los filtros"
       />
 

@@ -374,4 +374,33 @@ class PersonalController extends Controller
 
         return response()->json($personal);
     }
+    
+    public function activar($id)
+    {
+        $personal = Personal::with('usuario')->find($id);
+
+        if (!$personal) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Personal no encontrado'
+            ], 404);
+        }
+
+        DB::beginTransaction();
+        try {
+            $personal->usuario->update(['usr_estado' => 'activo']);
+
+            DB::commit();
+            return response()->json([
+                'success' => true,
+                'message' => 'Personal activado exitosamente'
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al activar al personal: ' . $e->getMessage()
+            ], 500);
+        }
+    }
 }
