@@ -201,7 +201,7 @@ class NinoController extends Controller
             'nin_medicamentos' => 'nullable|string',
             'nin_observaciones' => 'nullable|string',
             'nin_estado' => 'nullable|in:activo,inactivo',
-            'grupo_id' => 'nullable|integer|exists:tbl_grp_grupos,grp_id'
+            'grupo_id' => 'nullable|integer'
         ]);
 
         if ($validator->fails()) {
@@ -238,7 +238,22 @@ class NinoController extends Controller
                 ]);
             }
 
-            if ($request->filled('grupo_id')) {
+            // Obtenemos la asignación actual del niño
+            $asignacionActual = AsignacionNino::where('asn_nin_id', $id)
+                                            ->where('asn_estado', 'activo')
+                                            ->whereNull('asn_fecha_baja')
+                                            ->first();
+            
+            // Si se está quitando la asignación (grupo_id es null, 0, o se envía "No Asignado")
+            if ($request->grupo_id === null || $request->grupo_id === 0 || $request->grupo_id === "0" || $request->grupo_id === "") {
+                if ($asignacionActual) {
+                    // Establecer la asignación actual como inactiva
+                    $asignacionActual->asn_estado = 'inactivo';
+                    $asignacionActual->asn_fecha_baja = now();
+                    $asignacionActual->asn_observaciones = 'Asignación removida manualmente';
+                    $asignacionActual->save();
+                }
+            } else if ($request->filled('grupo_id') && $request->grupo_id > 0) {
                 $grupo = Grupo::find($request->grupo_id);
                 
                 if (!$grupo) {
@@ -257,11 +272,7 @@ class NinoController extends Controller
                     ], 422);
                 }
                 
-                $asignacionActual = AsignacionNino::where('asn_nin_id', $id)
-                                                ->where('asn_estado', 'activo')
-                                                ->whereNull('asn_fecha_baja')
-                                                ->first();
-                
+                // Si ya tiene una asignación activa
                 if ($asignacionActual) {
                     if ($asignacionActual->asn_grp_id != $request->grupo_id) {
                         $asignacionActual->asn_estado = 'inactivo';
