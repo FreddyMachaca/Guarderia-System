@@ -16,6 +16,7 @@ const FormularioGrupo = ({ grupo, onVolver }) => {
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
   const [personal, setPersonal] = useState([]);
+  const [ninosAsignados, setNinosAsignados] = useState(0);
 
   useEffect(() => {
     cargarPersonal();
@@ -30,6 +31,7 @@ const FormularioGrupo = ({ grupo, onVolver }) => {
         grp_responsable_id: grupo.grp_responsable_id || '',
         grp_estado: grupo.grp_estado || 'activo'
       });
+      cargarNinosAsignados(grupo.grp_id);
     }
   }, [grupo]);
 
@@ -41,6 +43,20 @@ const FormularioGrupo = ({ grupo, onVolver }) => {
       }
     } catch (error) {
       console.error('Error de conexión al cargar personal:', error);
+    }
+  };
+
+  const cargarNinosAsignados = async (grupoId) => {
+    try {
+      const response = await get(`/grupos/${grupoId}`);
+      if (response && response.ninosAsignados) {
+        setNinosAsignados(Array.isArray(response.ninosAsignados) ? response.ninosAsignados.length : 0);
+      } else {
+        setNinosAsignados(0);
+      }
+    } catch (error) {
+      console.error('Error al cargar niños asignados:', error);
+      setNinosAsignados(0);
     }
   };
 
@@ -70,6 +86,11 @@ const FormularioGrupo = ({ grupo, onVolver }) => {
     }
     if (!formData.grp_capacidad) newErrors.grp_capacidad = 'La capacidad es requerida';
     if (!formData.grp_responsable_id) newErrors.grp_responsable_id = 'El responsable es requerido';
+
+    // Validación de capacidad respecto a niños asignados
+    if (parseInt(formData.grp_capacidad) < ninosAsignados) {
+      newErrors.grp_capacidad = `La capacidad no puede ser menor a ${ninosAsignados} niños ya asignados al grupo`;
+    }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -200,6 +221,11 @@ const FormularioGrupo = ({ grupo, onVolver }) => {
                 className={errors.grp_capacidad ? 'error' : ''}
               />
               {errors.grp_capacidad && <span className="error-text">{errors.grp_capacidad}</span>}
+              {grupo && ninosAsignados > 0 && (
+                <div className="info-text">
+                  <i className="pi pi-info-circle"></i> Actualmente hay {ninosAsignados} niños asignados a este grupo
+                </div>
+              )}
             </div>
           </div>
 
