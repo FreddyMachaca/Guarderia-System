@@ -15,6 +15,7 @@ use App\Exports\IngresosExport;
 use App\Exports\NinosInscritosExport;
 use App\Exports\GruposExport;
 use App\Exports\PagosExport;
+use App\Exports\AsignacionesExport;
 
 class ReporteController extends Controller
 {
