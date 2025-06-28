@@ -33,9 +33,8 @@ Route::middleware('api')->group(function () {
     });
 });
 
-Route::middleware('api')->group(function () {
+Route::middleware(['api', 'api.throttle'])->group(function () {
     
-    // Rutas para el módulo de Niños
     Route::prefix('ninos')->group(function () {
         Route::get('/', [NinoController::class, 'index']);
         Route::post('/', [NinoController::class, 'store']);

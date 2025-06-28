@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useMemo, useCallback } from 'react';
+import RequestManager from '../services/RequestManager';
 
 const Pagination = ({ 
     currentPage = 1, 
@@ -131,7 +132,7 @@ const Pagination = ({
         }
     `;
 
-    const generatePageNumbers = () => {
+    const generatePageNumbers = useMemo(() => {
         const pages = [];
         const maxVisiblePages = 5;
         let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
@@ -146,12 +147,24 @@ const Pagination = ({
         }
         
         return pages;
-    };
+    }, [currentPage, totalPages]);
 
-    const handleLimitChange = (e) => {
+    const debouncedPageChange = useMemo(() => {
+        return RequestManager.debounce((page) => {
+            onPageChange && onPageChange(page);
+        }, 200);
+    }, [onPageChange]);
+
+    const handleLimitChange = useCallback((e) => {
+        RequestManager.cancelAllRequests();
         onLimitChange && onLimitChange(parseInt(e.target.value));
         onPageChange && onPageChange(1);
-    };
+    }, [onLimitChange, onPageChange]);
+
+    const handleRefresh = useCallback(() => {
+        RequestManager.cancelAllRequests();
+        onRefresh && onRefresh();
+    }, [onRefresh]);
 
     const startRecord = totalRecords > 0 ? ((currentPage - 1) * perPage) + 1 : 0;
     const endRecord = Math.min(currentPage * perPage, totalRecords);
@@ -179,7 +192,7 @@ const Pagination = ({
                         
                         <button 
                             className="pagination-refresh"
-                            onClick={onRefresh}
+                            onClick={handleRefresh}
                             title="Actualizar datos"
                         >
                             ↻ Actualizar
@@ -190,17 +203,17 @@ const Pagination = ({
                         <div className="pagination-nav">
                             <button 
                                 className={`pagination-btn ${currentPage === 1 ? 'disabled' : ''}`}
-                                onClick={() => currentPage > 1 && onPageChange && onPageChange(currentPage - 1)}
+                                onClick={() => currentPage > 1 && debouncedPageChange(currentPage - 1)}
                                 disabled={currentPage === 1}
                             >
                                 ‹ Anterior
                             </button>
                             
-                            {generatePageNumbers().map(page => (
+                            {generatePageNumbers.map(page => (
                                 <button 
                                     key={page}
                                     className={`pagination-btn ${page === currentPage ? 'active' : ''}`}
-                                    onClick={() => onPageChange && onPageChange(page)}
+                                    onClick={() => debouncedPageChange(page)}
                                 >
                                     {page}
                                 </button>
@@ -208,7 +221,7 @@ const Pagination = ({
                             
                             <button 
                                 className={`pagination-btn ${currentPage === totalPages ? 'disabled' : ''}`}
-                                onClick={() => currentPage < totalPages && onPageChange && onPageChange(parseInt(currentPage) + 1)}
+                                onClick={() => currentPage < totalPages && debouncedPageChange(parseInt(currentPage) + 1)}
                                 disabled={currentPage === totalPages}
                             >
                                 Siguiente ›
@@ -225,4 +238,4 @@ const Pagination = ({
     );
 };
 
-export default Pagination;
+export default React.memo(Pagination);

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useApi } from '../../hooks/useApi';
 import SearchableSelect from '../../components/SearchableSelect';
 import './GestionNinos.css';
@@ -34,7 +34,7 @@ const ListaNinos = ({ onAgregarNino, onEditarNino, onVerNino }) => {
     cargarNinos();
   }, [mostrarInactivos, currentPage, limit, searchTerm, grupoFilter]);
 
-  const cargarNinos = async () => {
+  const cargarNinos = useCallback(async () => {
     try {
       setLoading(true);
       const params = new URLSearchParams();
@@ -56,7 +56,7 @@ const ListaNinos = ({ onAgregarNino, onEditarNino, onVerNino }) => {
       params.append('page', currentPage);
       params.append('limit', limit);
       
-      const response = await get(`/ninos?${params}`);
+      const response = await get(`/ninos?${params}`, 5);
       if (response.success && response.data) {
         setNinos(response.data);
         updatePagination(response.pagination);
@@ -78,23 +78,27 @@ const ListaNinos = ({ onAgregarNino, onEditarNino, onVerNino }) => {
         });
       }
     } catch (error) {
-      console.error('Error al cargar niños:', error);
-      setNinos([]);
+      if (error.name !== 'AbortError') {
+        console.error('Error al cargar niños:', error);
+        setNinos([]);
+      }
     } finally {
       setLoading(false);
     }
-  };
+  }, [mostrarInactivos, currentPage, limit, searchTerm, grupoFilter, get, updatePagination]);
 
-  const cargarGrupos = async () => {
+  const cargarGrupos = useCallback(async () => {
     try {
-      const response = await get('/grupos');
+      const response = await get('/grupos', 3);
       const data = response.data || response || [];
       setGrupos(Array.isArray(data) ? data : []);
     } catch (error) {
-      console.error('Error al cargar grupos:', error);
-      setGrupos([]);
+      if (error.name !== 'AbortError') {
+        console.error('Error al cargar grupos:', error);
+        setGrupos([]);
+      }
     }
-  };
+  }, [get]);
 
   const handleRefresh = () => {
     cargarNinos();

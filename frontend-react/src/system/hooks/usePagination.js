@@ -1,4 +1,5 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef } from 'react';
+import RequestManager from '../services/RequestManager';
 
 const usePagination = (initialPage = 1, initialLimit = 9) => {
     const [currentPage, setCurrentPage] = useState(initialPage);
@@ -11,18 +12,29 @@ const usePagination = (initialPage = 1, initialLimit = 9) => {
         has_next: false,
         has_previous: false
     });
+    
+    const pageChangeTimeoutRef = useRef(null);
 
     const handlePageChange = useCallback((page) => {
-        if (page < 1) {
-            setCurrentPage(1);
-        } else if (page > pagination.total_pages) {
-            setCurrentPage(pagination.total_pages);
-        } else {
-            setCurrentPage(page);
+        if (pageChangeTimeoutRef.current) {
+            clearTimeout(pageChangeTimeoutRef.current);
         }
+        
+        RequestManager.cancelRequest('pagination-data');
+        
+        pageChangeTimeoutRef.current = setTimeout(() => {
+            if (page < 1) {
+                setCurrentPage(1);
+            } else if (page > pagination.total_pages) {
+                setCurrentPage(pagination.total_pages);
+            } else {
+                setCurrentPage(page);
+            }
+        }, 100);
     }, [pagination.total_pages]);
 
     const handleLimitChange = useCallback((newLimit) => {
+        RequestManager.cancelRequest('pagination-data');
         setLimit(newLimit);
         setCurrentPage(1);
         setPagination(prev => ({
@@ -45,6 +57,7 @@ const usePagination = (initialPage = 1, initialLimit = 9) => {
     }, []);
 
     const reset = useCallback(() => {
+        RequestManager.cancelRequest('pagination-data');
         setCurrentPage(1);
         setLimit(initialLimit);
         setPagination({

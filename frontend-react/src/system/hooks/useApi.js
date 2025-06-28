@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
+import RequestManager from '../services/RequestManager';
 
 const API_PATH = process.env.REACT_APP_API_PATH;
 const STORAGE_KEY = process.env.REACT_APP_STORAGE_KEY;
@@ -61,56 +62,69 @@ export const useApi = () => {
     if (token && userData) {
       setUser(JSON.parse(userData));
     }
+
+    return () => {
+      RequestManager.cancelAllRequests();
+    };
   }, []);
 
-  const request = useCallback(async (method, endpoint, data = null) => {
-    setLoading(true);
-    setError(null);
+  const request = useCallback(async (method, endpoint, data = null, priority = 1) => {
+    const requestKey = `${method}-${endpoint}-${JSON.stringify(data)}`;
     
-    try {
-      const config = {
-        method,
-        url: endpoint,
-        ...(data && { data }),
-      };
+    return RequestManager.makeRequest(requestKey, async (signal) => {
+      setLoading(true);
+      setError(null);
       
-      const response = await axiosInstance(config);
-      setLoading(false);
-      return response.data;
-    } catch (err) {
-      setLoading(false);
-      const errorMessage = err.response?.data?.message || err.message;
-      setError(errorMessage);
-      
-      if (err.response && err.response.status === 422) {
-        return {
-          success: false,
-          ...err.response.data,
-          message: err.response.data.message || 'Error de validación'
+      try {
+        const config = {
+          method,
+          url: endpoint,
+          signal,
+          ...(data && { data }),
         };
+        
+        const response = await axiosInstance(config);
+        setLoading(false);
+        return response.data;
+      } catch (err) {
+        setLoading(false);
+        if (err.name === 'AbortError') {
+          throw err;
+        }
+        
+        const errorMessage = err.response?.data?.message || err.message;
+        setError(errorMessage);
+        
+        if (err.response && err.response.status === 422) {
+          return {
+            success: false,
+            ...err.response.data,
+            message: err.response.data.message || 'Error de validación'
+          };
+        }
+        
+        if (err.response && err.response.status === 500) {
+          console.error('Error del servidor en:', endpoint, err.response?.data);
+          return {
+            success: false,
+            data: null,
+            message: 'Error interno del servidor'
+          };
+        }
+        console.error('Error en API:', err);
+        throw err;
       }
-      
-      if (err.response && err.response.status === 500) {
-        console.error('Error del servidor en:', endpoint, err.response?.data);
-        return {
-          success: false,
-          data: null,
-          message: 'Error interno del servidor'
-        };
-      }
-      console.error('Error en API:', err);
-      throw err;
-    }
+    }, priority);
   }, []);
 
-  const get = useCallback((endpoint) => request('GET', endpoint), [request]);
-  const post = useCallback((endpoint, data) => request('POST', endpoint, data), [request]);
-  const put = useCallback((endpoint, data) => request('PUT', endpoint, data), [request]);
-  const del = useCallback((endpoint) => request('DELETE', endpoint), [request]);
+  const get = useCallback((endpoint, priority = 1) => request('GET', endpoint, null, priority), [request]);
+  const post = useCallback((endpoint, data, priority = 1) => request('POST', endpoint, data, priority), [request]);
+  const put = useCallback((endpoint, data, priority = 1) => request('PUT', endpoint, data, priority), [request]);
+  const del = useCallback((endpoint, priority = 1) => request('DELETE', endpoint, null, priority), [request]);
 
   const login = useCallback(async (credentials, userType) => {
     try {
-      const response = await post(`/auth/login/${userType}`, credentials);
+      const response = await post(`/auth/login/${userType}`, credentials, 10);
       if (response.token) {
         localStorage.setItem(`${STORAGE_KEY}_token`, response.token);
         localStorage.setItem(`${STORAGE_KEY}_user`, JSON.stringify(response.user));
@@ -124,10 +138,11 @@ export const useApi = () => {
 
   const logout = useCallback(async () => {
     try {
-      await post('/auth/logout');
+      await post('/auth/logout', null, 10);
     } catch (error) {
       console.error('Error al cerrar sesión:', error);
     } finally {
+      RequestManager.cancelAllRequests();
       localStorage.removeItem(`${STORAGE_KEY}_token`);
       localStorage.removeItem(`${STORAGE_KEY}_user`);
       setUser(null);
