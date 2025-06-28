@@ -12,7 +12,7 @@ const ListaGrupos = ({ onAgregarGrupo, onEditarGrupo, onVerGrupo }) => {
   const [searchInput, setSearchInput] = useState('');
   const [mostrarInactivos, setMostrarInactivos] = useState(false);
   const [viewType, setViewType] = useState('card');
-  const { get, del } = useApi();
+  const { get, put } = useApi();
   
   const {
     currentPage,
@@ -46,35 +46,18 @@ const ListaGrupos = ({ onAgregarGrupo, onEditarGrupo, onVerGrupo }) => {
       params.append('limit', limit);
       
       const response = await get(`/grupos?${params}`);
-      
-      if (response.success && Array.isArray(response.data)) {
+      if (response.success && response.data) {
         setGrupos(response.data);
-        updatePagination(response.pagination || {
-          current_page: 1,
-          total_pages: 1,
-          total_records: response.data.length,
-          per_page: limit
-        });
-      } else if (Array.isArray(response)) {
-        // Si la respuesta es directamente un array (formato antiguo)
-        setGrupos(response);
+        updatePagination(response.pagination);
+      } else if (response.data) {
+        setGrupos(Array.isArray(response.data) ? response.data : []);
         updatePagination({
           current_page: 1,
           total_pages: 1,
-          total_records: response.length,
-          per_page: limit
-        });
-      } else if (response.data && Array.isArray(response.data)) {
-        // Por si el formato es diferente pero tiene data
-        setGrupos(response.data);
-        updatePagination(response.pagination || {
-          current_page: 1,
-          total_pages: 1,
-          total_records: response.data.length,
+          total_records: Array.isArray(response.data) ? response.data.length : 0,
           per_page: limit
         });
       } else {
-        console.error('Formato de respuesta no esperado:', response);
         setGrupos([]);
         updatePagination({
           current_page: 1,
@@ -86,12 +69,6 @@ const ListaGrupos = ({ onAgregarGrupo, onEditarGrupo, onVerGrupo }) => {
     } catch (error) {
       console.error('Error al cargar grupos:', error);
       setGrupos([]);
-      updatePagination({
-        current_page: 1,
-        total_pages: 1,
-        total_records: 0,
-        per_page: limit
-      });
     } finally {
       setLoading(false);
     }
@@ -101,18 +78,44 @@ const ListaGrupos = ({ onAgregarGrupo, onEditarGrupo, onVerGrupo }) => {
     cargarGrupos();
   };
 
-  const eliminarGrupo = async (grupo) => {
+  const desactivarGrupo = async (grupo) => {
     if (window.confirm('¿Está seguro de desactivar este grupo?')) {
       try {
-        await del(`/grupos/${grupo.grp_id}`);
-        cargarGrupos();
+        const response = await put(`/grupos/${grupo.grp_id}/desactivar`);
+        if (response.success) {
+          cargarGrupos();
+        } else {
+          alert(response.message || 'Error al desactivar grupo');
+        }
       } catch (error) {
-        console.error('Error al cambiar estado del grupo:', error);
+        console.error('Error al desactivar grupo:', error);
+        alert('Error al desactivar grupo');
+      }
+    }
+  };
+
+  const activarGrupo = async (grupo) => {
+    if (window.confirm('¿Está seguro de activar este grupo?')) {
+      try {
+        const response = await put(`/grupos/${grupo.grp_id}/activar`);
+        if (response.success) {
+          cargarGrupos();
+        } else {
+          alert(response.message || 'Error al activar grupo');
+        }
+      } catch (error) {
+        console.error('Error al activar grupo:', error);
+        alert('Error al activar grupo');
       }
     }
   };
 
   const renderGrupoCard = (grupo) => {
+    const ocupacion = grupo.grp_capacidad ? ((grupo.ocupacion || 0) / grupo.grp_capacidad) * 100 : 0;
+    const ocupacionClass = 
+      ocupacion >= 90 ? 'alta' :
+      ocupacion >= 60 ? 'media' : 'baja';
+
     return (
       <div key={grupo.grp_id} className="grupo-card">
         <div className="grupo-icon">
@@ -120,15 +123,18 @@ const ListaGrupos = ({ onAgregarGrupo, onEditarGrupo, onVerGrupo }) => {
         </div>
         <div className="grupo-info">
           <h3>{grupo.grp_nombre}</h3>
-          <p><strong>Rango de edad:</strong> {grupo.grp_edad_minima} - {grupo.grp_edad_maxima} años</p>
-          <p><strong>Capacidad:</strong> {grupo.grp_capacidad} niños</p>
+          <p><strong>Capacidad:</strong> {grupo.ocupacion || 0}/{grupo.grp_capacidad}</p>
+          <p><strong>Edades:</strong> {grupo.grp_edad_minima} - {grupo.grp_edad_maxima} años</p>
           <p><strong>Educador:</strong> {grupo.grp_educador || 'No asignado'}</p>
           <p><strong>Estado:</strong> 
-            <span className={`estado ${grupo.grp_estado || 'activo'}`}>
-              {grupo.grp_estado || 'activo'}
+            <span className={`estado ${grupo.grp_estado}`}>
+              {grupo.grp_estado}
             </span>
           </p>
-          <p className="descripcion-corta">{grupo.grp_descripcion || 'Sin descripción'}</p>
+          <div className={`ocupacion-barra ${ocupacionClass}`}>
+            <div className="ocupacion-progreso" style={{ width: `${Math.min(ocupacion, 100)}%` }}></div>
+            <span className="ocupacion-texto">{Math.round(ocupacion)}% ocupado</span>
+          </div>
         </div>
         <div className="grupo-actions">
           <button 
@@ -145,13 +151,21 @@ const ListaGrupos = ({ onAgregarGrupo, onEditarGrupo, onVerGrupo }) => {
           >
             <i className="pi pi-pencil"></i>
           </button>
-          {(grupo.grp_estado !== 'inactivo') && (
+          {grupo.grp_estado === 'activo' ? (
             <button 
               className="btn-delete"
-              onClick={() => eliminarGrupo(grupo)}
+              onClick={() => desactivarGrupo(grupo)}
               title="Desactivar"
             >
               <i className="pi pi-ban"></i>
+            </button>
+          ) : (
+            <button 
+              className="btn-activate"
+              onClick={() => activarGrupo(grupo)}
+              title="Activar"
+            >
+              <i className="pi pi-check-circle"></i>
             </button>
           )}
         </div>
@@ -162,26 +176,25 @@ const ListaGrupos = ({ onAgregarGrupo, onEditarGrupo, onVerGrupo }) => {
   const columns = [
     { 
       header: 'Nombre', 
-      field: 'grp_nombre'
-    },
-    { 
-      header: 'Rango de Edad',
-      render: (grupo) => `${grupo.grp_edad_minima} - ${grupo.grp_edad_maxima} años`
+      render: (grupo) => grupo.grp_nombre
     },
     {
       header: 'Capacidad',
-      render: (grupo) => `${grupo.grp_capacidad} niños`
+      render: (grupo) => `${grupo.ocupacion || 0}/${grupo.grp_capacidad}`
+    },
+    {
+      header: 'Edades',
+      render: (grupo) => `${grupo.grp_edad_minima} - ${grupo.grp_edad_maxima} años`
     },
     {
       header: 'Educador',
-      field: 'grp_educador',
       render: (grupo) => grupo.grp_educador || 'No asignado'
     },
     {
       header: 'Estado',
       render: (grupo) => (
-        <span className={`estado ${grupo.grp_estado || 'activo'}`}>
-          {grupo.grp_estado || 'activo'}
+        <span className={`estado ${grupo.grp_estado}`}>
+          {grupo.grp_estado}
         </span>
       )
     }
@@ -196,7 +209,7 @@ const ListaGrupos = ({ onAgregarGrupo, onEditarGrupo, onVerGrupo }) => {
       <div className="lista-header">
         <div className="header-title">
           <h2>Lista de Grupos/Aulas</h2>
-          <p>Gestiona la información de todos los grupos registrados</p>
+          <p>Gestiona la información de todos los grupos y aulas</p>
         </div>
         <button className="btn-primary" onClick={onAgregarGrupo}>
           <i className="pi pi-plus"></i>
@@ -209,7 +222,7 @@ const ListaGrupos = ({ onAgregarGrupo, onEditarGrupo, onVerGrupo }) => {
           <i className="pi pi-search" onClick={() => setSearchTerm(searchInput)}></i>
           <input
             type="text"
-            placeholder="Buscar por nombre..."
+            placeholder="Buscar por nombre o educador..."
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
             onKeyPress={(e) => e.key === 'Enter' && setSearchTerm(searchInput)}
@@ -249,7 +262,7 @@ const ListaGrupos = ({ onAgregarGrupo, onEditarGrupo, onVerGrupo }) => {
         renderCard={renderGrupoCard}
         columns={columns}
         onEdit={onEditarGrupo}
-        onDelete={eliminarGrupo}
+        onDelete={mostrarInactivos ? activarGrupo : desactivarGrupo}
         onView={onVerGrupo}
         emptyMessage="No se encontraron grupos que coincidan con los filtros"
       />

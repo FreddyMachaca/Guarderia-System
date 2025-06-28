@@ -66,6 +66,8 @@ Route::middleware('api')->group(function () {
         Route::get('/{id}', [GrupoController::class, 'show']);
         Route::put('/{id}', [GrupoController::class, 'update']);
         Route::delete('/{id}', [GrupoController::class, 'destroy']);
+        Route::put('/{id}/activar', [GrupoController::class, 'activar']);
+        Route::put('/{id}/desactivar', [GrupoController::class, 'desactivar']);
         Route::get('/responsables/lista', [GrupoController::class, 'getResponsables']);
         
         // Rutas para asignaciones

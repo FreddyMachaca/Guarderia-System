@@ -9,12 +9,40 @@ use App\Models\Nino;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
+use App\Services\PaginationService;
 
 class GrupoController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $grupos = Grupo::with(['responsable.usuario', 'ninosActivos.nino'])->get();
+        $mostrarInactivos = $request->query('estado', 'activo') === 'inactivo';
+        $page = $request->query('page', 1);
+        $limit = $request->query('limit', 10);
+        $search = $request->query('search', '');
+        
+        $query = Grupo::with(['responsable.usuario', 'ninosActivos.nino']);
+        
+        $query->where('grp_estado', $mostrarInactivos ? 'inactivo' : 'activo');
+        
+        if ($search) {
+            $query->where(function($q) use ($search) {
+                $q->where('grp_nombre', 'ILIKE', "%{$search}%")
+                  ->orWhere('grp_descripcion', 'ILIKE', "%{$search}%")
+                  ->orWhereHas('responsable.usuario', function($sq) use ($search) {
+                      $sq->where('usr_nombre', 'ILIKE', "%{$search}%")
+                        ->orWhere('usr_apellido', 'ILIKE', "%{$search}%");
+                  });
+            });
+        }
+        
+        if ($request->has('page') && $request->has('limit')) {
+            $result = PaginationService::paginate($query, $page, $limit);
+            $grupos = $result['data'];
+            $pagination = $result['pagination'];
+        } else {
+            $grupos = $query->get();
+            $pagination = null;
+        }
         
         $gruposFormateados = $grupos->map(function ($grupo) {
             return [
@@ -30,6 +58,14 @@ class GrupoController extends Controller
                 'ocupacion' => $grupo->ninosActivos->count(),
             ];
         });
+        
+        if ($pagination) {
+            return response()->json([
+                'success' => true,
+                'data' => $gruposFormateados,
+                'pagination' => $pagination
+            ]);
+        }
         
         return response()->json([
             'success' => true,
@@ -217,6 +253,40 @@ class GrupoController extends Controller
         return response()->json([
             'success' => true,
             'data' => $ninos
+        ]);
+    }
+    
+    public function desactivar($id)
+    {
+        $grupo = Grupo::findOrFail($id);
+        
+        $grupo->grp_estado = 'inactivo';
+        $grupo->grp_fecha_actualizacion = now();
+        $grupo->save();
+        
+        $grupo->ninosActivos()->update([
+            'asn_fecha_baja' => now(),
+            'asn_estado' => 'inactivo',
+            'asn_observaciones' => 'Baja automática por inactivación del grupo'
+        ]);
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'Grupo desactivado correctamente'
+        ]);
+    }
+    
+    public function activar($id)
+    {
+        $grupo = Grupo::findOrFail($id);
+        
+        $grupo->grp_estado = 'activo';
+        $grupo->grp_fecha_actualizacion = now();
+        $grupo->save();
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'Grupo activado correctamente'
         ]);
     }
 }

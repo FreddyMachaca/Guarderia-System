@@ -14,11 +14,13 @@
 }
 
 .grupo-card {
-  background: white;
-  border: 2px solid #f0f0f0;
-  border-radius: 12px;
+  border: 1px solid #e3e6f0;
+  border-radius: 8px;
   padding: 20px;
-  transition: all 0.3s ease;
+  margin-bottom: 15px;
+  background: white;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  transition: all 0.2s ease;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -27,20 +29,20 @@
 
 .grupo-card:hover {
   transform: translateY(-3px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
   border-color: #4ecdc4;
 }
 
 .grupo-icon {
-  width: 70px;
-  height: 70px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #4ecdc4, #2cb5ac);
   color: white;
-  font-size: 2rem;
+  font-size: 18px;
   margin-bottom: 15px;
 }
 
@@ -52,14 +54,15 @@
 
 .grupo-info h3 {
   margin: 0 0 10px 0;
-  color: #333;
-  font-size: 1.3rem;
+  color: #2c3e50;
+  font-size: 18px;
+  font-weight: 600;
 }
 
 .grupo-info p {
   margin: 5px 0;
-  color: #666;
-  font-size: 0.9rem;
+  color: #6c757d;
+  font-size: 14px;
 }
 
 .descripcion-corta {
@@ -75,9 +78,9 @@
 
 .grupo-actions {
   display: flex;
-  justify-content: center;
-  gap: 10px;
-  margin-top: auto;
+  gap: 8px;
+  margin-top: 15px;
+  justify-content: flex-end;
 }
 
 /* Formulario de Grupo */
@@ -188,42 +191,45 @@
   border-radius: 10px;
   position: relative;
   overflow: hidden;
-  margin-bottom: 5px;
+  margin-top: 8px;
 }
 
 .ocupacion-barra {
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
+  position: relative;
+  background-color: #e9ecef;
   border-radius: 10px;
+  height: 20px;
+  margin-top: 8px;
+  overflow: hidden;
+}
+
+.ocupacion-progreso {
+  height: 100%;
+  background-color: #4ecdc4;
   transition: width 0.3s ease;
+  border-radius: 10px;
 }
 
-.ocupacion-chart.baja .ocupacion-barra {
-  background: linear-gradient(to right, #4ecdc4, #2cb5ac);
+.ocupacion-barra.alta .ocupacion-progreso {
+  background-color: #e74c3c;
 }
 
-.ocupacion-chart.media .ocupacion-barra {
-  background: linear-gradient(to right, #ffbe0b, #fb8500);
+.ocupacion-barra.media .ocupacion-progreso {
+  background-color: #f39c12;
 }
 
-.ocupacion-chart.alta .ocupacion-barra {
-  background: linear-gradient(to right, #ff5400, #ff0054);
+.ocupacion-barra.baja .ocupacion-progreso {
+  background-color: #4ecdc4;
 }
 
 .ocupacion-texto {
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 11px;
+  font-weight: bold;
   color: #333;
-  font-weight: 600;
-  font-size: 0.8rem;
 }
 
 .ocupacion-detalle {
@@ -317,6 +323,64 @@
 
 .estado-mini.inactivo {
   background-color: #e74c3c;
+}
+
+.btn-view, .btn-edit, .btn-delete, .btn-activate {
+  border: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.btn-view {
+  background-color: #17a2b8;
+  color: white;
+}
+
+.btn-view:hover {
+  background-color: #138496;
+}
+
+.btn-edit {
+  background-color: #ffc107;
+  color: #212529;
+}
+
+.btn-edit:hover {
+  background-color: #e0a800;
+}
+
+.btn-delete {
+  background-color: #dc3545;
+  color: white;
+}
+
+.btn-delete:hover {
+  background-color: #c82333;
+}
+
+.btn-activate {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.btn-activate:hover {
+  background-color: #218838;
+  transform: scale(1.05);
 }
 
 @media (max-width: 768px) {
