@@ -252,10 +252,9 @@ const ListaPersonal = ({ onAgregarPersonal, onEditarPersonal, onVerPersonal }) =
 
       <div className="filtros">
         <div className="filtro-busqueda">
-          <i className="pi pi-search" onClick={() => setSearchTerm(searchInput)}></i>
           <input
             type="text"
-            placeholder="Buscar por nombre, apellido, email o código..."
+            placeholder="Buscar por nombre, apellido, email o CI..."
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
             onKeyPress={(e) => e.key === 'Enter' && setSearchTerm(searchInput)}

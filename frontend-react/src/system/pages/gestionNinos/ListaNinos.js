@@ -277,7 +277,6 @@ const ListaNinos = ({ onAgregarNino, onEditarNino, onVerNino }) => {
 
       <div className="filtros">
         <div className="filtro-busqueda">
-          <i className="pi pi-search" onClick={() => setSearchTerm(searchInput)}></i>
           <input
             type="text"
             placeholder="Buscar por nombre, apellido o CI..."

@@ -232,7 +232,6 @@ const ListaPadres = ({ onAgregarPadre, onEditarPadre, onVerPadre }) => {
 
       <div className="filtros">
         <div className="filtro-busqueda">
-          <i className="pi pi-search" onClick={() => setSearchTerm(searchInput)}></i>
           <input
             type="text"
             placeholder="Buscar por nombre, apellido, email o CI..."
