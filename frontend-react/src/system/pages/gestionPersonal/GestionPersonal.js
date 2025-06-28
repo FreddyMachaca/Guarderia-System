@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useApi } from '../../hooks/useApi';
 import { useMenus } from '../../hooks/useMenus';
+import UserProfileMenu from '../../components/UserProfileMenu';
 import FormularioPersonal from './FormularioPersonal';
 import ListaPersonal from './ListaPersonal';
 import ViewPersonal from './ViewPersonal';
@@ -67,16 +68,7 @@ const GestionPersonal = () => {
             <h1>Gestión de Personal</h1>
           </div>
           <div className="header-right">
-            <div className="user-info">
-              <div className="user-avatar">
-                {user?.name?.charAt(0)?.toUpperCase()}
-              </div>
-              <div className="user-details">
-                <div className="user-name">Bienvenido, {user?.name}</div>
-                <div className="user-role">{user?.type === 'admin' ? 'Administrador' : 'Personal'}</div>
-              </div>
-              <button onClick={logout} className="logout-btn">Cerrar Sesión</button>
-            </div>
+            <UserProfileMenu user={user} onLogout={logout} />
           </div>
         </header>
         
@@ -105,3 +97,4 @@ const GestionPersonal = () => {
 };
 
 export default GestionPersonal;
+      

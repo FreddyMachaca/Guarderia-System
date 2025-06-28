@@ -61,7 +61,6 @@ const PerfilUsuario = () => {
       ...prev,
       [name]: value
     }));
-
     if (errors[name]) {
       setErrors(prev => ({
         ...prev,
@@ -73,58 +72,29 @@ const PerfilUsuario = () => {
   const handleFotoChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      const maxSize = 2 * 1024 * 1024;
-      const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif'];
-      
-      if (!allowedTypes.includes(file.type)) {
-        alert('Formato de imagen no permitido. Solo se permiten archivos: JPEG, PNG, JPG, GIF');
-        e.target.value = '';
-        return;
-      }
-      
-      if (file.size > maxSize) {
-        const fileSizeMB = (file.size / (1024 * 1024)).toFixed(2);
-        alert(`La imagen es demasiado grande (${fileSizeMB} MB). El tamaño máximo permitido es 2 MB.`);
-        e.target.value = '';
-        return;
-      }
-      
       setFoto(file);
       const reader = new FileReader();
-      reader.onload = (e) => {
-        setPreviewFoto(e.target.result);
-      };
+      reader.onload = (e) => setPreviewFoto(e.target.result);
       reader.readAsDataURL(file);
     }
   };
 
-  const subirFoto = async () => {
+  const guardarFoto = async () => {
     if (!foto) return;
-
+    
     setSubiendoFoto(true);
     try {
-      const formDataFoto = new FormData();
-      formDataFoto.append('foto', foto);
-
-      const storedToken = localStorage.getItem(`${process.env.REACT_APP_STORAGE_KEY}_token`);
+      const formData = new FormData();
+      formData.append('foto', foto);
       
-      const response = await fetch(`${process.env.REACT_APP_API_PATH}perfil/foto`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${storedToken}`
-        },
-        body: formDataFoto
+      const response = await post('/perfil/foto', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
       });
-
-      const result = await response.json();
-
-      if (response.ok && result.success) {
-        alert('Foto actualizada exitosamente');
+      
+      if (response.success) {
         setFoto(null);
         cargarPerfil();
-      } else {
-        console.error('Error en respuesta:', result);
-        alert(result.message || 'Error al subir la foto');
+        alert('Foto actualizada exitosamente');
       }
     } catch (error) {
       console.error('Error al subir foto:', error);
@@ -134,64 +104,38 @@ const PerfilUsuario = () => {
     }
   };
 
-  const validarFormulario = () => {
-    const newErrors = {};
-
-    if (!formData.usr_nombre.trim()) {
-      newErrors.usr_nombre = 'El nombre es requerido';
-    }
-
-    if (!formData.usr_apellido.trim()) {
-      newErrors.usr_apellido = 'El apellido es requerido';
-    }
-
-    if (!formData.usr_email.trim()) {
-      newErrors.usr_email = 'El email es requerido';
-    } else if (!/\S+@\S+\.\S+/.test(formData.usr_email)) {
-      newErrors.usr_email = 'El formato del email no es válido';
-    }
-
-    if (formData.usr_password && formData.usr_password.length < 6) {
-      newErrors.usr_password = 'La contraseña debe tener al menos 6 caracteres';
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    if (!validarFormulario()) {
-      return;
-    }
-
     setGuardando(true);
+    setErrors({});
+
     try {
-      const dataToSend = { ...formData };
-      if (!dataToSend.usr_password) {
-        delete dataToSend.usr_password;
-      }
-
-      const response = await put('/perfil', dataToSend);
-
+      const response = await put('/perfil', formData);
       if (response.success) {
-        alert('Perfil actualizado exitosamente');
         setEditando(false);
         cargarPerfil();
-      } else {
-        if (response.errors) {
-          setErrors(response.errors);
-        } else {
-          alert('Error al actualizar el perfil');
-        }
+        alert('Perfil actualizado exitosamente');
       }
     } catch (error) {
+      if (error.response?.data?.errors) {
+        setErrors(error.response.data.errors);
+      }
       console.error('Error al actualizar perfil:', error);
-      alert('Error de conexión');
     } finally {
       setGuardando(false);
     }
+  };
+
+  const handleCancel = () => {
+    setEditando(false);
+    setFormData({
+      usr_nombre: perfil.usr_nombre || '',
+      usr_apellido: perfil.usr_apellido || '',
+      usr_email: perfil.usr_email || '',
+      usr_telefono: perfil.usr_telefono || '',
+      usr_password: ''
+    });
+    setErrors({});
   };
 
   if (loading) {
@@ -205,9 +149,7 @@ const PerfilUsuario = () => {
           <div className="sidebar-logo">
             <span>Guardería</span>
           </div>
-          <div className="sidebar-subtitle">
-            {user?.type === 'Tutor' ? 'Portal de Padres' : 'Panel de Administración'}
-          </div>
+          <div className="sidebar-subtitle">Panel de Administración</div>
         </div>
         
         <nav className="sidebar-menu">
@@ -235,18 +177,11 @@ const PerfilUsuario = () => {
           <div className="header-right">
             <div className="user-info">
               <div className="user-avatar">
-                {previewFoto ? (
-                  <img src={previewFoto} alt="Perfil" />
-                ) : (
-                  user?.name?.charAt(0)?.toUpperCase()
-                )}
+                {user?.name?.charAt(0)?.toUpperCase()}
               </div>
               <div className="user-details">
                 <div className="user-name">Bienvenido, {user?.name}</div>
-                <div className="user-role">
-                  {user?.type === 'admin' ? 'Administrador' : 
-                   user?.type === 'personal' ? 'Personal' : 'Padre/Madre'}
-                </div>
+                <div className="user-role">{user?.type === 'admin' ? 'Administrador' : 'Personal'}</div>
               </div>
               <button onClick={logout} className="logout-btn">Cerrar Sesión</button>
             </div>
@@ -256,16 +191,16 @@ const PerfilUsuario = () => {
         <div className="perfil-content">
           <div className="perfil-container">
             <div className="perfil-header">
-              <h2>Información Personal</h2>
+              <h2>Mi Perfil</h2>
               {puedeEditar && (
                 <div className="perfil-actions">
                   {!editando ? (
                     <button className="btn-edit" onClick={() => setEditando(true)}>
                       <i className="pi pi-pencil"></i>
-                      Editar Perfil
+                      Editar
                     </button>
                   ) : (
-                    <button className="btn-cancel" onClick={() => setEditando(false)}>
+                    <button className="btn-cancel" onClick={handleCancel}>
                       <i className="pi pi-times"></i>
                       Cancelar
                     </button>
@@ -278,7 +213,7 @@ const PerfilUsuario = () => {
               <div className="perfil-foto-section">
                 <div className="foto-preview">
                   {previewFoto ? (
-                    <img src={previewFoto} alt="Foto de perfil" />
+                    <img src={previewFoto} alt="Perfil" />
                   ) : (
                     <div className="foto-placeholder">
                       <i className="pi pi-user"></i>
@@ -286,13 +221,13 @@ const PerfilUsuario = () => {
                     </div>
                   )}
                 </div>
-                
-                {puedeEditar && (
+
+                {puedeEditar && editando && (
                   <div className="foto-upload">
                     <input
                       type="file"
                       id="foto-input"
-                      accept="image/jpeg,image/png,image/jpg,image/gif"
+                      accept="image/*"
                       onChange={handleFotoChange}
                       style={{ display: 'none' }}
                     />
@@ -301,129 +236,126 @@ const PerfilUsuario = () => {
                       Cambiar Foto
                     </label>
                     {foto && (
-                      <button 
-                        className="btn-save-foto" 
-                        onClick={subirFoto}
+                      <button
+                        className="btn-save-foto"
+                        onClick={guardarFoto}
                         disabled={subiendoFoto}
                       >
-                        {subiendoFoto ? 'Subiendo...' : 'Guardar Foto'}
+                        {subiendoFoto ? 'Guardando...' : 'Guardar Foto'}
                       </button>
                     )}
                     <div className="foto-requirements">
-                      <p>Formatos: JPEG, PNG, JPG, GIF | Máximo: 2 MB</p>
+                      <p>Formatos: JPG, PNG, GIF</p>
+                      <p>Tamaño máximo: 2MB</p>
                     </div>
                   </div>
                 )}
               </div>
 
-              <form onSubmit={handleSubmit} className="perfil-form">
-                <div className="form-row">
-                  <div className="form-group">
-                    <label>Nombre</label>
-                    <input
-                      type="text"
-                      name="usr_nombre"
-                      value={formData.usr_nombre}
-                      onChange={handleInputChange}
-                      className={errors.usr_nombre ? 'error' : ''}
-                      disabled={!editando || !puedeEditar}
-                    />
-                    {errors.usr_nombre && <span className="error-text">{errors.usr_nombre}</span>}
-                  </div>
-                  <div className="form-group">
-                    <label>Apellido</label>
-                    <input
-                      type="text"
-                      name="usr_apellido"
-                      value={formData.usr_apellido}
-                      onChange={handleInputChange}
-                      className={errors.usr_apellido ? 'error' : ''}
-                      disabled={!editando || !puedeEditar}
-                    />
-                    {errors.usr_apellido && <span className="error-text">{errors.usr_apellido}</span>}
-                  </div>
-                </div>
+              <div className="perfil-form">
+                <form onSubmit={handleSubmit}>
+                  <div className="form-row">
+                    <div className="form-group">
+                      <label>Nombre</label>
+                      <input
+                        type="text"
+                        name="usr_nombre"
+                        value={formData.usr_nombre}
+                        onChange={handleInputChange}
+                        disabled={!editando}
+                        className={errors.usr_nombre ? 'error' : ''}
+                      />
+                      {errors.usr_nombre && <span className="error-text">{errors.usr_nombre[0]}</span>}
+                    </div>
 
-                <div className="form-row">
-                  <div className="form-group">
-                    <label>Email</label>
-                    <input
-                      type="email"
-                      name="usr_email"
-                      value={formData.usr_email}
-                      onChange={handleInputChange}
-                      className={errors.usr_email ? 'error' : ''}
-                      disabled={!editando || !puedeEditar}
-                    />
-                    {errors.usr_email && <span className="error-text">{errors.usr_email}</span>}
+                    <div className="form-group">
+                      <label>Apellido</label>
+                      <input
+                        type="text"
+                        name="usr_apellido"
+                        value={formData.usr_apellido}
+                        onChange={handleInputChange}
+                        disabled={!editando}
+                        className={errors.usr_apellido ? 'error' : ''}
+                      />
+                      {errors.usr_apellido && <span className="error-text">{errors.usr_apellido[0]}</span>}
+                    </div>
                   </div>
-                  <div className="form-group">
-                    <label>Teléfono</label>
-                    <input
-                      type="tel"
-                      name="usr_telefono"
-                      value={formData.usr_telefono}
-                      onChange={handleInputChange}
-                      disabled={!editando || !puedeEditar}
-                    />
-                  </div>
-                </div>
 
-                {puedeEditar && editando && (
-                  <div className="form-group">
-                    <label>Nueva Contraseña (opcional)</label>
-                    <input
-                      type="password"
-                      name="usr_password"
-                      value={formData.usr_password}
-                      onChange={handleInputChange}
-                      className={errors.usr_password ? 'error' : ''}
-                      placeholder="Dejar vacío para mantener la actual"
-                    />
-                    {errors.usr_password && <span className="error-text">{errors.usr_password}</span>}
-                  </div>
-                )}
+                  <div className="form-row">
+                    <div className="form-group">
+                      <label>Email</label>
+                      <input
+                        type="email"
+                        name="usr_email"
+                        value={formData.usr_email}
+                        onChange={handleInputChange}
+                        disabled={!editando}
+                        className={errors.usr_email ? 'error' : ''}
+                      />
+                      {errors.usr_email && <span className="error-text">{errors.usr_email[0]}</span>}
+                    </div>
 
-                <div className="form-info">
-                  <div className="info-item">
-                    <strong>Tipo de Usuario:</strong> 
-                    {perfil?.usr_tipo === 'admin' ? 'Administrador' : 
-                     perfil?.usr_tipo === 'personal' ? 'Personal' : 'Padre/Madre'}
+                    <div className="form-group">
+                      <label>Teléfono</label>
+                      <input
+                        type="text"
+                        name="usr_telefono"
+                        value={formData.usr_telefono}
+                        onChange={handleInputChange}
+                        disabled={!editando}
+                      />
+                    </div>
                   </div>
-                  <div className="info-item">
-                    <strong>Estado:</strong> 
-                    <span className={`estado ${perfil?.usr_estado}`}>
-                      {perfil?.usr_estado}
-                    </span>
-                  </div>
-                </div>
 
-                {puedeEditar && editando && (
-                  <div className="form-actions">
-                    <button 
-                      type="button" 
-                      onClick={() => setEditando(false)}
-                      className="btn-cancel"
-                    >
-                      Cancelar
-                    </button>
-                    <button 
-                      type="submit" 
-                      disabled={guardando}
-                      className="btn-save"
-                    >
-                      {guardando ? 'Guardando...' : 'Guardar Cambios'}
-                    </button>
+                  {editando && (
+                    <div className="form-row">
+                      <div className="form-group">
+                        <label>Nueva Contraseña (opcional)</label>
+                        <input
+                          type="password"
+                          name="usr_password"
+                          value={formData.usr_password}
+                          onChange={handleInputChange}
+                          placeholder="Dejar vacío para mantener actual"
+                          className={errors.usr_password ? 'error' : ''}
+                        />
+                        {errors.usr_password && <span className="error-text">{errors.usr_password[0]}</span>}
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="form-info">
+                    <div className="info-item">
+                      <strong>Tipo de Usuario:</strong> {perfil?.usr_tipo || 'N/A'}
+                    </div>
+                    <div className="info-item">
+                      <strong>Estado:</strong>
+                      <span className={`estado ${perfil?.usr_estado || 'activo'}`}>
+                        {perfil?.usr_estado || 'activo'}
+                      </span>
+                    </div>
                   </div>
-                )}
+
+                  {editando && (
+                    <div className="form-actions">
+                      <button type="button" className="btn-cancel" onClick={handleCancel}>
+                        Cancelar
+                      </button>
+                      <button type="submit" className="btn-save" disabled={guardando}>
+                        {guardando ? 'Guardando...' : 'Guardar Cambios'}
+                      </button>
+                    </div>
+                  )}
+                </form>
 
                 {!puedeEditar && (
                   <div className="readonly-notice">
                     <i className="pi pi-info-circle"></i>
-                    <span>Solo puedes visualizar tu información. No tienes permisos para editarla.</span>
+                    <span>Solo el personal administrativo puede editar el perfil</span>
                   </div>
                 )}
-              </form>
+              </div>
             </div>
           </div>
         </div>
@@ -433,3 +365,4 @@ const PerfilUsuario = () => {
 };
 
 export default PerfilUsuario;
+          

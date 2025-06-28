@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useApi } from '../../hooks/useApi';
 import { useMenus } from '../../hooks/useMenus';
+import UserProfileMenu from '../../components/UserProfileMenu';
 import FormularioMensualidad from './FormularioMensualidad';
 import ListaMensualidades from './ListaMensualidades';
 import ViewMensualidad from './ViewMensualidad';
@@ -75,16 +76,7 @@ const GestionMensualidades = () => {
             <h1>Gestión de Mensualidades</h1>
           </div>
           <div className="header-right">
-            <div className="user-info">
-              <div className="user-avatar">
-                {user?.name?.charAt(0)?.toUpperCase()}
-              </div>
-              <div className="user-details">
-                <div className="user-name">Bienvenido, {user?.name}</div>
-                <div className="user-role">{user?.type === 'admin' ? 'Administrador' : 'Personal'}</div>
-              </div>
-              <button onClick={logout} className="logout-btn">Cerrar Sesión</button>
-            </div>
+            <UserProfileMenu user={user} onLogout={logout} />
           </div>
         </header>
         
