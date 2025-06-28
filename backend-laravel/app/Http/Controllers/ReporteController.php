@@ -25,8 +25,12 @@ class ReporteController extends Controller
         $fechaFin = $request->input('fecha_fin', Carbon::now()->endOfMonth()->format('Y-m-d'));
         $tipo = $request->input('tipo', 'pdf');
 
+        // Ajustar fechas para incluir todo el día
+        $fechaInicioCompleta = Carbon::parse($fechaInicio)->startOfDay();
+        $fechaFinCompleta = Carbon::parse($fechaFin)->endOfDay();
+
         $ingresos = PagoMensualidad::with(['mensualidadNino.nino', 'mensualidadNino.mensualidadGrupo.grupo'])
-            ->whereBetween('pgm_fecha_pago', [$fechaInicio, $fechaFin])
+            ->whereBetween('pgm_fecha_pago', [$fechaInicioCompleta, $fechaFinCompleta])
             ->orderBy('pgm_fecha_pago', 'desc')
             ->get();
 
@@ -66,9 +70,13 @@ class ReporteController extends Controller
         $tipo = $request->input('tipo', 'pdf');
         $grupoId = $request->input('grupo_id');
 
+        // Ajustar fechas para incluir todo el día
+        $fechaInicioCompleta = Carbon::parse($fechaInicio)->startOfDay();
+        $fechaFinCompleta = Carbon::parse($fechaFin)->endOfDay();
+
         $query = Nino::with(['asignacionActual.grupo', 'padres.usuario'])
             ->where('nin_estado', 'activo')
-            ->whereBetween('nin_fecha_inscripcion', [$fechaInicio, $fechaFin]);
+            ->whereBetween('nin_fecha_inscripcion', [$fechaInicioCompleta, $fechaFinCompleta]);
 
         if ($grupoId) {
             $query->whereHas('asignacionActual', function($q) use ($grupoId) {
@@ -149,10 +157,13 @@ class ReporteController extends Controller
         $estado = $request->input('estado');
         $tipo = $request->input('tipo', 'pdf');
 
+        // Ajustar fechas para incluir todo el día
+        $fechaInicioCompleta = Carbon::parse($fechaInicio)->startOfDay();
+        $fechaFinCompleta = Carbon::parse($fechaFin)->endOfDay();
+
         $query = MensualidadNino::with(['nino', 'mensualidadGrupo.grupo', 'pagos'])
-            ->whereHas('mensualidadGrupo', function($q) use ($fechaInicio, $fechaFin) {
-                $q->whereDate('msg_fecha_creacion', '>=', $fechaInicio)
-                  ->whereDate('msg_fecha_creacion', '<=', $fechaFin);
+            ->whereHas('mensualidadGrupo', function($q) use ($fechaInicioCompleta, $fechaFinCompleta) {
+                $q->whereBetween('msg_fecha_creacion', [$fechaInicioCompleta, $fechaFinCompleta]);
             });
 
         if ($estado) {
@@ -195,9 +206,13 @@ class ReporteController extends Controller
         $grupoId = $request->input('grupo_id');
         $tipo = $request->input('tipo', 'pdf');
 
+        // Ajustar fechas para incluir todo el día
+        $fechaInicioCompleta = Carbon::parse($fechaInicio)->startOfDay();
+        $fechaFinCompleta = Carbon::parse($fechaFin)->endOfDay();
+
         $query = AsignacionNino::with(['nino', 'grupo'])
             ->where('asn_estado', 'activo')
-            ->whereBetween('asn_fecha_asignacion', [$fechaInicio, $fechaFin]);
+            ->whereBetween('asn_fecha_asignacion', [$fechaInicioCompleta, $fechaFinCompleta]);
 
         if ($grupoId) {
             $query->where('asn_grp_id', $grupoId);
