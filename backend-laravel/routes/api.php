@@ -9,6 +9,7 @@ use App\Http\Controllers\AsignacionNinoController;
 use App\Http\Controllers\PersonalController;
 use App\Http\Controllers\PadreController;
 use App\Http\Controllers\MensualidadController;
+use App\Http\Controllers\DashboardController;
 
 /*
 |--------------------------------------------------------------------------
@@ -111,5 +112,17 @@ Route::middleware('api')->group(function () {
         Route::get('/grupos', [App\Http\Controllers\ReporteController::class, 'reporteGrupos']);
         Route::get('/pagos', [App\Http\Controllers\ReporteController::class, 'reportePagos']);
         Route::get('/asignaciones', [App\Http\Controllers\ReporteController::class, 'reporteAsistencia']);
+    });
+
+    // Rutas para el módulo de Dashboard
+    Route::prefix('dashboard')->group(function () {
+        Route::get('/estadisticas-basicas', [DashboardController::class, 'estadisticasBasicas']);
+        Route::get('/estadisticas', [DashboardController::class, 'estadisticas']);
+        Route::get('/ingresos', [DashboardController::class, 'ingresos']);
+        Route::get('/pagos-metodo', [DashboardController::class, 'pagosPorMetodo']);
+        Route::get('/ninos-por-grupo', [DashboardController::class, 'ninosPorGrupo']);
+        Route::get('/actividad-calendario', [DashboardController::class, 'actividadCalendario']);
+        Route::get('/ninos', [DashboardController::class, 'ninos']);
+        Route::get('/padre', [DashboardController::class, 'datosPadre']);
     });
 });

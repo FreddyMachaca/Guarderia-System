@@ -1,13 +1,35 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import DashboardAnalytics from './DashboardAnalytics';
 import './Dashboard.css';
 import { useApi } from '../../hooks/useApi';
 import { useMenus } from '../../hooks/useMenus';
 import 'primeicons/primeicons.css';
 
 const Dashboard = () => {
-  const { getCurrentUser, logout } = useApi();
+  const { getCurrentUser, logout, get } = useApi();
   const { adminMenus, activeMenu, setMenu, isMenuOpen, toggleMenu } = useMenus();
+  const [dashboardStats, setDashboardStats] = useState({
+    ninos: 0,
+    personal: 0,
+    padres: 0,
+    actividades: 0
+  });
   const user = getCurrentUser();
+
+  useEffect(() => {
+    cargarEstadisticasBasicas();
+  }, []);
+
+  const cargarEstadisticasBasicas = async () => {
+    try {
+      const response = await get('/dashboard/estadisticas-basicas');
+      if (response.success) {
+        setDashboardStats(response.data);
+      }
+    } catch (error) {
+      console.error('Error al cargar estadísticas:', error);
+    }
+  };
 
   return (
     <div className="dashboard">
@@ -39,7 +61,7 @@ const Dashboard = () => {
             <button className="menu-toggle" onClick={toggleMenu}>
               <i className="pi pi-bars" />
             </button>
-            <h1>Panel de Administración</h1>
+            <h1>Dashboard Analítico</h1>
           </div>
           <div className="header-right">
             <div className="user-info">
@@ -56,31 +78,7 @@ const Dashboard = () => {
         </header>
         
         <div className="dashboard-content">
-          <div className="dashboard-cards">
-            <div className="dashboard-card">
-              <h3>Niños Registrados</h3>
-              <div className="card-value">0</div>
-              <div className="card-description">Total de niños activos</div>
-            </div>
-            
-            <div className="dashboard-card">
-              <h3>Personal Activo</h3>
-              <div className="card-value">0</div>
-              <div className="card-description">Personal</div>
-            </div>
-            
-            <div className="dashboard-card">
-              <h3>Padres Registrados</h3>
-              <div className="card-value">0</div>
-              <div className="card-description">Familias en el sistema</div>
-            </div>
-            
-            <div className="dashboard-card">
-              <h3>Actividades Hoy</h3>
-              <div className="card-value">0</div>
-              <div className="card-description">Programadas para hoy</div>
-            </div>
-          </div>
+          <DashboardAnalytics />
         </div>
       </div>
     </div>
