@@ -172,9 +172,9 @@ const ListaMensualidades = ({ onAgregarMensualidad, onEditarMensualidad, onVerMe
   };
 
   const renderMensualidadCard = (mensualidad) => {
-    const totalEsperado = (mensualidad.msg_precio_base || 0) * (mensualidad.ninos_activos_grupo || 0);
-    const porcentajeCobrado = totalEsperado > 0 
-      ? (((mensualidad.total_recaudado || 0) / totalEsperado) * 100).toFixed(1)
+    const precioTotalReal = mensualidad.precio_total_real || mensualidad.msg_precio_base * (mensualidad.ninos_en_mensualidad || 0);
+    const porcentajeCobrado = precioTotalReal > 0 
+      ? (((mensualidad.total_recaudado || 0) / precioTotalReal) * 100).toFixed(1)
       : 0;
 
     return (

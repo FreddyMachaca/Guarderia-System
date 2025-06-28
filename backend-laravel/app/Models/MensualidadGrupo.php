@@ -37,16 +37,27 @@ class MensualidadGrupo extends Model
 
     public function getTotalRecaudadoAttribute()
     {
-        return $this->mensualidadesNinos()
-                    ->where('mnc_estado_pago', 'pagado')
-                    ->sum('mnc_monto_pagado');
+        return $this->mensualidadesNinos()->sum('mnc_monto_pagado');
     }
 
     public function getTotalPendienteAttribute()
     {
         return $this->mensualidadesNinos()
-                    ->where('mnc_estado_pago', 'pendiente')
-                    ->sum('mnc_precio_final');
+                    ->selectRaw('SUM(mnc_precio_final - COALESCE(mnc_monto_pagado, 0)) as pendiente')
+                    ->value('pendiente') ?: 0;
+    }
+
+    public function getPrecioTotalRealAttribute()
+    {
+        return $this->mensualidadesNinos()->sum('mnc_precio_final');
+    }
+
+    public function getPorcentajeCobradoAttribute()
+    {
+        $precioTotalReal = $this->precio_total_real;
+        $totalRecaudado = $this->total_recaudado;
+        
+        return $precioTotalReal > 0 ? round(($totalRecaudado / $precioTotalReal) * 100, 1) : 0;
     }
 
     public function getCantidadNinosAttribute()

@@ -57,6 +57,8 @@ class MensualidadController extends Controller
             
             $mensualidad->total_recaudado = $mensualidad->total_recaudado;
             $mensualidad->total_pendiente = $mensualidad->total_pendiente;
+            $mensualidad->precio_total_real = $mensualidad->precio_total_real;
+            $mensualidad->porcentaje_cobrado = $mensualidad->porcentaje_cobrado;
             $mensualidad->cantidad_ninos = $mensualidad->cantidad_ninos;
             $mensualidad->ninos_activos_grupo = $ninosActivos;
             $mensualidad->ninos_en_mensualidad = $ninosEnMensualidad;
@@ -169,6 +171,8 @@ class MensualidadController extends Controller
 
         $mensualidad->total_recaudado = $mensualidad->total_recaudado;
         $mensualidad->total_pendiente = $mensualidad->total_pendiente;
+        $mensualidad->precio_total_real = $mensualidad->precio_total_real;
+        $mensualidad->porcentaje_cobrado = $mensualidad->porcentaje_cobrado;
         $mensualidad->cantidad_ninos = $mensualidad->cantidad_ninos;
         $mensualidad->ninos_activos_grupo = $ninosActivos;
         $mensualidad->ninos_en_mensualidad = $ninosEnMensualidad;
@@ -507,9 +511,7 @@ class MensualidadController extends Controller
                     'cantidad_ninos' => $mensualidad->cantidad_ninos,
                     'recaudado' => $mensualidad->total_recaudado,
                     'pendiente' => $mensualidad->total_pendiente,
-                    'porcentaje_cobrado' => $mensualidad->cantidad_ninos > 0 
-                        ? round(($mensualidad->total_recaudado / ($mensualidad->msg_precio_base * $mensualidad->cantidad_ninos)) * 100, 2)
-                        : 0
+                    'porcentaje_cobrado' => $mensualidad->porcentaje_cobrado
                 ];
             })
         ];

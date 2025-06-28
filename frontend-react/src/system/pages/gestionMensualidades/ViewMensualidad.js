@@ -91,9 +91,25 @@ const ViewMensualidad = ({ mensualidad, onVolver, onRegistrarPago }) => {
   };
 
   const calcularPorcentajeCobrado = () => {
-    if (!mensualidadData || (mensualidadData.cantidad_ninos || 0) === 0) return 0;
-    const totalEsperado = (mensualidadData.msg_precio_base || 0) * (mensualidadData.cantidad_ninos || 0);
-    return totalEsperado > 0 ? (((mensualidadData.total_recaudado || 0) / totalEsperado) * 100).toFixed(1) : 0;
+    if (!mensualidadData || !mensualidadData.mensualidades_ninos || mensualidadData.mensualidades_ninos.length === 0) {
+      return 0;
+    }
+    
+    let totalAPagar = 0;
+    let totalPagado = 0;
+    
+    mensualidadData.mensualidades_ninos.forEach(nino => {
+      const precioFinal = parseFloat(nino.mnc_precio_final || 0);
+      const montoPagado = parseFloat(nino.mnc_monto_pagado || 0);
+      
+      totalAPagar += precioFinal;
+      totalPagado += montoPagado;
+    });
+    
+    if (totalAPagar === 0) return 0;
+    
+    const porcentaje = (totalPagado / totalAPagar) * 100;
+    return Math.round(porcentaje * 10) / 10;
   };
 
   if (loading) {
