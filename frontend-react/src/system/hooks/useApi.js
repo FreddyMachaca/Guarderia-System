@@ -171,11 +171,14 @@ export const useApi = () => {
   const postFile = useCallback(async (endpoint, formData, options = {}) => {
     setLoading(true);
     setError(null);
-    
+
     try {
       const storedToken = localStorage.getItem(`${STORAGE_KEY}_token`);
-      
-      const response = await fetch(`${API_PATH}${endpoint}`, {
+      let baseUrl = API_PATH || '';
+      if (baseUrl.endsWith('/')) baseUrl = baseUrl.slice(0, -1);
+      let cleanEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
+
+      const response = await fetch(`${baseUrl}${cleanEndpoint}`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${storedToken}`,
@@ -186,12 +189,12 @@ export const useApi = () => {
 
       const result = await response.json();
       setLoading(false);
-      
+
       if (!response.ok) {
         setError(result.message || 'Error en la petición');
         return result;
       }
-      
+
       return result;
     } catch (error) {
       setLoading(false);

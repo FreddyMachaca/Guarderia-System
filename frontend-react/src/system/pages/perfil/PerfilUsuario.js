@@ -4,7 +4,7 @@ import { useMenus } from '../../hooks/useMenus';
 import './PerfilUsuario.css';
 
 const PerfilUsuario = () => {
-  const { getCurrentUser, logout, get, put, post } = useApi();
+  const { getCurrentUser, logout, get, put, postFile } = useApi();
   const { adminMenus, parentMenus, activeMenu, setMenu, isMenuOpen, toggleMenu } = useMenus();
   const [perfil, setPerfil] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -87,9 +87,7 @@ const PerfilUsuario = () => {
       const formData = new FormData();
       formData.append('foto', foto);
       
-      const response = await post('/perfil/foto', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' }
-      });
+      const response = await postFile('/perfil/foto', formData);
       
       if (response.success) {
         setFoto(null);
@@ -365,4 +363,3 @@ const PerfilUsuario = () => {
 };
 
 export default PerfilUsuario;
-          
