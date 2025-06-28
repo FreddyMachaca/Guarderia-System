@@ -182,13 +182,6 @@ const PdfViewerModal = (props) => {
                 </div>
                 
                 <div className="pdf-modal-content">
-                    {loading && (
-                        <div className="pdf-loading-overlay">
-                            <div className="loading-spinner">
-                                <i className="pi pi-spin pi-spinner"></i>
-                            </div>
-                        </div>
-                    )}
                     {pdfUrl && (
                         <iframe 
                             id="pdf-iframe"

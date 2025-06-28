@@ -104,6 +104,9 @@
   flex: 1;
   position: relative;
   background: #f8f9fa;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .pdf-iframe {
@@ -113,22 +116,14 @@
   background: white;
 }
 
-.pdf-loading-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(255, 255, 255, 0.9);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 10;
-}
-
-.loading-spinner {
-  font-size: 2rem;
-  color: #667eea;
+.pdf-modal-content:empty::before {
+  content: '';
+  display: inline-block;
+  width: 40px;
+  height: 40px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #667eea;
+  border-radius: 50%;
   animation: spin 1s linear infinite;
 }
 
