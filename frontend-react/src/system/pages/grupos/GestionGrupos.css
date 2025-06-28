@@ -210,15 +210,48 @@
   border-radius: 10px;
 }
 
-.ocupacion-barra.alta .ocupacion-progreso {
+.ocupacion-chart .ocupacion-barra {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  margin-top: 0;
+  background: transparent;
+}
+
+.ocupacion-chart.alta .ocupacion-barra {
+  background-color: transparent;
+}
+
+.ocupacion-chart.media .ocupacion-barra {
+  background-color: transparent;
+}
+
+.ocupacion-chart.baja .ocupacion-barra {
+  background-color: transparent;
+}
+
+.ocupacion-chart.alta {
+  background-color: #e9ecef;
+}
+
+.ocupacion-chart.media {
+  background-color: #e9ecef;
+}
+
+.ocupacion-chart.baja {
+  background-color: #e9ecef;
+}
+
+.ocupacion-chart.alta .ocupacion-progreso {
   background-color: #e74c3c;
 }
 
-.ocupacion-barra.media .ocupacion-progreso {
+.ocupacion-chart.media .ocupacion-progreso {
   background-color: #f39c12;
 }
 
-.ocupacion-barra.baja .ocupacion-progreso {
+.ocupacion-chart.baja .ocupacion-progreso {
   background-color: #4ecdc4;
 }
 
@@ -401,6 +434,3 @@
     margin: 20px auto 0;
   }
 }
-
-/* Resto de estilos compartidos con GestionNinos.css */
-/* Se está heredando la mayoría de estilos comunes de GestionNinos.css */

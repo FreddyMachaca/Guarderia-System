@@ -96,7 +96,9 @@ const ViewGrupo = ({ grupo, onVolver }) => {
           <div className="ocupacion-container">
             <div className="ocupacion-titulo">Ocupación</div>
             <div className={`ocupacion-chart ${ocupacionClass}`}>
-              <div className="ocupacion-barra" style={{ width: `${Math.min(ocupacion, 100)}%` }}></div>
+              <div className="ocupacion-barra" style={{ width: `${Math.min(ocupacion, 100)}%` }}>
+                <div className="ocupacion-progreso" style={{ width: '100%' }}></div>
+              </div>
               <div className="ocupacion-texto">{Math.round(ocupacion)}%</div>
             </div>
             <div className="ocupacion-detalle">
