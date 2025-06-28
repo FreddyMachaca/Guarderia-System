@@ -189,7 +189,7 @@ const PdfViewerModal = (props) => {
                             </div>
                         </div>
                     )}
-                    {url && (
+                    {pdfUrl && (
                         <iframe 
                             id="pdf-iframe"
                             src={pdfUrl}
