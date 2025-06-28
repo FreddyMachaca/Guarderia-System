@@ -14,7 +14,7 @@ const ListaNinos = ({ onAgregarNino, onEditarNino, onVerNino }) => {
   const [grupos, setGrupos] = useState([]);
   const [mostrarInactivos, setMostrarInactivos] = useState(false);
   const [viewType, setViewType] = useState('card'); 
-  const { get, del } = useApi();
+  const { get, del, put } = useApi();
   
   const {
     currentPage,
@@ -109,6 +109,22 @@ const ListaNinos = ({ onAgregarNino, onEditarNino, onVerNino }) => {
       }
     }
   };
+
+  const activarNino = async (nino) => {
+    if (window.confirm('¿Está seguro de activar este niño?')) {
+      try {
+        const response = await put(`/ninos/${nino.nin_id}/activar`);
+        if (response.success) {
+          cargarNinos();
+        } else {
+          alert(response.message || 'Error al activar niño');
+        }
+      } catch (error) {
+        console.error('Error al activar niño:', error);
+        alert('Error al activar niño');
+      }
+    }
+  };
   
   const renderNinoCard = (nino) => {
     let tutorInfo = null;
@@ -184,6 +200,15 @@ const ListaNinos = ({ onAgregarNino, onEditarNino, onVerNino }) => {
               title="Desactivar"
             >
               <i className="pi pi-ban"></i>
+            </button>
+          )}
+          {(nino.nin_estado === 'inactivo') && (
+            <button 
+              className="btn-activate"
+              onClick={() => activarNino(nino)}
+              title="Activar"
+            >
+              <i className="pi pi-check-circle"></i>
             </button>
           )}
         </div>
@@ -309,6 +334,8 @@ const ListaNinos = ({ onAgregarNino, onEditarNino, onVerNino }) => {
         onDelete={eliminarNino}
         onView={onVerNino}
         emptyMessage="No se encontraron niños que coincidan con los filtros"
+        activarNino={activarNino}
+        mostrarInactivos={mostrarInactivos}
       />
 
       <div style={{marginTop: '1rem'}}>

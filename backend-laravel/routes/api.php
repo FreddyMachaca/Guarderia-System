@@ -43,6 +43,7 @@ Route::middleware('api')->group(function () {
         Route::get('/{id}', [NinoController::class, 'show']);
         Route::put('/{id}', [NinoController::class, 'update']);
         Route::delete('/{id}', [NinoController::class, 'destroy']);
+        Route::put('/{id}/activar', [NinoController::class, 'activar']);
         Route::post('/{id}/asignar-grupo', [NinoController::class, 'asignarGrupo']);
         Route::delete('/{id}/remover-grupo', [NinoController::class, 'removerGrupo']);
     });

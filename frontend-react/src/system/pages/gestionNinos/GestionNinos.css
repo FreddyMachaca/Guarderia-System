@@ -410,6 +410,16 @@
   transform: translateY(-2px);
 }
 
+.btn-activate {
+  background: #2ecc71;
+  color: white;
+}
+
+.btn-activate:hover {
+  background: #27ae60;
+  transform: translateY(-2px);
+}
+
 .no-results {
   text-align: center;
   padding: 60px 20px;

@@ -340,6 +340,25 @@ class NinoController extends Controller
         ]);
     }
 
+    public function activar($id)
+    {
+        $nino = Nino::find($id);
+
+        if (!$nino) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Niño no encontrado'
+            ], 404);
+        }
+
+        $nino->update(['nin_estado' => 'activo']);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Niño activado exitosamente'
+        ]);
+    }
+
     public function asignarGrupo(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
