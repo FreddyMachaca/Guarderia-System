@@ -13,7 +13,8 @@ const ListaMensualidades = ({ onAgregarMensualidad, onEditarMensualidad, onVerMe
   const [grupoFilter, setGrupoFilter] = useState('');
   const [grupos, setGrupos] = useState([]);
   const [viewType, setViewType] = useState('card');
-  const { get, del, post } = useApi();
+  const [mostrarInactivos, setMostrarInactivos] = useState(false);
+  const { get, del, post, put } = useApi();
   
   const {
     currentPage,
@@ -45,7 +46,7 @@ const ListaMensualidades = ({ onAgregarMensualidad, onEditarMensualidad, onVerMe
 
   useEffect(() => {
     cargarMensualidades();
-  }, [currentPage, limit, mesFilter, anioFilter, grupoFilter]);
+  }, [currentPage, limit, mesFilter, anioFilter, grupoFilter, mostrarInactivos]);
 
   const cargarMensualidades = async () => {
     try {
@@ -62,6 +63,11 @@ const ListaMensualidades = ({ onAgregarMensualidad, onEditarMensualidad, onVerMe
 
       if (grupoFilter) {
         params.append('grupo', grupoFilter);
+      }
+
+      // Añadir parámetro para filtrar por estado
+      if (!mostrarInactivos) {
+        params.append('estado', 'activo');
       }
       
       params.append('page', currentPage);
@@ -104,13 +110,33 @@ const ListaMensualidades = ({ onAgregarMensualidad, onEditarMensualidad, onVerMe
   };
 
   const eliminarMensualidad = async (mensualidad) => {
-    if (window.confirm('¿Está seguro de eliminar esta mensualidad?')) {
+    if (window.confirm('¿Está seguro de inactivar esta mensualidad?')) {
       try {
-        await del(`/mensualidades/${mensualidad.msg_id}`);
-        cargarMensualidades();
+        const response = await put(`/mensualidades/${mensualidad.msg_id}/inactivar`);
+        if (response.success) {
+          cargarMensualidades();
+        } else {
+          alert(response.message || 'Error al inactivar mensualidad');
+        }
       } catch (error) {
-        console.error('Error al eliminar mensualidad:', error);
-        alert('Error al eliminar mensualidad');
+        console.error('Error al inactivar mensualidad:', error);
+        alert('Error al inactivar mensualidad');
+      }
+    }
+  };
+
+  const activarMensualidad = async (mensualidad) => {
+    if (window.confirm('¿Está seguro de activar esta mensualidad?')) {
+      try {
+        const response = await put(`/mensualidades/${mensualidad.msg_id}/activar`);
+        if (response.success) {
+          cargarMensualidades();
+        } else {
+          alert(response.message || 'Error al activar mensualidad');
+        }
+      } catch (error) {
+        console.error('Error al activar mensualidad:', error);
+        alert('Error al activar mensualidad');
       }
     }
   };
@@ -225,13 +251,23 @@ const ListaMensualidades = ({ onAgregarMensualidad, onEditarMensualidad, onVerMe
           >
             <i className="pi pi-pencil"></i>
           </button>
-          <button 
-            className="btn-delete"
-            onClick={() => eliminarMensualidad(mensualidad)}
-            title="Eliminar"
-          >
-            <i className="pi pi-trash"></i>
-          </button>
+          {mensualidad.msg_estado === 'activo' ? (
+            <button 
+              className="btn-delete"
+              onClick={() => eliminarMensualidad(mensualidad)}
+              title="Inactivar"
+            >
+              <i className="pi pi-ban"></i>
+            </button>
+          ) : (
+            <button 
+              className="btn-activate"
+              onClick={() => activarMensualidad(mensualidad)}
+              title="Activar"
+            >
+              <i className="pi pi-check-circle"></i>
+            </button>
+          )}
         </div>
       </div>
     );
@@ -332,6 +368,18 @@ const ListaMensualidades = ({ onAgregarMensualidad, onEditarMensualidad, onVerMe
             </option>
           ))}
         </select>
+        
+        <div className="filtro-switch">
+          <label className="switch">
+            <input
+              type="checkbox"
+              checked={mostrarInactivos}
+              onChange={() => setMostrarInactivos(!mostrarInactivos)}
+            />
+            <span className="slider round"></span>
+          </label>
+          <span>Mostrar inactivos</span>
+        </div>
         
         <div className="view-toggle">
           <button 

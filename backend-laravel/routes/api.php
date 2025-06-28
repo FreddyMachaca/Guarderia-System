@@ -103,6 +103,8 @@ Route::middleware('api')->group(function () {
         Route::post('/{id}/sincronizar-ninos', [MensualidadController::class, 'sincronizarNinos']);
         Route::get('/{id}/sincronizar-ninos', [MensualidadController::class, 'sincronizarNinos']);
         Route::get('/{id}/verificar-sincronizacion', [MensualidadController::class, 'verificarSincronizacion']);
+        Route::put('/{id}/inactivar', [MensualidadController::class, 'inactivar']); 
+        Route::put('/{id}/activar', [MensualidadController::class, 'activar']); // Nueva ruta para activar
     });
 
     // Rutas para reportes

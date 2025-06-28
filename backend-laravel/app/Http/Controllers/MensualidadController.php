@@ -21,6 +21,7 @@ class MensualidadController extends Controller
         $mes = $request->query('mes');
         $anio = $request->query('anio', date('Y'));
         $grupo = $request->query('grupo');
+        $estado = $request->query('estado');
 
         $query = MensualidadGrupo::with(['grupo', 'mensualidadesNinos.nino']);
 
@@ -34,6 +35,11 @@ class MensualidadController extends Controller
 
         if ($grupo) {
             $query->where('msg_grp_id', $grupo);
+        }
+
+        // Filtrar por estado si se proporciona
+        if ($estado) {
+            $query->where('msg_estado', $estado);
         }
 
         $query->orderBy('msg_anio', 'desc')
@@ -238,21 +244,64 @@ class MensualidadController extends Controller
 
         DB::beginTransaction();
         try {
-            $mensualidad->mensualidadesNinos()->delete();
-            $mensualidad->delete();
+            $mensualidad->update([
+                'msg_estado' => 'inactivo'
+            ]);
 
             DB::commit();
             return response()->json([
                 'success' => true,
-                'message' => 'Mensualidad eliminada exitosamente'
+                'message' => 'Mensualidad inactivada exitosamente'
             ]);
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json([
                 'success' => false,
-                'message' => 'Error al eliminar mensualidad: ' . $e->getMessage()
+                'message' => 'Error al inactivar mensualidad: ' . $e->getMessage()
             ], 500);
         }
+    }
+
+    public function inactivar($id)
+    {
+        $mensualidad = MensualidadGrupo::find($id);
+
+        if (!$mensualidad) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Mensualidad no encontrada'
+            ], 404);
+        }
+
+        $mensualidad->update([
+            'msg_estado' => 'inactivo'
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Mensualidad inactivada exitosamente'
+        ]);
+    }
+
+    public function activar($id)
+    {
+        $mensualidad = MensualidadGrupo::find($id);
+
+        if (!$mensualidad) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Mensualidad no encontrada'
+            ], 404);
+        }
+
+        $mensualidad->update([
+            'msg_estado' => 'activo'
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Mensualidad activada exitosamente'
+        ]);
     }
 
     public function actualizarPrecioNino(Request $request, $mensualidadId, $ninoId)
