@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useApi } from '../../hooks/useApi';
+import SearchableSelect from '../../components/SearchableSelect';
 import './GestionMensualidades.css';
 
 const FormularioMensualidad = ({ mensualidad, onVolver }) => {
@@ -161,20 +162,17 @@ const FormularioMensualidad = ({ mensualidad, onVolver }) => {
           <div className="form-row">
             <div className="form-group">
               <label>Grupo/Aula *</label>
-              <select
-                name="msg_grp_id"
+              <SearchableSelect
+                options={grupos}
                 value={formData.msg_grp_id}
-                onChange={handleInputChange}
-                className={errors.msg_grp_id ? 'error' : ''}
+                onChange={(value) => handleInputChange({ target: { name: 'msg_grp_id', value } })}
+                placeholder="Seleccionar grupo"
+                searchPlaceholder="Buscar grupo..."
+                getOptionLabel={(grupo) => grupo.grp_nombre}
+                getOptionValue={(grupo) => grupo.grp_id}
+                error={!!errors.msg_grp_id}
                 disabled={!!mensualidad}
-              >
-                <option value="">Seleccionar grupo</option>
-                {grupos.map(grupo => (
-                  <option key={grupo.grp_id} value={grupo.grp_id}>
-                    {grupo.grp_nombre}
-                  </option>
-                ))}
-              </select>
+              />
               {errors.msg_grp_id && <span className="error-text">{errors.msg_grp_id}</span>}
             </div>
             <div className="form-group">

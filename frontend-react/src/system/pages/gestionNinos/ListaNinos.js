@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useApi } from '../../hooks/useApi';
+import SearchableSelect from '../../components/SearchableSelect';
 import './GestionNinos.css';
 import Pagination from '../../components/Pagination';
 import usePagination from '../../hooks/usePagination';
@@ -286,18 +287,20 @@ const ListaNinos = ({ onAgregarNino, onEditarNino, onVerNino }) => {
             className="input-busqueda"
           />
         </div>
-        <select
-          value={grupoFilter}
-          onChange={(e) => setGrupoFilter(e.target.value)}
-          className="select-grupo"
-        >
-          <option value="">Todos los grupos</option>
-          {Array.isArray(grupos) && grupos.map(grupo => (
-            <option key={grupo.grp_id} value={grupo.grp_nombre}>
-              {grupo.grp_nombre}
-            </option>
-          ))}
-        </select>
+        
+        <div className="filtro-grupo">
+          <SearchableSelect
+            options={grupos}
+            value={grupoFilter}
+            onChange={(value) => setGrupoFilter(value)}
+            placeholder="Todos los grupos"
+            searchPlaceholder="Buscar grupo..."
+            getOptionLabel={(grupo) => `${grupo.grp_nombre} (${grupo.grp_edad_minima}-${grupo.grp_edad_maxima} años)`}
+            getOptionValue={(grupo) => grupo.grp_nombre}
+            className="select-grupo-filter"
+          />
+        </div>
+        
         <label className="switch-container">
           <input
             type="checkbox"

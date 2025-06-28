@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useApi } from '../../hooks/useApi';
+import SearchableSelect from '../../components/SearchableSelect';
 import './GestionGrupos.css';
 
 const FormularioGrupo = ({ grupo, onVolver }) => {
@@ -168,19 +169,16 @@ const FormularioGrupo = ({ grupo, onVolver }) => {
             </div>
             <div className="form-group">
               <label>Educador Responsable *</label>
-              <select
-                name="grp_responsable_id"
+              <SearchableSelect
+                options={personal}
                 value={formData.grp_responsable_id}
-                onChange={handleInputChange}
-                className={errors.grp_responsable_id ? 'error' : ''}
-              >
-                <option value="">Seleccione un educador</option>
-                {personal.map(persona => (
-                  <option key={persona.prs_id} value={persona.prs_id}>
-                    {persona.usr_nombre} {persona.usr_apellido}
-                  </option>
-                ))}
-              </select>
+                onChange={(value) => handleInputChange({ target: { name: 'grp_responsable_id', value } })}
+                placeholder="Seleccione un educador"
+                searchPlaceholder="Buscar educador..."
+                getOptionLabel={(persona) => `${persona.usr_nombre} ${persona.usr_apellido}`}
+                getOptionValue={(persona) => persona.prs_id}
+                error={!!errors.grp_responsable_id}
+              />
               {errors.grp_responsable_id && <span className="error-text">{errors.grp_responsable_id}</span>}
             </div>
           </div>

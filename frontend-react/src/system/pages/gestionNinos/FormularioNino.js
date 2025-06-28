@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useApi } from '../../hooks/useApi';
+import SearchableSelect from '../../components/SearchableSelect';
 import './GestionNinos.css';
 
 const FormularioNino = ({ nino, onVolver }) => {
@@ -356,19 +357,17 @@ const FormularioNino = ({ nino, onVolver }) => {
 
           <div className="form-group">
             <label>Tutor Legal *</label>
-            <select
-              name="nin_tutor_legal"
+            <SearchableSelect
+              options={padres}
               value={formData.nin_tutor_legal}
-              onChange={handleInputChange}
+              onChange={(value) => handleInputChange({ target: { name: 'nin_tutor_legal', value } })}
+              placeholder="Seleccionar tutor legal"
+              searchPlaceholder="Buscar por nombre, apellido o email..."
+              getOptionLabel={(padre) => `${padre.nombre_completo} - ${padre.usr_email}`}
+              getOptionValue={(padre) => padre.pdr_id}
+              error={!!errors.nin_tutor_legal}
               className={errors.nin_tutor_legal ? 'error' : ''}
-            >
-              <option value="">Seleccionar tutor legal</option>
-              {padres.map(padre => (
-                <option key={padre.pdr_id} value={padre.pdr_id}>
-                  {padre.nombre_completo}
-                </option>
-              ))}
-            </select>
+            />
             {errors.nin_tutor_legal && <span className="error-text">{errors.nin_tutor_legal}</span>}
           </div>
 
@@ -458,19 +457,17 @@ const FormularioNino = ({ nino, onVolver }) => {
           <h3>Asignación a Grupo</h3>
           <div className="form-group">
             <label>Grupo/Aula</label>
-            <select
-              name="asn_grp_id"
+            <SearchableSelect
+              options={grupos}
               value={formData.asn_grp_id}
-              onChange={handleInputChange}
+              onChange={(value) => handleInputChange({ target: { name: 'asn_grp_id', value } })}
+              placeholder="Sin asignar"
+              searchPlaceholder="Buscar grupo por nombre..."
+              getOptionLabel={(grupo) => `${grupo.grp_nombre} (Edades: ${grupo.grp_edad_minima}-${grupo.grp_edad_maxima})`}
+              getOptionValue={(grupo) => grupo.grp_id}
+              error={!!errors.asn_grp_id}
               className={errors.asn_grp_id ? 'error' : ''}
-            >
-              <option value="">Sin asignar</option>
-              {Array.isArray(grupos) && grupos.map(grupo => (
-                <option key={grupo.grp_id} value={grupo.grp_id}>
-                  {grupo.grp_nombre} (Edades: {grupo.grp_edad_minima}-{grupo.grp_edad_maxima})
-                </option>
-              ))}
-            </select>
+            />
             {errors.asn_grp_id && <span className="error-text">{errors.asn_grp_id}</span>}
           </div>
         </div>
