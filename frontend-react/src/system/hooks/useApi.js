@@ -168,6 +168,38 @@ export const useApi = () => {
     return !!localStorage.getItem(`${STORAGE_KEY}_token`);
   }, []);
 
+  const postFile = useCallback(async (endpoint, formData, options = {}) => {
+    setLoading(true);
+    setError(null);
+    
+    try {
+      const storedToken = localStorage.getItem(`${STORAGE_KEY}_token`);
+      
+      const response = await fetch(`${API_PATH}${endpoint}`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${storedToken}`,
+          ...options.headers
+        },
+        body: formData
+      });
+
+      const result = await response.json();
+      setLoading(false);
+      
+      if (!response.ok) {
+        setError(result.message || 'Error en la petición');
+        return result;
+      }
+      
+      return result;
+    } catch (error) {
+      setLoading(false);
+      setError(error.message);
+      throw error;
+    }
+  }, []);
+
   return {
     user,
     loading,
@@ -176,6 +208,7 @@ export const useApi = () => {
     post,
     put,
     del,
+    postFile,
     login,
     logout,
     getCurrentUser,

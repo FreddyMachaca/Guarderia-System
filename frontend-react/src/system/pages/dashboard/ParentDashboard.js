@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ResponsiveLine } from '@nivo/line';
 import { ResponsivePie } from '@nivo/pie';
+import UserProfileMenu from '../../components/UserProfileMenu';
 import './Dashboard.css';
 import { useApi } from '../../hooks/useApi';
 import { useMenus } from '../../hooks/useMenus';
@@ -74,16 +75,7 @@ const ParentDashboard = () => {
             <h1>Portal de Padres</h1>
           </div>
           <div className="header-right">
-            <div className="user-info">
-              <div className="user-avatar">
-                {user?.name?.charAt(0)?.toUpperCase()}
-              </div>
-              <div className="user-details">
-                <div className="user-name">Bienvenido, {user?.name}</div>
-                <div className="user-role">Padre/Madre</div>
-              </div>
-              <button onClick={logout} className="logout-btn">Cerrar Sesión</button>
-            </div>
+            <UserProfileMenu user={user} onLogout={logout} />
           </div>
         </header>
         

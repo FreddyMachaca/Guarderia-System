@@ -127,6 +127,11 @@
   color: #ff6b35;
 }
 
+.header-right {
+  display: flex;
+  align-items: center;
+}
+
 .user-info {
   display: flex;
   align-items: center;

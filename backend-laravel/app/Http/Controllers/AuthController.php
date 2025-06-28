@@ -83,7 +83,8 @@ class AuthController extends Controller
                 'email' => $user->usr_email,
                 'type' => $user->usr_tipo,
                 'staff_id' => $staff->prs_id ?? null,
-                'employee_code' => $staff->prs_codigo_empleado ?? null
+                'employee_code' => $staff->prs_codigo_empleado ?? null,
+                'foto_perfil' => $staff->prs_foto ?? null
             ],
             'token' => $token,
             'message' => 'Inicio de sesión exitoso'

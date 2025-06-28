@@ -75,6 +75,12 @@ export const useMenus = () => {
 
   useEffect(() => {
     const currentPath = location.pathname;
+    
+    if (currentPath.includes('/perfil')) {
+      setActiveMenu('perfil');
+      return;
+    }
+    
     const allMenus = [...adminMenus, ...parentMenus];
     const currentMenu = allMenus.find(menu => currentPath.includes(menu.id));
     if (currentMenu) {
@@ -84,6 +90,12 @@ export const useMenus = () => {
 
   const setMenu = useCallback((menuId) => {
     setActiveMenu(menuId);
+    
+    if (menuId === 'perfil') {
+      navigate('/system/perfil');
+      return;
+    }
+    
     const allMenus = [...adminMenus, ...parentMenus];
     const menu = allMenus.find(m => m.id === menuId);
     if (menu) {

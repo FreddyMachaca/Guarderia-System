@@ -131,4 +131,11 @@ Route::middleware(['api', 'api.throttle'])->group(function () {
         Route::get('/ninos', [DashboardController::class, 'ninos']);
         Route::get('/padre', [DashboardController::class, 'datosPadre']);
     });
+
+    // Rutas para perfil de usuario
+    Route::prefix('perfil')->group(function () {
+        Route::get('/', [App\Http\Controllers\PerfilController::class, 'show']);
+        Route::put('/', [App\Http\Controllers\PerfilController::class, 'update']);
+        Route::post('/foto', [App\Http\Controllers\PerfilController::class, 'updateFoto']);
+    });
 });
