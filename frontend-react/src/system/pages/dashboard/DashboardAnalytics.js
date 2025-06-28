@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { ResponsiveLine } from '@nivo/line';
 import { ResponsiveBar } from '@nivo/bar';
 import { ResponsivePie } from '@nivo/pie';
@@ -13,6 +13,7 @@ const DashboardAnalytics = () => {
   const [loading, setLoading] = useState(true);
   const [dateFilter, setDateFilter] = useState('anual');
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
+  const isMountedRef = useRef(true);
   const [dashboardData, setDashboardData] = useState({
     ingresos: [],
     ninos: [],
@@ -23,10 +24,17 @@ const DashboardAnalytics = () => {
   });
 
   useEffect(() => {
+    isMountedRef.current = true;
     cargarDatosDashboard();
+    
+    return () => {
+      isMountedRef.current = false;
+    };
   }, [dateFilter, selectedYear]);
 
   const cargarDatosDashboard = async () => {
+    if (!isMountedRef.current) return;
+    
     setLoading(true);
     try {
       const fechas = obtenerFechas();
@@ -45,6 +53,8 @@ const DashboardAnalytics = () => {
         get('/dashboard/ninos-por-grupo')
       ]);
 
+      if (!isMountedRef.current) return;
+
       const ingresosData = ingresosRes.status === 'fulfilled' ? ingresosRes.value?.data || [] : [];
       const ninosData = ninosRes.status === 'fulfilled' ? ninosRes.value?.data || [] : [];
       const estadisticasData = estadisticasRes.status === 'fulfilled' ? estadisticasRes.value?.data || {} : {};
@@ -60,17 +70,25 @@ const DashboardAnalytics = () => {
         distribucionEdades: procesarDistribucionEdades(ninosData)
       });
     } catch (error) {
+      if (error.name === 'AbortError' || error.name === 'CanceledError') {
+        return;
+      }
+      
       console.error('Error al cargar datos del dashboard:', error);
-      setDashboardData({
-        ingresos: [],
-        ninos: [],
-        estadisticas: {},
-        pagosPorMetodo: [],
-        ninosPorGrupo: [],
-        distribucionEdades: []
-      });
+      if (isMountedRef.current) {
+        setDashboardData({
+          ingresos: [],
+          ninos: [],
+          estadisticas: {},
+          pagosPorMetodo: [],
+          ninosPorGrupo: [],
+          distribucionEdades: []
+        });
+      }
     } finally {
-      setLoading(false);
+      if (isMountedRef.current) {
+        setLoading(false);
+      }
     }
   };
 

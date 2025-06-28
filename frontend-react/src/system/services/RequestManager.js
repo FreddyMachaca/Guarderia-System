@@ -67,9 +67,10 @@ class RequestManager {
             nextRequest.resolve(result);
         } catch (error) {
             this.activeRequests.delete(nextRequest.key);
-            if (error.name !== 'AbortError') {
-                nextRequest.reject(error);
+            if (error.name === 'AbortError' || error.name === 'CanceledError') {
+                return;
             }
+            nextRequest.reject(error);
         }
 
         setTimeout(() => this.processQueue(), 10);

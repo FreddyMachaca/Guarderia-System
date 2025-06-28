@@ -88,7 +88,8 @@ export const useApi = () => {
         return response.data;
       } catch (err) {
         setLoading(false);
-        if (err.name === 'AbortError') {
+        
+        if (err.name === 'AbortError' || err.name === 'CanceledError') {
           throw err;
         }
         
@@ -104,14 +105,13 @@ export const useApi = () => {
         }
         
         if (err.response && err.response.status === 500) {
-          console.error('Error del servidor en:', endpoint, err.response?.data);
           return {
             success: false,
             data: null,
             message: 'Error interno del servidor'
           };
         }
-        console.error('Error en API:', err);
+        
         throw err;
       }
     }, priority);
