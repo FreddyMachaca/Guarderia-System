@@ -12,7 +12,7 @@ const ListaPadres = ({ onAgregarPadre, onEditarPadre, onVerPadre }) => {
   const [searchInput, setSearchInput] = useState('');
   const [mostrarInactivos, setMostrarInactivos] = useState(false);
   const [viewType, setViewType] = useState('card'); 
-  const { get, del } = useApi();
+  const { get, del, put } = useApi();
   
   const {
     currentPage,
@@ -88,6 +88,22 @@ const ListaPadres = ({ onAgregarPadre, onEditarPadre, onVerPadre }) => {
       }
     }
   };
+
+  const activarPadre = async (padre) => {
+    if (window.confirm('¿Está seguro de activar este padre/tutor?')) {
+      try {
+        const response = await put(`/padres/${padre.pdr_id}/activar`);
+        if (response.success) {
+          cargarPadres();
+        } else {
+          alert(response.message || 'Error al activar padre');
+        }
+      } catch (error) {
+        console.error('Error al activar padre:', error);
+        alert('Error al activar padre');
+      }
+    }
+  };
   
   const renderPadreCard = (padre) => {
     // Validación de seguridad para el objeto usuario
@@ -139,6 +155,15 @@ const ListaPadres = ({ onAgregarPadre, onEditarPadre, onVerPadre }) => {
               title="Desactivar"
             >
               <i className="pi pi-ban"></i>
+            </button>
+          )}
+          {(padre.pdr_estado === 'inactivo') && (
+            <button 
+              className="btn-activate"
+              onClick={() => activarPadre(padre)}
+              title="Activar"
+            >
+              <i className="pi pi-check-circle"></i>
             </button>
           )}
         </div>
@@ -253,6 +278,8 @@ const ListaPadres = ({ onAgregarPadre, onEditarPadre, onVerPadre }) => {
         onDelete={eliminarPadre}
         onView={onVerPadre}
         emptyMessage="No se encontraron padres/tutores que coincidan con los filtros"
+        activarPadre={activarPadre}
+        mostrarInactivos={mostrarInactivos}
       />
 
       <div style={{marginTop: '1rem'}}>

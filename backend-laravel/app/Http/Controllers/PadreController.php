@@ -333,4 +333,34 @@ class PadreController extends Controller
             ], 500);
         }
     }
+
+    public function activar($id)
+    {
+        $padre = Padre::with('usuario')->find($id);
+
+        if (!$padre) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Padre no encontrado'
+            ], 404);
+        }
+
+        DB::beginTransaction();
+        try {
+            $padre->update(['pdr_estado' => 'activo']);
+            $padre->usuario->update(['usr_estado' => 'activo']);
+
+            DB::commit();
+            return response()->json([
+                'success' => true,
+                'message' => 'Padre activado exitosamente'
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al activar al padre: ' . $e->getMessage()
+            ], 500);
+        }
+    }
 }

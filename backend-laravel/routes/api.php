@@ -56,6 +56,7 @@ Route::middleware('api')->group(function () {
         Route::put('/{id}', [PadreController::class, 'update']);
         Route::delete('/{id}', [PadreController::class, 'destroy']);
         Route::put('/{id}/reset-password', [PadreController::class, 'resetPassword']);
+        Route::put('/{id}/activar', [PadreController::class, 'activar']);
     });
 
     // Rutas para el módulo de Grupos/Aulas
