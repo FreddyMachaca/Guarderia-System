@@ -150,6 +150,13 @@ Route::middleware(['api', 'api.throttle', 'check.user.type:Tutor'])->group(funct
         Route::get('/', [MisHijosController::class, 'index']);
         Route::get('/{id}', [MisHijosController::class, 'show']);
     });
+
+    // Rutas para Pagos
+    Route::prefix('pagos')->group(function () {
+        Route::get('/', [App\Http\Controllers\PagosController::class, 'index']);
+        Route::get('/resumen', [App\Http\Controllers\PagosController::class, 'resumen']);
+        Route::get('/{id}', [App\Http\Controllers\PagosController::class, 'show']);
+    });
 });
 
 Route::middleware(['api', 'api.throttle', 'check.user.type:admin,personal,Tutor'])->group(function () {

@@ -11,6 +11,7 @@ import GestionMensualidades from './pages/gestionMensualidades/GestionMensualida
 import GestionReportes from './pages/reportes/GestionReportes';
 import MisHijos from './pages/misHijos/MisHijos';
 import PerfilUsuario from './pages/perfil/PerfilUsuario';
+import Pagos from './pages/pagos/Pagos';
 import './System.css';
 
 const AppSystem = () => {
@@ -50,6 +51,7 @@ const AppSystem = () => {
             <Route path="/parent-dashboard" element={<ParentDashboard />} />
             <Route path="/parent" element={<ParentDashboard />} />
             <Route path="/mis-hijos" element={<MisHijos />} />
+            <Route path="/pagos" element={<Pagos />} />
           </>
         )}
         
