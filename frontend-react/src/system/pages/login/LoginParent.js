@@ -22,8 +22,13 @@ const LoginParent = ({ onBack }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await login(formData, 'parent');
-      navigate('/system/parent');
+      const response = await login(formData, 'parent');
+      
+      if (response.success) {
+        navigate('/system/parent');
+      } else {
+        console.error('Error de login:', response.message);
+      }
     } catch (err) {
       console.error('Error de login:', err);
     }

@@ -1,0 +1,530 @@
+.parent-dashboard {
+  min-height: 100vh;
+}
+
+.parent-dashboard .loading-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 50%, #f1f3f4 100%);
+}
+
+.parent-dashboard .loading-spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #FF6B35;
+  border-radius: 50%;
+  animation: parent-spin 1s linear infinite;
+  margin-bottom: 20px;
+}
+
+@keyframes parent-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.parent-dashboard .loading-screen p {
+  color: #7f8c8d;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.parent-dashboard .header-info h1 {
+  color: #2c3e50;
+  font-size: 28px;
+  font-weight: 700;
+  font-family: 'Poppins', sans-serif;
+  margin: 0;
+  background: linear-gradient(135deg, #FF6B35, #ff8c42);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.parent-dashboard .header-info p {
+  color: #7f8c8d;
+  font-size: 14px;
+  margin: 5px 0 0 0;
+}
+
+.parent-dashboard .dashboard-card {
+  background: white;
+  padding: 35px 30px;
+  border-radius: 20px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  border: 1px solid rgba(255, 107, 53, 0.1);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  text-align: left;
+}
+
+.parent-dashboard .dashboard-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: linear-gradient(90deg, #FF6B35, #e55a2b);
+  transform: translateX(-100%);
+  transition: transform 0.3s ease;
+}
+
+.parent-dashboard .dashboard-card:hover::before {
+  transform: translateX(0);
+}
+
+.parent-dashboard .dashboard-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.15);
+  border-color: #FF6B35;
+}
+
+.parent-dashboard .dashboard-card.primary {
+  border-left: 4px solid #007bff;
+}
+
+.parent-dashboard .dashboard-card.warning {
+  border-left: 4px solid #ffc107;
+}
+
+.parent-dashboard .card-icon {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  color: white;
+  flex-shrink: 0;
+}
+
+.parent-dashboard .dashboard-card.primary .card-icon {
+  background: linear-gradient(135deg, #007bff, #0056b3);
+}
+
+.parent-dashboard .dashboard-card.warning .card-icon {
+  background: linear-gradient(135deg, #ffc107, #e0a800);
+}
+
+.parent-dashboard .card-content h3 {
+  color: #2c3e50;
+  font-size: 18px;
+  margin: 0 0 10px 0;
+  font-weight: 600;
+  font-family: 'Poppins', sans-serif;
+}
+
+.parent-dashboard .card-value {
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: #FF6B35;
+  margin: 0 0 5px 0;
+  background: linear-gradient(135deg, #FF6B35, #e55a2b);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.parent-dashboard .card-description {
+  color: #7f8c8d;
+  font-size: 14px;
+  font-weight: 500;
+  margin: 0;
+}
+
+.parent-content-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+  margin-top: 30px;
+}
+
+.content-section {
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(255, 107, 53, 0.1);
+  overflow: hidden;
+}
+
+.section-header {
+  background: linear-gradient(135deg, #FF6B35, #e55a2b);
+  color: white;
+  padding: 20px 25px;
+  margin: 0;
+}
+
+.section-header h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.section-header i {
+  font-size: 20px;
+}
+
+.hijos-section {
+  grid-column: 1 / -1;
+}
+
+.hijos-cards {
+  padding: 25px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.hijo-card {
+  background: #f8f9fa;
+  border: 2px solid #e9ecef;
+  border-radius: 15px;
+  padding: 20px;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.hijo-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+  border-color: #FF6B35;
+}
+
+.hijo-foto {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  margin: 0 auto 15px;
+  position: relative;
+  overflow: hidden;
+  border: 3px solid #FF6B35;
+}
+
+.hijo-foto img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.foto-placeholder {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #FF6B35, #e55a2b);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 32px;
+}
+
+.hijo-info {
+  text-align: center;
+}
+
+.hijo-info h4 {
+  color: #2c3e50;
+  font-size: 18px;
+  font-weight: 700;
+  margin: 0 0 15px 0;
+  font-family: 'Poppins', sans-serif;
+}
+
+.hijo-detalles {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 15px;
+}
+
+.detalle-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 14px;
+  color: #6c757d;
+}
+
+.detalle-item i {
+  color: #FF6B35;
+  font-size: 14px;
+  width: 16px;
+}
+
+.detalle-item.estado .estado-activo {
+  color: #28a745;
+  font-weight: 600;
+}
+
+.detalle-item.estado .estado-inactivo {
+  color: #dc3545;
+  font-weight: 600;
+}
+
+.ultimo-pago {
+  border-top: 1px solid #e9ecef;
+  padding-top: 15px;
+  margin-top: 15px;
+}
+
+.pago-info-simple {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+}
+
+.aula-pago {
+  background: #e3f2fd;
+  color: #1976d2;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.estado-pago {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.estado-pago.pagado {
+  background: #d4edda;
+  color: #155724;
+}
+
+.estado-pago.pendiente {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.estado-pago.vencido {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+.estado-pago.parcial {
+  background: #e2e3f1;
+  color: #383d41;
+}
+
+.pagos-content,
+.historial-content {
+  padding: 25px;
+  height: 350px;
+}
+
+.chart-container {
+  height: 100%;
+  width: 100%;
+}
+
+.no-data {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: #6c757d;
+  text-align: center;
+}
+
+.no-data i {
+  font-size: 48px;
+  margin-bottom: 15px;
+  opacity: 0.5;
+}
+
+.no-data p {
+  font-size: 16px;
+  margin: 0;
+}
+
+.vencimientos-list {
+  padding: 25px;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.vencimiento-item {
+  display: grid;
+  grid-template-columns: 1fr 120px 100px 80px;
+  gap: 15px;
+  align-items: center;
+  padding: 15px;
+  border: 2px solid #e9ecef;
+  border-radius: 12px;
+  margin-bottom: 15px;
+  background: #f8f9fa;
+  transition: all 0.3s ease;
+}
+
+.vencimiento-item:hover {
+  border-color: #FF6B35;
+  background: white;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+.vencimiento-hijo,
+.vencimiento-fecha {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #2c3e50;
+  font-weight: 500;
+}
+
+.vencimiento-hijo i,
+.vencimiento-fecha i {
+  color: #FF6B35;
+  font-size: 14px;
+}
+
+.vencimiento-monto {
+  font-weight: 700;
+  color: #FF6B35;
+  text-align: right;
+  font-size: 14px;
+}
+
+.vencimiento-estado {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.vencimiento-estado.vencido {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+.vencimiento-estado.proximo {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.vencimiento-estado.normal {
+  background: #d4edda;
+  color: #155724;
+}
+
+@media (max-width: 1200px) {
+  .parent-content-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  
+  .hijos-cards {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .parent-dashboard .dashboard-cards {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  
+  .parent-dashboard .dashboard-card {
+    padding: 25px 20px;
+    flex-direction: column;
+    text-align: center;
+    gap: 15px;
+  }
+  
+  .parent-dashboard .card-icon {
+    width: 50px;
+    height: 50px;
+    font-size: 20px;
+  }
+  
+  .parent-dashboard .card-value {
+    font-size: 2rem;
+  }
+  
+  .parent-dashboard .header-info h1 {
+    font-size: 24px;
+  }
+  
+  .hijos-cards {
+    grid-template-columns: 1fr;
+    padding: 20px;
+  }
+  
+  .pagos-content,
+  .historial-content {
+    padding: 20px;
+    height: 300px;
+  }
+  
+  .vencimiento-item {
+    grid-template-columns: 1fr;
+    gap: 10px;
+    text-align: center;
+  }
+  
+  .vencimiento-monto {
+    text-align: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .parent-dashboard .header-info h1 {
+    font-size: 20px;
+  }
+  
+  .parent-dashboard .dashboard-card {
+    padding: 20px 15px;
+  }
+  
+  .parent-dashboard .card-value {
+    font-size: 1.8rem;
+  }
+  
+  .hijo-card {
+    padding: 15px;
+  }
+  
+  .hijo-foto {
+    width: 60px;
+    height: 60px;
+  }
+  
+  .foto-placeholder {
+    font-size: 24px;
+  }
+  
+  .section-header {
+    padding: 15px 20px;
+  }
+  
+  .section-header h3 {
+    font-size: 16px;
+  }
+  
+  .pagos-content,
+  .historial-content,
+  .vencimientos-list {
+    padding: 15px;
+  }
+}

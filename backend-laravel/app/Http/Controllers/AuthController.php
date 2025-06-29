@@ -30,19 +30,31 @@ class AuthController extends Controller
 
         $parent = DB::table('tbl_pdr_padres')
             ->where('pdr_usr_id', $user->usr_id)
+            ->where('pdr_estado', 'activo')
             ->first();
+
+        if (!$parent) {
+            throw ValidationException::withMessages([
+                'email' => ['No se encontró el registro de padre/tutor asociado.'],
+            ]);
+        }
 
         $token = $this->generateToken($user->usr_id);
         $this->storeToken($token, $user->usr_id);
 
         return response()->json([
+            'success' => true,
             'user' => [
                 'id' => $user->usr_id,
-                'name' => $user->usr_nombre,
+                'usr_id' => $user->usr_id,
+                'name' => $user->usr_nombre . ' ' . $user->usr_apellido,
+                'usr_nombre' => $user->usr_nombre,
+                'usr_apellido' => $user->usr_apellido,
                 'lastname' => $user->usr_apellido,
                 'email' => $user->usr_email,
-                'type' => $user->usr_tipo,
-                'parent_id' => $parent->pdr_id ?? null
+                'type' => 'parent',
+                'usr_tipo' => 'Tutor',
+                'parent_id' => $parent->pdr_id
             ],
             'token' => $token,
             'message' => 'Inicio de sesión exitoso'
@@ -76,12 +88,17 @@ class AuthController extends Controller
         $this->storeToken($token, $user->usr_id);
 
         return response()->json([
+            'success' => true,
             'user' => [
                 'id' => $user->usr_id,
-                'name' => $user->usr_nombre,
+                'usr_id' => $user->usr_id,
+                'name' => $user->usr_nombre . ' ' . $user->usr_apellido,
+                'usr_nombre' => $user->usr_nombre,
+                'usr_apellido' => $user->usr_apellido,
                 'lastname' => $user->usr_apellido,
                 'email' => $user->usr_email,
-                'type' => $user->usr_tipo,
+                'type' => $user->usr_tipo === 'admin' ? 'admin' : 'staff',
+                'usr_tipo' => $user->usr_tipo,
                 'staff_id' => $staff->prs_id ?? null,
                 'employee_code' => $staff->prs_codigo_empleado ?? null,
                 'foto_perfil' => $staff->prs_foto ?? null
@@ -127,7 +144,35 @@ class AuthController extends Controller
             ->where('usr_id', $tokenData->tkn_usr_id)
             ->first();
 
-        return response()->json($user);
+        if (!$user) {
+            return response()->json(['message' => 'Usuario no encontrado'], 404);
+        }
+
+        $userData = [
+            'id' => $user->usr_id,
+            'usr_id' => $user->usr_id,
+            'name' => $user->usr_nombre,
+            'lastname' => $user->usr_apellido,
+            'email' => $user->usr_email,
+            'usr_tipo' => $user->usr_tipo,
+            'permissions' => $this->getUserPermissions($user->usr_tipo)
+        ];
+
+        if ($user->usr_tipo === 'Tutor') {
+            $parent = DB::table('tbl_pdr_padres')
+                ->where('pdr_usr_id', $user->usr_id)
+                ->first();
+            $userData['parent_id'] = $parent->pdr_id ?? null;
+            $userData['type'] = 'parent';
+        } else {
+            $staff = DB::table('tbl_prs_personal')
+                ->where('prs_usr_id', $user->usr_id)
+                ->first();
+            $userData['staff_id'] = $staff->prs_id ?? null;
+            $userData['type'] = $user->usr_tipo === 'admin' ? 'admin' : 'staff';
+        }
+
+        return response()->json($userData);
     }
 
     public function getCurrentUserId(Request $request)
@@ -167,5 +212,19 @@ class AuthController extends Controller
             'tkn_fecha_creacion' => now(),
             'tkn_fecha_expiracion' => now()->addDays(30)
         ]);
+    }
+
+    private function getUserPermissions($userType)
+    {
+        switch ($userType) {
+            case 'admin':
+                return ['all'];
+            case 'personal':
+                return ['dashboard', 'ninos', 'grupos', 'mensualidades', 'reportes', 'perfil'];
+            case 'Tutor':
+                return ['dashboard_padre', 'perfil'];
+            default:
+                return [];
+        }
     }
 }

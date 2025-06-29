@@ -10,6 +10,7 @@ use App\Http\Controllers\PersonalController;
 use App\Http\Controllers\PadreController;
 use App\Http\Controllers\MensualidadController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\MisHijosController;
 
 /*
 |--------------------------------------------------------------------------
@@ -33,7 +34,7 @@ Route::middleware('api')->group(function () {
     });
 });
 
-Route::middleware(['api', 'api.throttle'])->group(function () {
+Route::middleware(['api', 'api.throttle', 'check.user.type:admin,personal'])->group(function () {
     
     Route::prefix('ninos')->group(function () {
         Route::get('/', [NinoController::class, 'index']);
@@ -129,10 +130,36 @@ Route::middleware(['api', 'api.throttle'])->group(function () {
         Route::get('/ninos-por-grupo', [DashboardController::class, 'ninosPorGrupo']);
         Route::get('/actividad-calendario', [DashboardController::class, 'actividadCalendario']);
         Route::get('/ninos', [DashboardController::class, 'ninos']);
+    });
+});
+
+Route::middleware(['api', 'api.throttle', 'check.user.type:Tutor'])->group(function () {
+    Route::prefix('dashboard')->group(function () {
         Route::get('/padre', [DashboardController::class, 'datosPadre']);
+        Route::get('/padre-completo', [DashboardController::class, 'datosCompletoPadre']);
     });
 
-    // Rutas para perfil de usuario
+    Route::prefix('perfil')->group(function () {
+        Route::get('/', [App\Http\Controllers\PerfilController::class, 'show']);
+        Route::put('/', [App\Http\Controllers\PerfilController::class, 'update']);
+        Route::post('/foto', [App\Http\Controllers\PerfilController::class, 'updateFoto']);
+    });
+
+    // Rutas para Mis Hijos
+    Route::prefix('mis-hijos')->group(function () {
+        Route::get('/', [MisHijosController::class, 'index']);
+        Route::get('/{id}', [MisHijosController::class, 'show']);
+    });
+
+    // Rutas para Pagos
+    Route::prefix('pagos')->group(function () {
+        Route::get('/', [App\Http\Controllers\PagosController::class, 'index']);
+        Route::get('/resumen', [App\Http\Controllers\PagosController::class, 'resumen']);
+        Route::get('/{id}', [App\Http\Controllers\PagosController::class, 'show']);
+    });
+});
+
+Route::middleware(['api', 'api.throttle', 'check.user.type:admin,personal,Tutor'])->group(function () {
     Route::prefix('perfil')->group(function () {
         Route::get('/', [App\Http\Controllers\PerfilController::class, 'show']);
         Route::put('/', [App\Http\Controllers\PerfilController::class, 'update']);

@@ -35,6 +35,23 @@ const UserProfileMenu = ({ user, onLogout }) => {
     return null;
   };
 
+  const getUserRoleLabel = () => {
+    const userType = user?.type || user?.usr_tipo;
+    
+    switch (userType) {
+      case 'admin':
+        return 'Administrador';
+      case 'personal':
+      case 'staff':
+        return 'Personal';
+      case 'parent':
+      case 'Tutor':
+        return 'Padre/Madre';
+      default:
+        return 'Usuario';
+    }
+  };
+
   return (
     <div className="user-profile-menu" ref={menuRef}>
       <div className="user-profile-trigger" onClick={() => setIsOpen(!isOpen)}>
@@ -48,9 +65,7 @@ const UserProfileMenu = ({ user, onLogout }) => {
         <div className="user-details">
           <div className="user-name">Bienvenido, {user?.name}</div>
           <div className="user-role">
-            {user?.type === 'admin' ? 'Administrador' : 
-             user?.type === 'personal' ? 'Personal' : 
-             user?.type === 'Tutor' ? 'Padre/Madre' : 'Usuario'}
+            {getUserRoleLabel()}
           </div>
         </div>
         <div className={`dropdown-arrow ${isOpen ? 'open' : ''}`}>

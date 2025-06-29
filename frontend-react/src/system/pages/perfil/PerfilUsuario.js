@@ -1,11 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { useApi } from '../../hooks/useApi';
 import { useMenus } from '../../hooks/useMenus';
+import UserProfileMenu from '../../components/UserProfileMenu';
 import './PerfilUsuario.css';
 
 const PerfilUsuario = () => {
-  const { getCurrentUser, logout, get, put, postFile } = useApi();
+  const { get, put, postFile, getCurrentUser } = useApi();
+  const user = getCurrentUser();
+  const userType = user?.type || user?.usr_tipo;
+  
+  // Determinar si el usuario puede editar su perfil
+  const puedeEditar = userType === 'admin' || userType === 'personal' || userType === 'Administrador';
+  
+  // Determinar qué menús usar según el tipo de usuario
   const { adminMenus, parentMenus, activeMenu, setMenu, isMenuOpen, toggleMenu } = useMenus();
+  const menus = (userType === 'parent' || userType === 'Tutor') ? parentMenus : adminMenus;
+
   const [perfil, setPerfil] = useState(null);
   const [loading, setLoading] = useState(true);
   const [editando, setEditando] = useState(false);
@@ -21,10 +31,6 @@ const PerfilUsuario = () => {
   const [foto, setFoto] = useState(null);
   const [previewFoto, setPreviewFoto] = useState(null);
   const [subiendoFoto, setSubiendoFoto] = useState(false);
-
-  const user = getCurrentUser();
-  const menus = user?.type === 'Tutor' ? parentMenus : adminMenus;
-  const puedeEditar = ['personal', 'admin'].includes(user?.type);
 
   useEffect(() => {
     cargarPerfil();
@@ -147,7 +153,9 @@ const PerfilUsuario = () => {
           <div className="sidebar-logo">
             <span>Guardería</span>
           </div>
-          <div className="sidebar-subtitle">Panel de Administración</div>
+          <div className="sidebar-subtitle">
+            {(userType === 'parent' || userType === 'Tutor') ? 'Portal de Padres' : 'Panel de Administración'}
+          </div>
         </div>
         
         <nav className="sidebar-menu">
@@ -173,16 +181,7 @@ const PerfilUsuario = () => {
             <h1>Mi Perfil</h1>
           </div>
           <div className="header-right">
-            <div className="user-info">
-              <div className="user-avatar">
-                {user?.name?.charAt(0)?.toUpperCase()}
-              </div>
-              <div className="user-details">
-                <div className="user-name">Bienvenido, {user?.name}</div>
-                <div className="user-role">{user?.type === 'admin' ? 'Administrador' : 'Personal'}</div>
-              </div>
-              <button onClick={logout} className="logout-btn">Cerrar Sesión</button>
-            </div>
+            <UserProfileMenu user={user} onLogout={() => window.location.href = '/portal'} />
           </div>
         </header>
         
