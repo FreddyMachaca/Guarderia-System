@@ -1,11 +1,13 @@
 import { useState, useCallback, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useApi } from './useApi';
 
 export const useMenus = () => {
   const [activeMenu, setActiveMenu] = useState('dashboard');
   const [isMenuOpen, setIsMenuOpen] = useState(true);
   const navigate = useNavigate();
   const location = useLocation();
+  const { getCurrentUser } = useApi();
 
   const adminMenus = [
     {
@@ -49,6 +51,12 @@ export const useMenus = () => {
       title: 'Reportes',
       icon: 'pi pi-chart-bar',
       path: '/system/reportes'
+    },
+    {
+      id: 'perfil',
+      title: 'Mi Perfil',
+      icon: 'pi pi-user',
+      path: '/system/perfil'
     }
   ];
 
@@ -71,6 +79,12 @@ export const useMenus = () => {
       icon: 'pi pi-money-bill',
       path: '/system/pagos'
     },
+    {
+      id: 'perfil',
+      title: 'Mi Perfil',
+      icon: 'pi pi-user',
+      path: '/system/perfil'
+    }
   ];
 
   useEffect(() => {
@@ -96,12 +110,25 @@ export const useMenus = () => {
       return;
     }
     
+    // Handle dashboard routing based on user type
+    if (menuId === 'dashboard') {
+      const user = getCurrentUser();
+      const userType = user?.type || user?.usr_tipo;
+      
+      if (userType === 'parent' || userType === 'Tutor') {
+        navigate('/system/parent-dashboard');
+      } else {
+        navigate('/system/dashboard');
+      }
+      return;
+    }
+    
     const allMenus = [...adminMenus, ...parentMenus];
     const menu = allMenus.find(m => m.id === menuId);
     if (menu) {
       navigate(menu.path);
     }
-  }, [navigate]);
+  }, [navigate, adminMenus, parentMenus, getCurrentUser]);
 
   const toggleMenu = useCallback(() => {
     setIsMenuOpen(prev => !prev);

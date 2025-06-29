@@ -30,19 +30,33 @@ const AppSystem = () => {
   return (
     <div className="app-system system">
       <Routes>
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/parent" element={<ParentDashboard />} />
-        <Route path="/gestion-ninos" element={<GestionNinos />} />
-        <Route path="/grupos" element={<GestionGrupos />} />
-        <Route path="/padres" element={<GestionPadres />} />
-        <Route path="/personal" element={<GestionPersonal />} />
-        <Route path="/mensualidades" element={<GestionMensualidades />} />
-        <Route path="/reportes" element={<GestionReportes />} />
+        {/* Rutas para administradores y personal */}
+        {(userType === 'admin' || userType === 'personal' || userType === 'staff') && (
+          <>
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/gestion-ninos" element={<GestionNinos />} />
+            <Route path="/grupos" element={<GestionGrupos />} />
+            <Route path="/padres" element={<GestionPadres />} />
+            <Route path="/personal" element={<GestionPersonal />} />
+            <Route path="/mensualidades" element={<GestionMensualidades />} />
+            <Route path="/reportes" element={<GestionReportes />} />
+          </>
+        )}
+        
+        {/* Rutas para padres/tutores */}
+        {(userType === 'parent' || userType === 'Tutor') && (
+          <>
+            <Route path="/parent-dashboard" element={<ParentDashboard />} />
+            <Route path="/parent" element={<ParentDashboard />} />
+          </>
+        )}
+        
+        {/* Ruta de perfil disponible para todos */}
         <Route path="/perfil" element={<PerfilUsuario />} />
         
         <Route path="/" element={
           userType === 'parent' || userType === 'Tutor' ? 
-            <Navigate to="/system/parent" replace /> : 
+            <Navigate to="/system/parent-dashboard" replace /> : 
             <Navigate to="/system/dashboard" replace />
         } />
       </Routes>

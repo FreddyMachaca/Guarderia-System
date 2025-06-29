@@ -47,7 +47,9 @@ class AuthController extends Controller
             'user' => [
                 'id' => $user->usr_id,
                 'usr_id' => $user->usr_id,
-                'name' => $user->usr_nombre,
+                'name' => $user->usr_nombre . ' ' . $user->usr_apellido,
+                'usr_nombre' => $user->usr_nombre,
+                'usr_apellido' => $user->usr_apellido,
                 'lastname' => $user->usr_apellido,
                 'email' => $user->usr_email,
                 'type' => 'parent',
@@ -90,7 +92,9 @@ class AuthController extends Controller
             'user' => [
                 'id' => $user->usr_id,
                 'usr_id' => $user->usr_id,
-                'name' => $user->usr_nombre,
+                'name' => $user->usr_nombre . ' ' . $user->usr_apellido,
+                'usr_nombre' => $user->usr_nombre,
+                'usr_apellido' => $user->usr_apellido,
                 'lastname' => $user->usr_apellido,
                 'email' => $user->usr_email,
                 'type' => $user->usr_tipo === 'admin' ? 'admin' : 'staff',
