@@ -9,6 +9,7 @@ import GestionPadres from './pages/gestionPadres/GestionPadres';
 import GestionPersonal from './pages/gestionPersonal/GestionPersonal';
 import GestionMensualidades from './pages/gestionMensualidades/GestionMensualidades';
 import GestionReportes from './pages/reportes/GestionReportes';
+import MisHijos from './pages/misHijos/MisHijos';
 import PerfilUsuario from './pages/perfil/PerfilUsuario';
 import './System.css';
 
@@ -48,6 +49,7 @@ const AppSystem = () => {
           <>
             <Route path="/parent-dashboard" element={<ParentDashboard />} />
             <Route path="/parent" element={<ParentDashboard />} />
+            <Route path="/mis-hijos" element={<MisHijos />} />
           </>
         )}
         

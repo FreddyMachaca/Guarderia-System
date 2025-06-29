@@ -10,6 +10,7 @@ use App\Http\Controllers\PersonalController;
 use App\Http\Controllers\PadreController;
 use App\Http\Controllers\MensualidadController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\MisHijosController;
 
 /*
 |--------------------------------------------------------------------------
@@ -142,6 +143,12 @@ Route::middleware(['api', 'api.throttle', 'check.user.type:Tutor'])->group(funct
         Route::get('/', [App\Http\Controllers\PerfilController::class, 'show']);
         Route::put('/', [App\Http\Controllers\PerfilController::class, 'update']);
         Route::post('/foto', [App\Http\Controllers\PerfilController::class, 'updateFoto']);
+    });
+
+    // Rutas para Mis Hijos
+    Route::prefix('mis-hijos')->group(function () {
+        Route::get('/', [MisHijosController::class, 'index']);
+        Route::get('/{id}', [MisHijosController::class, 'show']);
     });
 });
 
