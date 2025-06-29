@@ -33,7 +33,7 @@ Route::middleware('api')->group(function () {
     });
 });
 
-Route::middleware(['api', 'api.throttle'])->group(function () {
+Route::middleware(['api', 'api.throttle', 'check.user.type:admin,personal'])->group(function () {
     
     Route::prefix('ninos')->group(function () {
         Route::get('/', [NinoController::class, 'index']);
@@ -129,10 +129,22 @@ Route::middleware(['api', 'api.throttle'])->group(function () {
         Route::get('/ninos-por-grupo', [DashboardController::class, 'ninosPorGrupo']);
         Route::get('/actividad-calendario', [DashboardController::class, 'actividadCalendario']);
         Route::get('/ninos', [DashboardController::class, 'ninos']);
+    });
+});
+
+Route::middleware(['api', 'api.throttle', 'check.user.type:Tutor'])->group(function () {
+    Route::prefix('dashboard')->group(function () {
         Route::get('/padre', [DashboardController::class, 'datosPadre']);
     });
 
-    // Rutas para perfil de usuario
+    Route::prefix('perfil')->group(function () {
+        Route::get('/', [App\Http\Controllers\PerfilController::class, 'show']);
+        Route::put('/', [App\Http\Controllers\PerfilController::class, 'update']);
+        Route::post('/foto', [App\Http\Controllers\PerfilController::class, 'updateFoto']);
+    });
+});
+
+Route::middleware(['api', 'api.throttle', 'check.user.type:admin,personal,Tutor'])->group(function () {
     Route::prefix('perfil')->group(function () {
         Route::get('/', [App\Http\Controllers\PerfilController::class, 'show']);
         Route::put('/', [App\Http\Controllers\PerfilController::class, 'update']);
