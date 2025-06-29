@@ -24,7 +24,7 @@ const PerfilUsuario = () => {
 
   const user = getCurrentUser();
   const menus = user?.type === 'Tutor' ? parentMenus : adminMenus;
-  const puedeEditar = ['personal', 'admin'].includes(user?.type);
+  const puedeEditar = ['personal', 'admin', 'staff'].includes(user?.type) || ['personal', 'admin'].includes(user?.usr_tipo);
 
   useEffect(() => {
     cargarPerfil();

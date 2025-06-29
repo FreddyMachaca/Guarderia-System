@@ -30,19 +30,29 @@ class AuthController extends Controller
 
         $parent = DB::table('tbl_pdr_padres')
             ->where('pdr_usr_id', $user->usr_id)
+            ->where('pdr_estado', 'activo')
             ->first();
+
+        if (!$parent) {
+            throw ValidationException::withMessages([
+                'email' => ['No se encontró el registro de padre/tutor asociado.'],
+            ]);
+        }
 
         $token = $this->generateToken($user->usr_id);
         $this->storeToken($token, $user->usr_id);
 
         return response()->json([
+            'success' => true,
             'user' => [
                 'id' => $user->usr_id,
+                'usr_id' => $user->usr_id,
                 'name' => $user->usr_nombre,
                 'lastname' => $user->usr_apellido,
                 'email' => $user->usr_email,
-                'type' => $user->usr_tipo,
-                'parent_id' => $parent->pdr_id ?? null
+                'type' => 'parent',
+                'usr_tipo' => 'Tutor',
+                'parent_id' => $parent->pdr_id
             ],
             'token' => $token,
             'message' => 'Inicio de sesión exitoso'
@@ -76,12 +86,15 @@ class AuthController extends Controller
         $this->storeToken($token, $user->usr_id);
 
         return response()->json([
+            'success' => true,
             'user' => [
                 'id' => $user->usr_id,
+                'usr_id' => $user->usr_id,
                 'name' => $user->usr_nombre,
                 'lastname' => $user->usr_apellido,
                 'email' => $user->usr_email,
-                'type' => $user->usr_tipo,
+                'type' => $user->usr_tipo === 'admin' ? 'admin' : 'staff',
+                'usr_tipo' => $user->usr_tipo,
                 'staff_id' => $staff->prs_id ?? null,
                 'employee_code' => $staff->prs_codigo_empleado ?? null,
                 'foto_perfil' => $staff->prs_foto ?? null

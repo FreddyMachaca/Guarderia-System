@@ -125,13 +125,17 @@ export const useApi = () => {
   const login = useCallback(async (credentials, userType) => {
     try {
       const response = await post(`/auth/login/${userType}`, credentials, 10);
-      if (response.token) {
+      
+      if (response.success && response.token && response.user) {
         localStorage.setItem(`${STORAGE_KEY}_token`, response.token);
         localStorage.setItem(`${STORAGE_KEY}_user`, JSON.stringify(response.user));
         setUser(response.user);
+        return response;
+      } else {
+        throw new Error(response.message || 'Error en el login');
       }
-      return response;
     } catch (error) {
+      console.error('Error en login:', error);
       throw error;
     }
   }, [post]);
@@ -152,20 +156,36 @@ export const useApi = () => {
 
   const getCurrentUser = useCallback(() => {
     const userData = localStorage.getItem(`${STORAGE_KEY}_user`);
-    return userData ? JSON.parse(userData) : null;
+    if (userData) {
+      try {
+        return JSON.parse(userData);
+      } catch (error) {
+        console.error('Error parsing user data:', error);
+        localStorage.removeItem(`${STORAGE_KEY}_user`);
+        localStorage.removeItem(`${STORAGE_KEY}_token`);
+        return null;
+      }
+    }
+    return null;
   }, []);
 
   const getCurrentUserId = useCallback(() => {
     const userData = localStorage.getItem(`${STORAGE_KEY}_user`);
     if (userData) {
-      const user = JSON.parse(userData);
-      return user.id || user.usr_id || user.prs_id || null;
+      try {
+        const user = JSON.parse(userData);
+        return user.id || user.usr_id || user.prs_id || null;
+      } catch (error) {
+        return null;
+      }
     }
     return null;
   }, []);
 
   const isAuthenticated = useCallback(() => {
-    return !!localStorage.getItem(`${STORAGE_KEY}_token`);
+    const token = localStorage.getItem(`${STORAGE_KEY}_token`);
+    const user = localStorage.getItem(`${STORAGE_KEY}_user`);
+    return !!(token && user);
   }, []);
 
   const postFile = useCallback(async (endpoint, formData, options = {}) => {

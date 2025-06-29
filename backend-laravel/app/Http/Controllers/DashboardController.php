@@ -211,18 +211,43 @@ class DashboardController extends Controller
 
     public function datosPadre(Request $request)
     {
-        $userId = auth()->id();
-        
-        if (!$userId) {
+        $token = $request->header('Authorization');
+        if (!$token) {
             return response()->json([
                 'success' => false,
-                'message' => 'Usuario no autenticado'
+                'message' => 'Token no proporcionado'
             ], 401);
         }
 
-        $padre = Padre::whereHas('usuario', function($query) use ($userId) {
-            $query->where('usr_id', $userId);
-        })->first();
+        $token = str_replace('Bearer ', '', $token);
+        $tokenData = DB::table('tbl_tkn_tokens')
+            ->where('tkn_token', $token)
+            ->where('tkn_estado', 'activo')
+            ->first();
+
+        if (!$tokenData) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Token inválido'
+            ], 401);
+        }
+
+        $user = DB::table('tbl_usr_usuarios')
+            ->where('usr_id', $tokenData->tkn_usr_id)
+            ->where('usr_tipo', 'Tutor')
+            ->first();
+
+        if (!$user) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Usuario no encontrado'
+            ], 404);
+        }
+
+        $padre = DB::table('tbl_pdr_padres')
+            ->where('pdr_usr_id', $user->usr_id)
+            ->where('pdr_estado', 'activo')
+            ->first();
 
         if (!$padre) {
             return response()->json([
@@ -231,19 +256,25 @@ class DashboardController extends Controller
             ], 404);
         }
 
-        $hijos = $padre->relacionesNinos()->count();
-        $pagosPendientes = MensualidadNino::whereHas('nino.relacionesPadres', function($query) use ($padre) {
-            $query->where('rel_pdr_id', $padre->pdr_id);
-        })->where('mnc_estado_pago', '!=', 'pagado')
-          ->sum(DB::raw('mnc_precio_final - COALESCE(mnc_monto_pagado, 0)'));
+        $hijos = DB::table('tbl_rel_padres_ninos')
+            ->where('rel_pdr_id', $padre->pdr_id)
+            ->count();
 
-        $historialPagos = PagoMensualidad::whereHas('mensualidadNino.nino.relacionesPadres', function($query) use ($padre) {
-            $query->where('rel_pdr_id', $padre->pdr_id);
-        })->whereBetween('pgm_fecha_pago', [Carbon::now()->subMonths(6), Carbon::now()])
-          ->select(DB::raw('EXTRACT(MONTH FROM pgm_fecha_pago) as mes'), DB::raw('SUM(pgm_monto) as total'))
-          ->groupBy('mes')
-          ->orderBy('mes')
-          ->get();
+        $pagosPendientes = DB::table('tbl_mnc_mensualidades_nino as mnc')
+            ->join('tbl_rel_padres_ninos as rel', 'mnc.mnc_nin_id', '=', 'rel.rel_nin_id')
+            ->where('rel.rel_pdr_id', $padre->pdr_id)
+            ->where('mnc.mnc_estado_pago', '!=', 'pagado')
+            ->sum(DB::raw('mnc.mnc_precio_final - COALESCE(mnc.mnc_monto_pagado, 0)'));
+
+        $historialPagos = DB::table('tbl_pgm_pagos_mensualidad as pgm')
+            ->join('tbl_mnc_mensualidades_nino as mnc', 'pgm.pgm_mnc_id', '=', 'mnc.mnc_id')
+            ->join('tbl_rel_padres_ninos as rel', 'mnc.mnc_nin_id', '=', 'rel.rel_nin_id')
+            ->where('rel.rel_pdr_id', $padre->pdr_id)
+            ->whereBetween('pgm.pgm_fecha_pago', [Carbon::now()->subMonths(6), Carbon::now()])
+            ->select(DB::raw('EXTRACT(MONTH FROM pgm.pgm_fecha_pago) as mes'), DB::raw('SUM(pgm.pgm_monto) as total'))
+            ->groupBy('mes')
+            ->orderBy('mes')
+            ->get();
 
         $historialData = $historialPagos->map(function($pago) {
             $meses = [
@@ -257,17 +288,19 @@ class DashboardController extends Controller
             ];
         });
 
-        $estadoPagos = MensualidadNino::whereHas('nino.relacionesPadres', function($query) use ($padre) {
-            $query->where('rel_pdr_id', $padre->pdr_id);
-        })->select('mnc_estado_pago', DB::raw('COUNT(*) as cantidad'))
-          ->groupBy('mnc_estado_pago')
-          ->get();
+        $estadoPagos = DB::table('tbl_mnc_mensualidades_nino as mnc')
+            ->join('tbl_rel_padres_ninos as rel', 'mnc.mnc_nin_id', '=', 'rel.rel_nin_id')
+            ->where('rel.rel_pdr_id', $padre->pdr_id)
+            ->select('mnc.mnc_estado_pago', DB::raw('COUNT(*) as cantidad'))
+            ->groupBy('mnc.mnc_estado_pago')
+            ->get();
 
         $estadoData = $estadoPagos->map(function($estado) {
             $labels = [
                 'pagado' => 'Pagado',
                 'pendiente' => 'Pendiente',
-                'vencido' => 'Vencido'
+                'vencido' => 'Vencido',
+                'parcial' => 'Parcial'
             ];
             return [
                 'id' => $labels[$estado->mnc_estado_pago] ?? $estado->mnc_estado_pago,

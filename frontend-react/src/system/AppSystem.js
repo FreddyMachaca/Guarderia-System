@@ -20,7 +20,12 @@ const AppSystem = () => {
   }
 
   const user = getCurrentUser();
-  const userType = user?.type;
+  
+  if (!user) {
+    return <Navigate to="/portal" replace />;
+  }
+
+  const userType = user?.type || user?.usr_tipo;
 
   return (
     <div className="app-system system">
@@ -36,7 +41,7 @@ const AppSystem = () => {
         <Route path="/perfil" element={<PerfilUsuario />} />
         
         <Route path="/" element={
-          userType === 'parent' ? 
+          userType === 'parent' || userType === 'Tutor' ? 
             <Navigate to="/system/parent" replace /> : 
             <Navigate to="/system/dashboard" replace />
         } />

@@ -22,8 +22,13 @@ const LoginStaff = ({ onBack }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await login(formData, 'staff');
-      navigate('/system/dashboard');
+      const response = await login(formData, 'staff');
+      
+      if (response.success) {
+        navigate('/system/dashboard');
+      } else {
+        console.error('Error de login:', response.message);
+      }
     } catch (err) {
       console.error('Error de login:', err);
     }
