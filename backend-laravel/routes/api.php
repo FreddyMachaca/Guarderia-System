@@ -135,6 +135,7 @@ Route::middleware(['api', 'api.throttle', 'check.user.type:admin,personal'])->gr
 Route::middleware(['api', 'api.throttle', 'check.user.type:Tutor'])->group(function () {
     Route::prefix('dashboard')->group(function () {
         Route::get('/padre', [DashboardController::class, 'datosPadre']);
+        Route::get('/padre-completo', [DashboardController::class, 'datosCompletoPadre']);
     });
 
     Route::prefix('perfil')->group(function () {
