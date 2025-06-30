@@ -34,6 +34,14 @@ Route::middleware('api')->group(function () {
     });
 });
 
+Route::prefix('reportes')->group(function () {
+    Route::get('/ingresos', [App\Http\Controllers\ReporteController::class, 'reporteIngresos']);
+    Route::get('/ninos-inscritos', [App\Http\Controllers\ReporteController::class, 'reporteNinosInscritos']);
+    Route::get('/grupos', [App\Http\Controllers\ReporteController::class, 'reporteGrupos']);
+    Route::get('/pagos', [App\Http\Controllers\ReporteController::class, 'reportePagos']);
+    Route::get('/asignaciones', [App\Http\Controllers\ReporteController::class, 'reporteAsistencia']);
+});
+
 Route::middleware(['api', 'api.throttle', 'check.user.type:admin,personal'])->group(function () {
     
     Route::prefix('ninos')->group(function () {
@@ -110,15 +118,6 @@ Route::middleware(['api', 'api.throttle', 'check.user.type:admin,personal'])->gr
         Route::get('/{id}/verificar-sincronizacion', [MensualidadController::class, 'verificarSincronizacion']);
         Route::put('/{id}/inactivar', [MensualidadController::class, 'inactivar']); 
         Route::put('/{id}/activar', [MensualidadController::class, 'activar']); // Nueva ruta para activar
-    });
-
-    // Rutas para reportes
-    Route::prefix('reportes')->group(function () {
-        Route::get('/ingresos', [App\Http\Controllers\ReporteController::class, 'reporteIngresos']);
-        Route::get('/ninos-inscritos', [App\Http\Controllers\ReporteController::class, 'reporteNinosInscritos']);
-        Route::get('/grupos', [App\Http\Controllers\ReporteController::class, 'reporteGrupos']);
-        Route::get('/pagos', [App\Http\Controllers\ReporteController::class, 'reportePagos']);
-        Route::get('/asignaciones', [App\Http\Controllers\ReporteController::class, 'reporteAsistencia']);
     });
 
     // Rutas para el módulo de Dashboard

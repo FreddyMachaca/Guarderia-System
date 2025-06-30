@@ -11,6 +11,7 @@ use App\Models\Nino;
 use App\Models\Grupo;
 use App\Models\PagoMensualidad;
 use App\Models\AsignacionNino;
+use App\Models\Token;
 use App\Exports\IngresosExport;
 use App\Exports\NinosInscritosExport;
 use App\Exports\GruposExport;
@@ -19,6 +20,24 @@ use App\Exports\AsignacionesExport;
 
 class ReporteController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware(function ($request, $next) {
+            if ($request->has('token')) {
+                $token = $request->get('token');
+                $tokenRecord = Token::where('tkn_token', $token)
+                    ->where('tkn_estado', 'activo')
+                    ->where('tkn_fecha_expiracion', '>', now())
+                    ->first();
+
+                if ($tokenRecord) {
+                    $request->headers->set('Authorization', 'Bearer ' . $token);
+                }
+            }
+            return $next($request);
+        });
+    }
+
     public function reporteIngresos(Request $request)
     {
         $fechaInicio = $request->input('fecha_inicio', Carbon::now()->startOfMonth()->format('Y-m-d'));
