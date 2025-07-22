@@ -13,7 +13,7 @@ const Footer = () => {
           <div className="footer-brand">
             <div className="footer-logo">
               <img src={logo} alt="Logo" />
-              <span>Nombre</span>
+              <span>Guarderia</span>
             </div>
             <p className="footer-description">
               Formamos pequeños genios con amor, dedicación y metodologías innovadoras. 

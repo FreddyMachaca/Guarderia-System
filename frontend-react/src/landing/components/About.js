@@ -12,7 +12,7 @@ const About = () => {
               Creamos Experiencias de Aprendizaje <span className="highlight">Extraordinarias</span>
             </h2>
             <p className="about-description">
-              En "Nombre", cada día es una aventura de descubrimiento. Nuestro enfoque 
+              En Guarderia, cada día es una aventura de descubrimiento. Nuestro enfoque 
               pedagógico innovador combina la tradición educativa con metodologías modernas, 
               creando un ambiente donde cada niño puede brillar y desarrollar su máximo potencial.
             </p>

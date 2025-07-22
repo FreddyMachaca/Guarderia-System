@@ -42,7 +42,7 @@ const Header = () => {
         <div className="header-container">
           <div className="logo">
             <img src={logo} alt="Guardería" />
-            <span>Nombre</span>
+            <span>Guarderia</span>
           </div>
           <nav className="nav">
             <a href="#inicio" onClick={(e) => handleNavClick(e, 'inicio')}>Inicio</a>
@@ -81,7 +81,7 @@ const Header = () => {
         <div className="mobile-nav-header">
           <div className="logo">
             <img src={logo} alt="Guardería" />
-            <span>Nombre</span>
+            <span>Guarderia</span>
           </div>
           <button className="mobile-nav-close" onClick={closeMenu}>
             ×

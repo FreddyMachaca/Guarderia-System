@@ -46,7 +46,7 @@ const Features = () => {
       <div className="features-container">
         <div className="features-header">
           <div className="features-badge">⭐ Características Destacadas</div>
-          <h2>¿Por Qué Elegir <span className="highlight">"Nombre"</span>?</h2>
+          <h2>¿Por Qué Elegir <span className="highlight">Guarderia</span>?</h2>
           <p>
             Ofrecemos una experiencia educativa integral que combina metodologías innovadoras 
             con un ambiente cálido y seguro, diseñado especialmente para el desarrollo óptimo de cada niño.
